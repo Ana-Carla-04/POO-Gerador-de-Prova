@@ -62,7 +62,7 @@ public class Questao {
     }
 
     public void setNivel(int nivel) {
-        if (nivel >= 1 && nivel <= 10) {
+        if (nivel >= 1 && nivel <= 3) {
             this.nivel = nivel;
         }
     }
