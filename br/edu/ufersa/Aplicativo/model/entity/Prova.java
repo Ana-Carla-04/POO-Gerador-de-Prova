@@ -1,4 +1,4 @@
-package br.edu.ufersa.Aplicativo.model;
+package br.edu.ufersa.Aplicativo.model.entity;
 
 import java.time.LocalDate;
 import java.util.List;

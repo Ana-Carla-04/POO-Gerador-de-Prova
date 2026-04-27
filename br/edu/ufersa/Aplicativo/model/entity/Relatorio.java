@@ -1,4 +1,4 @@
-package br.edu.ufersa.Aplicativo.model;
+package br.edu.ufersa.Aplicativo.model.entity;
 
 import java.util.List;
 
