@@ -1,0 +1,6 @@
+# Arquivos de configuração do IntelliJ
+.idea/
+*.iml
+
+# Pasta de código compilado do Java
+out/

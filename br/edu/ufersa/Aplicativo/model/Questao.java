@@ -5,9 +5,9 @@ public class Questao {
     private String enunciado;
     private String assunto;
     private Disciplina disciplina;
-    private int nivel;
+    private String nivel;
 
-    public Questao(String codigo, String enunciado, String assunto, Disciplina disciplina, int nivel) {
+    public Questao(String codigo, String enunciado, String assunto, Disciplina disciplina, String nivel) {
         setCodigo(codigo);
         setEnunciado(enunciado);
         setAssunto(assunto);
@@ -32,7 +32,7 @@ public class Questao {
         return disciplina;
     }
 
-    public int getNivel() {
+    public String getNivel() {
         return nivel;
     }
 
@@ -61,8 +61,8 @@ public class Questao {
         }
     }
 
-    public void setNivel(int nivel) {
-        if (nivel >= 1 && nivel <= 3) {
+    public void setNivel(String nivel) {
+        if (nivel.equalsIgnoreCase("Fácil") || nivel.equalsIgnoreCase("Médio") || nivel.equalsIgnoreCase("Difícil")) {
             this.nivel = nivel;
         }
     }

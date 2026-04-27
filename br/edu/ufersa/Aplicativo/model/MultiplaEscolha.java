@@ -6,7 +6,7 @@ public class MultiplaEscolha extends Questao {
     private List<String> alternativas;
     private String resposta;
 
-    public MultiplaEscolha(String codigo, String enunciado, String assunto, Disciplina disciplina, int nivel, List<String> alternativas, String resposta) {
+    public MultiplaEscolha(String codigo, String enunciado, String assunto, Disciplina disciplina, String nivel, List<String> alternativas, String resposta) {
         super(codigo, enunciado, assunto, disciplina, nivel);
         setAlternativas(alternativas);
         setResposta(resposta);
