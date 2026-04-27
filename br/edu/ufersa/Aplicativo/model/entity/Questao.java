@@ -1,39 +1,22 @@
-package br.edu.ufersa.Aplicativo.model.entity;
+package br.edu.ufersa.Aplicativo.model.entity;//localização da classe
 
 public class Questao {
+    //atributos
     private String codigo;
     private String enunciado;
     private String assunto;
     private Disciplina disciplina;
     private String nivel;
+    private String tipo;
 
-    public Questao(String codigo, String enunciado, String assunto, Disciplina disciplina, String nivel) {
+    //construtor
+    public Questao(String codigo, String enunciado,String tipo, String assunto, Disciplina disciplina, String nivel) {
         setCodigo(codigo);
         setEnunciado(enunciado);
         setAssunto(assunto);
         setDisciplina(disciplina);
         setNivel(nivel);
-    }
-
-    // Getters
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public String getEnunciado() {
-        return enunciado;
-    }
-
-    public String getAssunto() {
-        return assunto;
-    }
-
-    public Disciplina getDisciplina() {
-        return disciplina;
-    }
-
-    public String getNivel() {
-        return nivel;
+        setTipo(tipo);
     }
 
     // Setters
@@ -49,8 +32,15 @@ public class Questao {
         }
     }
 
+    public void setTipo(String tipo) {
+        //validando se nivel é igual a qualquer variação de Multipla-Escolha,Discursiva,Verdadeiro ou Falso
+        if (tipo.equalsIgnoreCase("Multipla-Escolha") || tipo.equalsIgnoreCase("Discursiva") || tipo.equalsIgnoreCase("Verdadeiro ou Falso")) {
+            this.tipo = tipo;
+        }
+    }
+
     public void setAssunto(String assunto) {
-        if (assunto != null && !assunto.trim().isEmpty()) {
+        if (assunto != null && !assunto.trim().isEmpty()) { //se não for nulo ou vazio faça:
             this.assunto = assunto;
         }
     }
@@ -62,8 +52,35 @@ public class Questao {
     }
 
     public void setNivel(String nivel) {
+        //validando se nivel é igual a qualquer variação de Facil,Medio e Dificil
         if (nivel.equalsIgnoreCase("Fácil") || nivel.equalsIgnoreCase("Médio") || nivel.equalsIgnoreCase("Difícil")) {
             this.nivel = nivel;
         }
     }
+
+    // Getters
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getEnunciado() {
+        return enunciado;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public String getAssunto() {
+        return assunto;
+    }
+
+    public Disciplina getDisciplina() {
+        return disciplina;
+    }
+
+    public String getNivel() {
+        return nivel;
+    }
+
 }

@@ -1,24 +1,17 @@
-package br.edu.ufersa.Aplicativo.model.entity;
+package br.edu.ufersa.Aplicativo.model.entity; //local da classe
 
-import java.util.List;
+import java.util.List;//importando a interface List
 
 public class MultiplaEscolha extends Questao {
+    //atributos de Questão e mais os da subclasse MultiplaEscolha
     private List<String> alternativas;
     private String resposta;
-
-    public MultiplaEscolha(String codigo, String enunciado, String assunto, Disciplina disciplina, String nivel, List<String> alternativas, String resposta) {
-        super(codigo, enunciado, assunto, disciplina, nivel);
+    
+    //construtor
+    public MultiplaEscolha(String codigo, String enunciado,String tipo, String assunto, Disciplina disciplina, String nivel, String resposta, List<String> alternativas) {
+        super(codigo, enunciado,tipo, assunto, disciplina, nivel);
         setAlternativas(alternativas);
         setResposta(resposta);
-    }
-
-    // Getters
-    public List<String> getAlternativas() {
-        return alternativas;
-    }
-
-    public String getResposta() {
-        return resposta;
     }
 
     // Setters
@@ -33,4 +26,13 @@ public class MultiplaEscolha extends Questao {
             this.resposta = resposta;
         }
     }
+    // Getters
+    public List<String> getAlternativas() {
+        return alternativas;
+    }
+
+    public String getResposta() {
+        return resposta;
+    }
+
 }
