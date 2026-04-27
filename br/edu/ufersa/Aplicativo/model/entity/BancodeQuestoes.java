@@ -3,12 +3,12 @@ package br.edu.ufersa.Aplicativo.model.entity; //Localização da classe
 import java.util.ArrayList; //importa a interface ArrayList;
 import java.util.List; //importa a interface List;
 
-public class BancodeQuestoes {
+public class BancoDeQuestoes {
     //atributos
     private List<Questao> questoes;
 
     //construtor
-    public BancodeQuestoes() {
+    public BancoDeQuestoes() {
         this.questoes = new ArrayList<>(); //criando uma lista de questões
     }
 
