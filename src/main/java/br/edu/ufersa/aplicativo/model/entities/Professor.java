@@ -1,21 +1,23 @@
-package br.edu.ufersa.Aplicativo.model.entity; //localização do pacote
+package br.edu.ufersa.aplicativo.model.entities;
 
 public class Professor {
-    //atributos
+    private int id;
     private String nome;
     private String email;
     private String senha;
-    //private List<Disciplina> disciplinas;
 
-    //construtor
     public Professor(String nome, String email, String senha) {
         setNome(nome);
         setEmail(email);
         setSenha(senha);
-        //setDisciplinas(new ArrayList<>());
     }
 
-    //setters
+    public void setId(int id) {
+        if (id > 0) {
+            this.id = id;
+        }
+    }
+
     public void setNome(String nome) {
         if(nome != null && !(nome.trim().isEmpty())){
             this.nome = nome;
@@ -31,27 +33,20 @@ public class Professor {
             this.senha = senha;
         }
     }
-    
-    //getters
+
+    public int getId() {
+        return id;
+    }
+
     public String getNome() {
         return nome;
     }
+
     public String getEmail() {
         return email;
     }
+
     public String getSenha() {
         return senha;
     }
-
-
-    // public void adicionarDisciplinanoProfessor(Disciplina disciplina) {
-    //     if (disciplina != null && !this.disciplinas.contains(disciplina)) {
-    //         this.disciplinas.add(disciplina);
-    //     }
-    // }
-    // public List<Disciplina> getDisciplinas() {
-    //     return disciplinas;
-    // }
-
-
 }

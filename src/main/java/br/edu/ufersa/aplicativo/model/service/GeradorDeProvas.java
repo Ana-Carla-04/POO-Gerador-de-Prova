@@ -1,9 +1,8 @@
-package br.edu.ufersa.Aplicativo.service;
+package br.edu.ufersa.aplicativo.model.service;
 
-import br.edu.ufersa.Aplicativo.model.entity.BancoDeQuestoes;
-import br.edu.ufersa.Aplicativo.model.entity.Prova;
-import br.edu.ufersa.Aplicativo.model.entity.Questao;
-import br.edu.ufersa.Aplicativo.model.entity.Disciplina;
+import br.edu.ufersa.aplicativo.model.entities.Prova;
+import br.edu.ufersa.aplicativo.model.entities.Questao;
+import br.edu.ufersa.aplicativo.model.entities.Disciplina;
 
 import java.util.ArrayList;
 import java.util.Collections;

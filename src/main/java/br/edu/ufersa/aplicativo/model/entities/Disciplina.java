@@ -1,22 +1,18 @@
-//define o pacote(pasta) onde a class esta localizada
-package br.edu.ufersa.Aplicativo.model.entity; 
+package br.edu.ufersa.aplicativo.model.entities;
 
-import java.util.List;//importa a interface List
+import java.util.List;
 
 public class Disciplina {
-    //atributos
     private String nome;
     private String codigo;
     private List<String> assuntos;
 
-    //construtor
     public Disciplina(String nome, String codigo, List<String> assuntos) {
         setNome(nome);
         setCodigo(codigo);
         setAssuntos(assuntos);
     }
 
-    // Setters
     public void setNome(String nome) {
         if (nome != null && !nome.trim().isEmpty()) {
             this.nome = nome;
@@ -34,7 +30,7 @@ public class Disciplina {
             this.assuntos = assuntos;
         }
     }
-    // Getters
+
     public String getNome() {
         return nome;
     }
