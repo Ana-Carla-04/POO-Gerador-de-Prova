@@ -5,12 +5,14 @@ public class Professor {
     private String email;
     private String senha;
 
+    //construtor
     public Professor(String nome, String email, String senha) {
         setNome(nome);
         setEmail(email);
         setSenha(senha);
     }
 
+    //setters
     public void setNome(String nome) {
         if(nome != null && !(nome.trim().isEmpty())){
             this.nome = nome;
@@ -27,6 +29,8 @@ public class Professor {
         }
     }
 
+
+    //getters
     public String getNome() {
         return nome;
     }
