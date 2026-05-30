@@ -11,9 +11,9 @@ import java.util.LinkedList;
 public class ProfessorDAO implements DAO<Professor> { //usou a interface para definou que não será mais tipo genérico e sim tipo Professor
     //inseri na tabela Professor do banco de dados:
     private static final String sql_inserir = "INSERT INTO professor (nome, email, senha) VALUES (?, ?, ?);"; //inseri nome, email e senha
-    private static final String sql_alterar = "UPDATE professor SET email = ?, senha = ? WHERE nome = ?;"; //altera o email e a senha baseado no nome
-    private static final String sql_deletar = "DELETE FROM professor WHERE nome = ?;"; //deleta baseado no nome
-    private static final String sql_listar = "SELECT * FROM professor"; //list a todos os professores
+    private static final String sql_alterar = "UPDATE professor SET nome = ?, email = ?, senha = ? WHERE id = ?;"; //altera o email e a senha baseado no nome
+    private static final String sql_deletar = "DELETE FROM professor WHERE id = ?;"; //deleta baseado no nome
+    private static final String sql_listar = "SELECT * FROM professor;"; //list a todos os professores
 
     private Connection conexao; //armazena a conexao com o banco de dados, como um atributo
 
@@ -27,14 +27,22 @@ public class ProfessorDAO implements DAO<Professor> { //usou a interface para de
         if (professor == null){
             throw new IllegalArgumentException("Professor não pode ser nulo");
         }
-        try{PreparedStatement ps =  conexao.prepareStatement(sql_inserir); // PreparedStatement prepara o "formulário" e faz sql_inserir ter ligação com o banco
+        try(PreparedStatement ps =  conexao.prepareStatement(sql_inserir,  Statement.RETURN_GENERATED_KEYS)){; // PreparedStatement prepara o "formulário" e faz sql_inserir ter ligação com o banco
         // preenche cada ? com os valores
         ps.setString(1, professor.getNome()); // 1º ? = nome
         ps.setString(2, professor.getEmail()); // 2º ? = email
         ps.setString(3, professor.getSenha()); // 3º ? = senha
         //Executa o comando já montado
         ps.executeUpdate();
-           }
+            //id gerado pelo banco                                                                              
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int idGerado = rs.getInt(1);
+                    professor.setId(idGerado);  // Coloca o ID no objeto
+                }
+            }   
+        }
+            
         //Fecha o formulário
         ps.close();
     }
@@ -45,7 +53,7 @@ public class ProfessorDAO implements DAO<Professor> { //usou a interface para de
              throw new IllegalArgumentException("Professor não pode ser nulo");
         }    
         PreparedStatement ps =  conexao.prepareStatement(sql_deletar);//cria o formulário e ja faz conexão sql_deletar com o banco de dados
-        ps.setString(1, professor.getNome()); // 1º ? = nome
+        ps.setInt(1, professor.getId()); // 1º ? = Id
         ps.executeUpdate(); //executa o formulário
         ps.close(); //fecha o formulário
     }
@@ -56,9 +64,10 @@ public class ProfessorDAO implements DAO<Professor> { //usou a interface para de
             throw new IllegalArgumentException("Professor não pode ser nulo");
         }
         PreparedStatement ps =  conexao.prepareStatement(sql_alterar); //cria um formulário e conecta sql_alterar com o banco de dados
-        ps.setString(3, professor.getNome()); //3° ? = nome
-        ps.setString(1, professor.getEmail()); //1° ? = email
-        ps.setString(2, professor.getSenha()); // 2° ? = senha
+        ps.setString(1, professor.getNome()); //1° ? = nome
+        ps.setString(2, professor.getEmail()); //2° ? = email
+        ps.setString(3, professor.getSenha()); // 3° ? = senha
+        ps.setInt(4, professor.getId()); //4° ? = Id
         ps.executeUpdate(); //exacuta o formulario e manda pro banco
         ps.close(); //fecha o formulário
     }
@@ -69,6 +78,7 @@ public class ProfessorDAO implements DAO<Professor> { //usou a interface para de
         ResultSet rs = st.executeQuery(sql_listar); //ResultSet é como se fosse uma Tabela virtual que contem os dados retornado pela exaução da query sql_listar
         LinkedList<Professor> professores = new LinkedList<>(); //cria uma lista vazia para armazenar os resultados
         while (rs.next()) { //.next avança pra proxima linha, e o while retorna falso quando não há mais linha
+            int id = rs.getInt("id");  
             String nome = rs.getString("nome"); //pega o valor da coluna nome e transforma de sql para String
             String email = rs.getString("email");  //pega o valor da coluna email e transforma de sql para String
             String senha  = rs.getString("senha");  //pega o valor da coluna senha e transforma de sql para String
