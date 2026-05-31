@@ -9,19 +9,27 @@ public class Disciplina {
     private Professor professor;  
     private List<String> assuntos;
 
-    //construtor
-    public Disciplina(String nome, String codigo,Professor prof, List<String> assuntos) {
-        setNome(nome);
-        setCodigo(codigo);
-        setProfessor(prof);
-        setAssuntos(assuntos);
-    }
     public Disciplina(int id,String nome, String codigo,Professor prof, List<String> assuntos) {
         setId(id);
         setNome(nome);
         setCodigo(codigo);
         setProfessor(prof);
         setAssuntos(assuntos);
+    }
+
+    public Disciplina(int id,String nome, String codigo,Professor prof) {
+        setId(id);
+        setNome(nome);
+        setCodigo(codigo);
+        setProfessor(prof);
+    }
+
+    public Disciplina(){};
+
+    public Disciplina(int id, String nome, String codigo) {
+        setId(id);
+        setNome(nome);
+        setCodigo(codigo);
     }
 
     //setters

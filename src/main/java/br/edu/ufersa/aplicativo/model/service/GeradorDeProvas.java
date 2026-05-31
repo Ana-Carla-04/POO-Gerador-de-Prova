@@ -1,68 +1,66 @@
 package br.edu.ufersa.aplicativo.model.service;
 
+import br.edu.ufersa.aplicativo.model.DAO.QuestaoDAO;
+import br.edu.ufersa.aplicativo.model.entities.Nivel;
 import br.edu.ufersa.aplicativo.model.entities.Prova;
 import br.edu.ufersa.aplicativo.model.entities.Questao;
 import br.edu.ufersa.aplicativo.model.entities.Disciplina;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class GeradorDeProvas {
-        private BancoDeQuestoes repositorio;
+        private QuestaoDAO repositorio;
 
-        public GeradorDeProvas(BancoDeQuestoes repositorio) {
+        public GeradorDeProvas(QuestaoDAO repositorio) {
                 this.repositorio = repositorio;
         }
 
-        // metodo para criar prova com os atributos informados no sistema
-        public Prova criarProva(Disciplina disciplina, int qtdFaceis, int qtdMedias, int qtdDificeis, String codigo) {
-                // declaração de lista com atribuição das questões ao chamar o metodo de buscar e embaralhar as questões
-                List<Questao> questoesFaceis = buscareshuffle(disciplina, "Fácil", qtdFaceis);
-                List<Questao> questoesMedias = buscareshuffle(disciplina, "Médio", qtdMedias);
-                List<Questao> questoesDificeis = buscareshuffle(disciplina, "Difícil", qtdDificeis);
+        public Prova criarProva(Disciplina disciplina, Nivel nivel, int qtdFaceis, int qtdMedias, int qtdDificeis, String codigo) throws SQLException {
 
-                // reunir todas as questões embaralhadas em uma lista de questões que vai pra prova
+                List<Questao> questoesFaceis = buscareshuffle(disciplina, Nivel.FACIL, qtdFaceis);
+                List<Questao> questoesMedias = buscareshuffle(disciplina, Nivel.MEDIO, qtdMedias);
+                List<Questao> questoesDificeis = buscareshuffle(disciplina, Nivel.DIFICIL, qtdDificeis);
+
                 List<Questao> todasAsQuestoesDaProva = new ArrayList<>();
                 todasAsQuestoesDaProva.addAll(questoesFaceis);
                 todasAsQuestoesDaProva.addAll(questoesMedias);
                 todasAsQuestoesDaProva.addAll(questoesDificeis);
 
-                // criação da prova com todas as questões
-                Prova novaProva = new Prova(todasAsQuestoesDaProva, disciplina, codigo);
-
-                return novaProva;
+                return new Prova(todasAsQuestoesDaProva, disciplina, codigo);
         }
 
-        private List<Questao> buscareshuffle(Disciplina disciplina, String dificuldade, int quantidadeDesejada) {
-                // se pedir a quantidade 0 ou negativo retorna lista vazia
+        private List<Questao> buscareshuffle(Disciplina disciplina, Nivel nivel, int quantidadeDesejada) throws SQLException {
                 if (quantidadeDesejada <= 0) {
                         return new ArrayList<>();
                 }
 
-                // busca de questões na dificuldade pedida
-                List<Questao> todasDaDificuldade = repositorio.buscarPorDificuldade(dificuldade);
+                List<Questao> todasDoNivel = repositorio.buscarPorNivel(nivel);
 
-                // lista para guardar as questões da disciplina escolhida
                 List<Questao> questoesFiltradas = new ArrayList<>();
 
-                // filtro para escolher somente as questões da disciplina escolhida
-                for (Questao q : todasDaDificuldade) {
-                        // compara o codigo da disciplina
+                for (Questao q : todasDoNivel) {
                         if (q.getDisciplina().getCodigo().equals(disciplina.getCodigo())) {
                                 questoesFiltradas.add(q);
                         }
                 }
 
-                // aviso para caso as questões não forem o suficiente
-                if (questoesFiltradas.size() < quantidadeDesejada) {
-                        System.out.println("Não tem questões suficientes!");
+                int quantidadeDisponivel = questoesFiltradas.size();
+                if (quantidadeDisponivel < quantidadeDesejada) {
+                        System.out.println("Aviso: Não há questões suficientes de nível '" + nivel + "' para a disciplina " + disciplina.getNome());
+                        System.out.println("Quantidade solicitada: " + quantidadeDesejada + " | Quantidade disponível no banco: " + quantidadeDisponivel);
+
+                        quantidadeDesejada = quantidadeDisponivel;
                 }
 
-                // embaralhar as questões
+                if (quantidadeDesejada == 0) {
+                        return new ArrayList<>();
+                }
+
                 Collections.shuffle(questoesFiltradas);
 
-                // pega as questões na ordem do sorteio
                 List<Questao> questoesSorteadas = questoesFiltradas.subList(0, quantidadeDesejada);
 
                 return new ArrayList<>(questoesSorteadas);

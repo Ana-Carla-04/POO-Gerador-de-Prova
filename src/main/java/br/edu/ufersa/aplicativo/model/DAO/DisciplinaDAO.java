@@ -8,13 +8,14 @@ import java.util.*;
 
 public class DisciplinaDAO implements DAO<Disciplina>{
     //sql querys
-    private static final String sql_inserir = "INSERT INTO disciplina (nome, codigo,professor_id) VALUES (?,?,?);";
+    private static final String sql_inserir = "INSERT INTO disciplina (nome, codigo, professor_id) VALUES (?,?,?);";
     private static final String sql_alterar = "UPDATE disciplina SET nome = ?, codigo = ?, professor_id = ? WHERE id =?;";
     private static final String sql_deletar = "DELETE FROM disciplina WHERE id = ?;";
-    private static final String sql_listar = "SELECT d.*, p.nome , p.email  " + //vai mostar tudo da tabela disciplina e o nome e email do professor
-                                             "FROM disciplina d , professor p WHERE d.professor_id = p.id;";
-    private static final String sql_buscarPorId = "SELECT d.*, p.nome, p.email FROM disciplina d, professor p WHERE d.professor_id = p.id AND d.id = ?;";
-    //outra tabela, tabela assunto
+    private static final String sql_listar = "SELECT d.*, p.id AS prof_id, p.nome AS prof_nome, p.email AS prof_email, p.senha AS prof_senha " +
+            "FROM disciplina d, professor p WHERE d.professor_id = p.id;";
+
+    private static final String sql_buscarPorId = "SELECT d.*, p.id AS prof_id, p.nome AS prof_nome, p.email AS prof_email, p.senha AS prof_senha " +
+            "FROM disciplina d, professor p WHERE d.professor_id = p.id AND d.id = ?;";//outra tabela, tabela assunto
     private static final String sql_buscarAssuntos = "SELECT nome_assunto FROM assunto WHERE disciplina_id = ? ORDER BY id;";  
     private static final String sql_inserirAssunto = "INSERT INTO assunto (disciplina_id, nome_assunto) VALUES (?,?);";
     private static final String sql_deletarAssunto = "DELETE FROM assunto WHERE disciplina_id = ?;";
@@ -23,7 +24,7 @@ public class DisciplinaDAO implements DAO<Disciplina>{
     private Connection conexao; //atributo conexao
 
     //construtor da conexao
-    private DisciplinaDAO(Connection conexao){
+    public DisciplinaDAO(Connection conexao){
         this.conexao = conexao;
     }
 
@@ -166,10 +167,10 @@ public class DisciplinaDAO implements DAO<Disciplina>{
 
         // criando o objeto Professor (que é dono da disciplina)
         Professor professor = new Professor(
-            rs.getInt("professor_id"),
-            rs.getString("professor_nome"),
-            rs.getString("professor_email"),
-            rs.getString("professor_senha")
+                rs.getInt("prof_id"),
+                rs.getString("prof_nome"),
+                rs.getString("prof_email"),
+                rs.getString("prof_senha")
         );
         
         //criando a Disciplina

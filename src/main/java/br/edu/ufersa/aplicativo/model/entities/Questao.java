@@ -12,8 +12,10 @@ public abstract class Questao {
         setEnunciado(enunciado);
         setAssunto(assunto);
         setDisciplina(disciplina);
-        setDificuldade(nivel);
+        setNivel(nivel);
     }
+
+    public Questao(){};
 
     public void setCodigo(int codigo) {
         if (codigo > 0) {
@@ -39,7 +41,7 @@ public abstract class Questao {
         }
     }
 
-    public void setDificuldade(Nivel nivel) {
+    public void setNivel(Nivel nivel) {
         if (nivel != null) {
             this.nivel = nivel;
         }
@@ -63,8 +65,8 @@ public abstract class Questao {
         return disciplina;
     }
 
-    public Nivel getDificuldade() {
-        return nivel;
+    public Nivel getNivel() {
+        return this.nivel;
     }
 
     public abstract String getResposta();

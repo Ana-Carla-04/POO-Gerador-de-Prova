@@ -2,7 +2,7 @@ package br.edu.ufersa.aplicativo.model.DAO;
 
 //esta classe que será feito a implementação dos metodos e como eles vão mexe no banco de dados  
 
-import br.edu.ufersa.aplicativo.model.entities.Professor; //importa a classe Professor 
+import br.edu.ufersa.aplicativo.model.entities.Professor; //importa a classe Professor
 
 import java.sql.*; //importa tudo do pacote sql
 import java.util.List;

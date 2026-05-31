@@ -15,6 +15,8 @@ public class MultiplaEscolha extends Questao {
         setResposta(resposta);
     }
 
+    public MultiplaEscolha(){};
+
     public void setAlternativas(List<String> alternativas) {
         if (alternativas != null && !alternativas.isEmpty()) {
             this.alternativas = alternativas;

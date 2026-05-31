@@ -10,6 +10,8 @@ public class Discursiva extends Questao {
         setResposta(resposta);
     }
 
+    public Discursiva(){};
+
     public void setResposta(String resposta){
         if(resposta != null && !(resposta.trim().isEmpty())){
             this.resposta = resposta;
