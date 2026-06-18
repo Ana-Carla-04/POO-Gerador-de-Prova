@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Main {
+public class MainTesta {
     public static void main(String[] args) {
     // Main para testar criação das classes Professor, Disciplina, Questão e Prova implementados no bd
         try (Connection conexao = Conexao.abrirConexao()) {
