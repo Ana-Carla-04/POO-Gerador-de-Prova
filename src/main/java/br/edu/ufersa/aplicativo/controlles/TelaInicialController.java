@@ -4,18 +4,17 @@ import br.edu.ufersa.aplicativo.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.geometry.Pos;
-import javafx.scene.layout.VBox;
+import javafx.stage.StageStyle;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -31,11 +30,11 @@ public class TelaInicialController implements Initializable {
     @FXML private StackPane menuGerarProva;
     @FXML private StackPane menuRelatorio;
     @FXML private StackPane menuProvas;
+    @FXML private Button fabButton;
 
     private List<StackPane> menuItems;
-
-    // Dados das disciplinas com suas informações
     private List<DisciplinaInfo> disciplinasInfo;
+    private Stage popupStage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,27 +42,22 @@ public class TelaInicialController implements Initializable {
                 menuDisciplinas, menuBuscar, menuGerarProva, menuRelatorio, menuProvas
         );
 
-        // Inicializar dados das disciplinas
         inicializarDisciplinas();
-
-        // Configurar GridPane responsivo
         configurarGridResponsivo();
-
-        // Carregar dados iniciais
         carregarDisciplinas();
     }
 
     private void inicializarDisciplinas() {
         disciplinasInfo = Arrays.asList(
-                new DisciplinaInfo("Matemática", "MAT001", 15, "Prof. Silva"),
-                new DisciplinaInfo("Português", "POR001", 12, "Prof. Santos"),
-                new DisciplinaInfo("História", "HIS001", 10, "Prof. Oliveira"),
-                new DisciplinaInfo("Geografia", "GEO001", 8, "Prof. Costa"),
-                new DisciplinaInfo("Física", "FIS001", 14, "Prof. Lima"),
-                new DisciplinaInfo("Química", "QUI001", 11, "Prof. Almeida"),
-                new DisciplinaInfo("Biologia", "BIO001", 9, "Prof. Ferreira"),
-                new DisciplinaInfo("Inglês", "ING001", 7, "Prof. Pereira"),
-                new DisciplinaInfo("Artes", "ART001", 6, "Prof. Carvalho")
+                new DisciplinaInfo("Matemática", "MAT001", 3, "Prof. Silva"),
+                new DisciplinaInfo("Português", "POR001", 2, "Prof. Santos"),
+                new DisciplinaInfo("História", "HIS001", 1, "Prof. Oliveira"),
+                new DisciplinaInfo("Geografia", "GEO001", 0, "Prof. Costa"),
+                new DisciplinaInfo("Física", "FIS001", 1, "Prof. Lima"),
+                new DisciplinaInfo("Química", "QUI001", 0, "Prof. Almeida"),
+                new DisciplinaInfo("Biologia", "BIO001", 1, "Prof. Ferreira"),
+                new DisciplinaInfo("Inglês", "ING001", 0, "Prof. Pereira"),
+                new DisciplinaInfo("Artes", "ART001", 0, "Prof. Carvalho")
         );
     }
 
@@ -120,9 +114,259 @@ public class TelaInicialController implements Initializable {
         topbarTitle.setText("Provas");
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // FAB - ABRE POPUP COM OPÇÕES (AGORA FECHA AO CLICAR FORA)
+    // ═══════════════════════════════════════════════════════════════════
     @FXML
     private void handleAddDisciplina() {
-        System.out.println("Adicionar nova disciplina...");
+        // Se o popup já estiver aberto, fecha
+        if (popupStage != null && popupStage.isShowing()) {
+            popupStage.close();
+            return;
+        }
+        mostrarPopupOpcoes();
+    }
+
+    private void mostrarPopupOpcoes() {
+        // Criar o popup
+        popupStage = new Stage();
+        popupStage.initStyle(StageStyle.TRANSPARENT);
+        popupStage.setAlwaysOnTop(true);
+        // ═══════════════════════════════════════════════════════════════
+        // REMOVER MODALIDADE - AGORA NÃO BLOQUEIA MAIS A TELA
+        // ═══════════════════════════════════════════════════════════════
+        // popupStage.initModality(Modality.APPLICATION_MODAL); ← REMOVIDO
+
+        // Criar o conteúdo do popup
+        VBox popupContent = new VBox();
+        popupContent.setSpacing(8);
+        popupContent.setAlignment(Pos.CENTER);
+        popupContent.setStyle(
+                "-fx-background-color: #0A4174;" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-padding: 16 20 16 20;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 5);"
+        );
+
+        // Label do título
+        Label tituloLabel = new Label("Adicionar");
+        tituloLabel.setStyle(
+                "-fx-text-fill: white;" +
+                        "-fx-font-size: 16px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Segoe UI', Arial, sans-serif;"
+        );
+
+        // Botão: Adicionar Disciplina
+        HBox btnDisciplina = criarOpcao("📚 Adicionar Disciplina", () -> {
+            popupStage.close();
+            abrirTelaAdicionarDisciplina();
+        });
+
+        // Botão: Adicionar Questão
+        HBox btnQuestao = criarOpcao("📝 Adicionar Questão", () -> {
+            popupStage.close();
+            abrirTelaAdicionarQuestao();
+        });
+
+        popupContent.getChildren().addAll(tituloLabel, btnDisciplina, btnQuestao);
+
+        // Configurar a cena do popup
+        Scene popupScene = new Scene(popupContent);
+        popupScene.setFill(Color.TRANSPARENT);
+        popupStage.setScene(popupScene);
+
+        // ═══════════════════════════════════════════════════════════════
+        // FECHAR O POPUP AO CLICAR FORA (QUALQUER LUGAR DA TELA)
+        // ═══════════════════════════════════════════════════════════════
+        // Adicionar um listener para fechar quando perder o foco
+        popupStage.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal && popupStage.isShowing()) {
+                popupStage.close();
+            }
+        });
+
+        // Posicionar o popup ao lado do FAB
+        posicionarPopupAoTab();
+
+        popupStage.show();
+
+        // ═══════════════════════════════════════════════════════════════
+        // FECHAR O POPUP AO CLICAR EM QUALQUER LUGAR DA TELA PRINCIPAL
+        // ═══════════════════════════════════════════════════════════════
+        // Adicionar um evento de clique na cena principal
+        Scene mainScene = fabButton.getScene();
+        if (mainScene != null) {
+            mainScene.setOnMouseClicked(event -> {
+                if (popupStage != null && popupStage.isShowing()) {
+                    popupStage.close();
+                    // Remover o listener depois que fechar
+                    mainScene.setOnMouseClicked(null);
+                }
+            });
+        }
+    }
+
+    private HBox criarOpcao(String texto, Runnable acao) {
+        HBox item = new HBox();
+        item.setAlignment(Pos.CENTER_LEFT);
+        item.setSpacing(10);
+        item.setStyle(
+                "-fx-background-color: rgba(189, 216, 233, 0.15);" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-padding: 10 16 10 16;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-min-width: 180;"
+        );
+
+        item.setOnMouseEntered(e -> {
+            item.setStyle(
+                    "-fx-background-color: rgba(189, 216, 233, 0.35);" +
+                            "-fx-background-radius: 6;" +
+                            "-fx-padding: 10 16 10 16;" +
+                            "-fx-cursor: hand;" +
+                            "-fx-min-width: 180;"
+            );
+        });
+
+        item.setOnMouseExited(e -> {
+            item.setStyle(
+                    "-fx-background-color: rgba(189, 216, 233, 0.15);" +
+                            "-fx-background-radius: 6;" +
+                            "-fx-padding: 10 16 10 16;" +
+                            "-fx-cursor: hand;" +
+                            "-fx-min-width: 180;"
+            );
+        });
+
+        Label label = new Label(texto);
+        label.setStyle(
+                "-fx-text-fill: white;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-font-family: 'Segoe UI', Arial, sans-serif;"
+        );
+
+        item.getChildren().add(label);
+        item.setOnMouseClicked(e -> acao.run());
+
+        return item;
+    }
+
+    private void posicionarPopupAoTab() {
+        if (popupStage == null || fabButton == null) return;
+
+        javafx.application.Platform.runLater(() -> {
+            double x = fabButton.localToScene(fabButton.getBoundsInLocal()).getMinX() - 220;
+            double y = fabButton.localToScene(fabButton.getBoundsInLocal()).getMinY() - 120;
+
+            Scene scene = fabButton.getScene();
+            if (scene != null) {
+                Stage stage = (Stage) scene.getWindow();
+                x += stage.getX() + scene.getX();
+                y += stage.getY() + scene.getY();
+            }
+
+            popupStage.setX(x);
+            popupStage.setY(y);
+        });
+    }
+
+    private void abrirTelaAdicionarDisciplina() {
+        try {
+            System.out.println("📚 Abrindo tela para adicionar disciplina...");
+
+            // Carregar a tela de adicionar disciplina
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaAdicionarDiscView.fxml")
+            );
+            Parent root = loader.load();
+
+            // Criar a nova cena
+            Scene scene = new Scene(root, 1280, 750);
+
+            // Carregar CSS específico
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaAdicionarDiscStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            // Pegar o Stage atual
+            Stage stage = (Stage) fabButton.getScene().getWindow();
+
+            // Salvar o estado de tela cheia
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Adicionar Disciplina");
+
+            // Restaurar estado
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Erro ao abrir tela de adicionar disciplina: " + e.getMessage());
+            showAlert("Erro", "Não foi possível abrir a tela de adicionar disciplina!");
+        }
+    }
+
+    private void abrirTelaAdicionarQuestao() {
+        try {
+            System.out.println("📝 Abrindo tela para adicionar questão...");
+
+            // Carregar a tela de adicionar questão
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaAdicionarQuestView.fxml")
+            );
+            Parent root = loader.load();
+
+            // Criar a nova cena
+            Scene scene = new Scene(root, 1280, 750);
+
+            // Carregar CSS específico
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaAdicionarQuestStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            // Pegar o Stage atual
+            Stage stage = (Stage) fabButton.getScene().getWindow();
+
+            // Salvar o estado de tela cheia
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Adicionar Questão");
+
+            // Restaurar estado
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Erro ao abrir tela de adicionar questão: " + e.getMessage());
+            showAlert("Erro", "Não foi possível abrir a tela de adicionar questão!");
+        }
+    }
+
+    private void showAlert(String titulo, String mensagem) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                javafx.scene.control.Alert.AlertType.INFORMATION
+        );
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 
     private void selecionarMenu(StackPane item) {
@@ -142,9 +386,8 @@ public class TelaInicialController implements Initializable {
             StackPane card = new StackPane();
             card.getStyleClass().add("disciplina-card");
 
-            // Criar layout do card com nome e quantidade de questões
             VBox cardContent = new VBox();
-            cardContent.setAlignment(javafx.geometry.Pos.CENTER);
+            cardContent.setAlignment(Pos.CENTER);
             cardContent.setSpacing(8);
 
             Label nomeLabel = new Label(info.getNome());
@@ -157,10 +400,7 @@ public class TelaInicialController implements Initializable {
             cardContent.getChildren().addAll(nomeLabel, qtdLabel);
             card.getChildren().add(cardContent);
 
-            // Salvar dados da disciplina no card
             card.setUserData(info);
-
-            // Clique no card - navegar para questões
             card.setOnMouseClicked(e -> handleCardDisciplina(info));
 
             GridPane.setColumnIndex(card, col);
@@ -178,43 +418,32 @@ public class TelaInicialController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // NAVEGAÇÃO PARA TELA DE QUESTÕES
-    // ═══════════════════════════════════════════════════════════════════
     private void handleCardDisciplina(DisciplinaInfo info) {
         try {
             System.out.println("Disciplina selecionada: " + info.getNome());
 
-            // Carregar a tela de questões
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/br/edu/ufersa/aplicativo/views/QuestoesView.fxml")
             );
             Parent root = loader.load();
 
-            // Pegar o controller e passar os dados da disciplina
             QuestoesController controller = loader.getController();
             controller.setDisciplinaInfo(info);
 
-            // Criar a nova cena
             Scene scene = new Scene(root, 1280, 750);
 
-            // Carregar CSS
             URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaInicialStyle.css");
             if (cssUrl != null) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            // Pegar o Stage atual
             Stage stage = (Stage) disciplinasGrid.getScene().getWindow();
-
-            // Salvar o estado de tela cheia
             boolean isFullScreen = stage.isFullScreen();
             boolean isMaximized = stage.isMaximized();
 
             stage.setScene(scene);
             stage.setTitle("Gerador de Provas - " + info.getNome());
 
-            // Restaurar estado
             if (isFullScreen) {
                 stage.setFullScreen(true);
             }
@@ -228,9 +457,6 @@ public class TelaInicialController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // CLASSE INTERNA PARA DADOS DA DISCIPLINA
-    // ═══════════════════════════════════════════════════════════════════
     public static class DisciplinaInfo {
         private String nome;
         private String codigo;

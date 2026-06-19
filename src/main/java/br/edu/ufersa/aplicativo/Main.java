@@ -73,7 +73,7 @@ public class Main extends Application {
                 System.out.println("❌ CSS Tela Inicial NÃO ENCONTRADO!");
             }
         }
-        // CSS específico da tela inicial (se for a tela inicial)
+        // CSS específico da tela questoes (se for a tela questoes)
         if (fxmlPath.contains("Questoes")) {
             URL cssQuestoes = Main.class.getResource("/br/edu/ufersa/aplicativo/css/QuestoesStyle.css");
             if (cssQuestoes != null) {
@@ -81,6 +81,16 @@ public class Main extends Application {
                 System.out.println("✅ CSS Questes carregado");
             } else {
                 System.out.println("❌ CSS Questoes NÃO ENCONTRADO!");
+            }
+        }
+        // CSS específico da tela adicionar disciplina (se for a tela adicionar disciplina)
+        if (fxmlPath.contains("AdicionarDisc")) {
+            URL cssAdicionarDisc = Main.class.getResource("/br/edu/ufersa/aplicativo/css/TelaAdiconarDiscStyle.css");
+            if (cssAdicionarDisc != null) {
+                scene.getStylesheets().add(cssAdicionarDisc.toExternalForm());
+                System.out.println("✅ CSS adicionar disciplina carregado");
+            } else {
+                System.out.println("❌ CSS adicionar disciplina NÃO ENCONTRADO!");
             }
         }
 

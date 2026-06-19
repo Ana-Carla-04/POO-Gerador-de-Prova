@@ -54,6 +54,13 @@
     -fx-background-color: #6A9FB0;
 }
 
+/* Classe específica para a seta */
+.topbar-seta-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 28px;        /* ← Tamanho da seta */
+    -fx-font-weight: bold;
+}
+
 .topbar-icon-label {
     -fx-text-fill: #001D39;
     -fx-font-size: 20px;
@@ -335,4 +342,49 @@
     -fx-background-radius: 4;
     -fx-padding: 8 12;
     -fx-border-radius: 4;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CAIXINHAS AO REDOR DOS LABELS
+   ════════════════════════════════════════════════════════════════ */
+
+/* Caixinha do título (ex: "Questão :", "Nível :", "tipo:") */
+.caixinha {
+    -fx-background-color: rgba(0, 29, 57, 0.12);
+    -fx-background-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+
+/* Caixinha do valor (ex: "QST001", "Nível 2") */
+.caixinha-valor {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-min-width: 60;
+}
+
+/* Caixinha do enunciado (maior) */
+.caixinha-valor-enunciado {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+
+/* Caixinha do gabarito */
+.caixinha-gabarito {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
 }

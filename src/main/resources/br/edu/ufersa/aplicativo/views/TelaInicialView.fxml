@@ -126,7 +126,7 @@
             <Button
                     fx:id="fabButton"
                     styleClass="fab-button"
-                    text="+"
+                    text="&#128209;+"
                     onAction="#handleAddDisciplina"
                     AnchorPane.bottomAnchor="20"
                     AnchorPane.rightAnchor="20"/>

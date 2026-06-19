@@ -95,6 +95,7 @@ public class QuestoesController implements Initializable {
                 new QuestaoInfo("QST003", "Trigonometria", "Nível 3", "multipla escolha",
                         "Qual o valor de sen(30°)?",
                         "b) 0,5", new String[]{"a) 0", "b) 0,5", "c) 1", "d) 1,5"})
+                
         ));
 
         // Questões de Português
@@ -290,31 +291,35 @@ public class QuestoesController implements Initializable {
             return;
         }
 
-        for (int i = 0; i < alternativas.length; i++) {
-            // Coluna da esquerda: TODAS as alternativas
-            // Se for a correta, coloca em VERMELHO
-            Label altLabel = new Label(alternativas[i]);
-            if (alternativas[i].equals(gabarito)) {
-                altLabel.getStyleClass().add("det-gabarito");  // Vermelho
-            } else {
-                altLabel.getStyleClass().add("det-normal");    // Preto
-            }
-            GridPane.setColumnIndex(altLabel, 0);
-            GridPane.setRowIndex(altLabel, i);
-            gabaritoGrid.getChildren().add(altLabel);
+        // Calcula quantas linhas serão necessárias (metade das alternativas)
+        int metade = (int) Math.ceil(alternativas.length / 2.0);
 
-            // Coluna da direita: SÓ A RESPOSTA CORRETA (opcional)
-            // Se quiser mostrar "Resposta: " ou "✓" na direita, descomente:
-        /*
-        if (alternativas[i].equals(gabarito)) {
-            Label gabLabel = new Label("✓ Resposta");
-            gabLabel.getStyleClass().add("det-gabarito");
-            GridPane.setColumnIndex(gabLabel, 1);
-            GridPane.setRowIndex(gabLabel, i);
-            gabaritoGrid.getChildren().add(gabLabel);
+        for (int i = 0; i < alternativas.length; i++) {
+            // Coluna 0: Primeira metade das alternativas (a, b, c...)
+            // Coluna 1: Segunda metade das alternativas (d, e, f...)
+            int col = i < metade ? 0 : 1;
+            int row = i < metade ? i : i - metade;
+
+            Label altLabel = new Label(alternativas[i]);
+
+            // ═══════════════════════════════════════════════════════════
+            // HABILITAR QUEBRA DE LINHA E CRESCIMENTO
+            // ═══════════════════════════════════════════════════════════
+            altLabel.setWrapText(true);  // ← Quebra o texto
+            altLabel.setMaxWidth(Double.MAX_VALUE);  // ← Permite crescer
+
+            if (alternativas[i].equals(gabarito)) {
+                altLabel.getStyleClass().add("det-gabarito");
+            } else {
+                altLabel.getStyleClass().add("det-normal");
+            }
+
+            GridPane.setColumnIndex(altLabel, col);
+            GridPane.setRowIndex(altLabel, row);
+            GridPane.setFillWidth(altLabel, true);  // ← Ocupa toda a largura
+            gabaritoGrid.getChildren().add(altLabel);
         }
-        */
-        }
+
     }
 
     private void selecionarMenu(StackPane item) {
