@@ -110,7 +110,6 @@ public class TelaAdicionarQuestController implements Initializable {
             case VERDADEIRO_FALSO  -> setTipoLabel("verdadeiro ou falso");
         }
 
-        // Recria os campos comuns
         fieldEnunciado  = criarTextField(340);
         fieldDisciplina = criarTextField(180);
         fieldAssunto    = criarTextField(180);
@@ -128,13 +127,11 @@ public class TelaAdicionarQuestController implements Initializable {
 
     // ── Múltipla Escolha ────────────────────────────────────────────
     private void montarCamposMultipla() {
-        // Criar campos de texto para as alternativas
         fieldAltA = criarTextField(280);
         fieldAltB = criarTextField(280);
         fieldAltC = criarTextField(280);
         fieldAltD = criarTextField(280);
 
-        // Criar grupo para os RadioButtons do gabarito
         grupoGabarito = new ToggleGroup();
 
         RadioButton rbA = criarRadio("a", grupoGabarito);
@@ -142,10 +139,8 @@ public class TelaAdicionarQuestController implements Initializable {
         RadioButton rbC = criarRadio("c", grupoGabarito);
         RadioButton rbD = criarRadio("d", grupoGabarito);
 
-        // ── 1. ENUNCIADO ──────────────────────────────────────────────
         camposDinamicos.getChildren().add(labeledField("Enunciado:", fieldEnunciado));
 
-        // ── 2. ALTERNATIVAS ───────────────────────────────────────────
         VBox colAlternativas = new VBox(4);
         colAlternativas.getChildren().add(label("alternativas:"));
         colAlternativas.getChildren().add(altRow("a:", fieldAltA));
@@ -154,7 +149,6 @@ public class TelaAdicionarQuestController implements Initializable {
         colAlternativas.getChildren().add(altRow("d:", fieldAltD));
         camposDinamicos.getChildren().add(colAlternativas);
 
-        // ── 3. GABARITO ───────────────────────────────────────────────
         HBox linhaGabarito = new HBox(12);
         linhaGabarito.setAlignment(Pos.CENTER_LEFT);
         Label gabLabel = new Label("Gabarito:");
@@ -162,12 +156,10 @@ public class TelaAdicionarQuestController implements Initializable {
         linhaGabarito.getChildren().addAll(gabLabel, rbA, rbB, rbC, rbD);
         camposDinamicos.getChildren().add(linhaGabarito);
 
-        // ── 4. ESPAÇO ──────────────────────────────────────────────────
         Region spacer = new Region();
         spacer.setPrefHeight(10);
         camposDinamicos.getChildren().add(spacer);
 
-        // ── 5. DISCIPLINA + ASSUNTO (lado a lado) ─────────────────────
         HBox linhaDiscAssunto = new HBox(30);
         linhaDiscAssunto.setAlignment(Pos.TOP_LEFT);
 
@@ -180,7 +172,6 @@ public class TelaAdicionarQuestController implements Initializable {
         linhaDiscAssunto.getChildren().addAll(colDisc, colAssunto);
         camposDinamicos.getChildren().add(linhaDiscAssunto);
 
-        // ── 6. NÍVEL DA DIFICULDADE (ÚLTIMO) ──────────────────────────
         camposDinamicos.getChildren().add(criarNivelRow());
     }
 
@@ -188,18 +179,13 @@ public class TelaAdicionarQuestController implements Initializable {
     private void montarCamposDiscursiva() {
         fieldGabarito = criarTextField(340);
 
-        // ── 1. ENUNCIADO ──────────────────────────────────────────────
         camposDinamicos.getChildren().add(labeledField("Enunciado:", fieldEnunciado));
-
-        // ── 2. GABARITO ───────────────────────────────────────────────
         camposDinamicos.getChildren().add(labeledField("Gabarito:", fieldGabarito));
 
-        // ── 3. ESPAÇO ──────────────────────────────────────────────────
         Region spacer = new Region();
         spacer.setPrefHeight(10);
         camposDinamicos.getChildren().add(spacer);
 
-        // ── 4. DISCIPLINA + ASSUNTO (lado a lado) ─────────────────────
         HBox linhaDiscAssunto = new HBox(30);
         linhaDiscAssunto.setAlignment(Pos.TOP_LEFT);
 
@@ -212,7 +198,6 @@ public class TelaAdicionarQuestController implements Initializable {
         linhaDiscAssunto.getChildren().addAll(colDisc, colAssunto);
         camposDinamicos.getChildren().add(linhaDiscAssunto);
 
-        // ── 5. NÍVEL DA DIFICULDADE (ÚLTIMO) ──────────────────────────
         camposDinamicos.getChildren().add(criarNivelRow());
     }
 
@@ -222,10 +207,8 @@ public class TelaAdicionarQuestController implements Initializable {
         RadioButton rbFalso      = criarRadio("Falso",      grupoGabarito);
         RadioButton rbVerdadeiro = criarRadio("Verdadeiro", grupoGabarito);
 
-        // ── 1. ENUNCIADO ──────────────────────────────────────────────
         camposDinamicos.getChildren().add(labeledField("Enunciado:", fieldEnunciado));
 
-        // ── 2. GABARITO ───────────────────────────────────────────────
         VBox vbGab = new VBox(5);
         vbGab.getChildren().add(label("Gabarito:"));
         HBox radios = new HBox(16, rbFalso, rbVerdadeiro);
@@ -233,12 +216,10 @@ public class TelaAdicionarQuestController implements Initializable {
         vbGab.getChildren().add(radios);
         camposDinamicos.getChildren().add(vbGab);
 
-        // ── 3. ESPAÇO ──────────────────────────────────────────────────
         Region spacer = new Region();
         spacer.setPrefHeight(10);
         camposDinamicos.getChildren().add(spacer);
 
-        // ── 4. DISCIPLINA + ASSUNTO (lado a lado) ─────────────────────
         HBox linhaDiscAssunto = new HBox(30);
         linhaDiscAssunto.setAlignment(Pos.TOP_LEFT);
 
@@ -251,11 +232,10 @@ public class TelaAdicionarQuestController implements Initializable {
         linhaDiscAssunto.getChildren().addAll(colDisc, colAssunto);
         camposDinamicos.getChildren().add(linhaDiscAssunto);
 
-        // ── 5. NÍVEL DA DIFICULDADE (ÚLTIMO) ──────────────────────────
         camposDinamicos.getChildren().add(criarNivelRow());
     }
 
-    // ── Nível da dificuldade (separado) ─────────────────────────────
+    // ── Nível da dificuldade ────────────────────────────────────────
     private HBox criarNivelRow() {
         HBox hb = new HBox(12);
         hb.setAlignment(Pos.CENTER_LEFT);
@@ -272,100 +252,54 @@ public class TelaAdicionarQuestController implements Initializable {
     }
 
     // ================================================================
-    // BOTÃO ADICIONAR
-    // ================================================================
-
-    @FXML
-    private void handleAdicionar() {
-        String codigo = fieldCodigo.getText().trim();
-        if (codigo.isEmpty()) {
-            alerta("Campo obrigatório", "Preencha o código da questão.");
-            return;
-        }
-        if (tipoAtual == TipoQuestao.NENHUM) {
-            alerta("Tipo não selecionado", "Escolha o tipo da questão.");
-            return;
-        }
-
-        // Validar campos comuns
-        if (fieldEnunciado.getText().trim().isEmpty()) {
-            alerta("Campo obrigatório", "Preencha o enunciado.");
-            return;
-        }
-        if (fieldDisciplina.getText().trim().isEmpty()) {
-            alerta("Campo obrigatório", "Preencha a disciplina.");
-            return;
-        }
-        if (fieldAssunto.getText().trim().isEmpty()) {
-            alerta("Campo obrigatório", "Preencha o assunto.");
-            return;
-        }
-
-        // Validar nível
-        if (grupoNivel.getSelectedToggle() == null) {
-            alerta("Campo obrigatório", "Selecione o nível da dificuldade.");
-            return;
-        }
-
-        // Validar específico por tipo
-        if (tipoAtual == TipoQuestao.MULTIPLA_ESCOLHA) {
-            if (grupoGabarito.getSelectedToggle() == null) {
-                alerta("Campo obrigatório", "Selecione o gabarito (a, b, c ou d).");
-                return;
-            }
-            if (fieldAltA.getText().trim().isEmpty() ||
-                    fieldAltB.getText().trim().isEmpty() ||
-                    fieldAltC.getText().trim().isEmpty() ||
-                    fieldAltD.getText().trim().isEmpty()) {
-                alerta("Campo obrigatório", "Preencha todas as alternativas.");
-                return;
-            }
-        }
-
-        // TODO: integrar com DAO/Service real
-        System.out.println("=== Questão cadastrada ===");
-        System.out.println("Código    : " + codigo);
-        System.out.println("Tipo      : " + tipoAtual);
-        System.out.println("Enunciado : " + fieldEnunciado.getText());
-        System.out.println("Disciplina: " + fieldDisciplina.getText());
-        System.out.println("Assunto   : " + fieldAssunto.getText());
-        System.out.println("Nível     : " + ((RadioButton) grupoNivel.getSelectedToggle()).getText());
-
-        if (tipoAtual == TipoQuestao.MULTIPLA_ESCOLHA) {
-            System.out.println("Gabarito  : " + ((RadioButton) grupoGabarito.getSelectedToggle()).getText());
-            System.out.println("Alt A     : " + fieldAltA.getText());
-            System.out.println("Alt B     : " + fieldAltB.getText());
-            System.out.println("Alt C     : " + fieldAltC.getText());
-            System.out.println("Alt D     : " + fieldAltD.getText());
-        }
-
-        alerta("Sucesso", "Questão cadastrada com sucesso!");
-
-        resetarFormulario();
-    }
-
-    private void resetarFormulario() {
-        fieldCodigo.clear();
-        tipoLabel.setText("escolha o tipo de questão");
-        tipoLabel.getStyleClass().remove("tipo-label-selected");
-        camposDinamicos.getChildren().clear();
-        boxBtnAdicionar.setVisible(false);
-        boxBtnAdicionar.setManaged(false);
-        tipoAtual = TipoQuestao.NENHUM;
-        if (grupoGabarito != null) grupoGabarito.selectToggle(null);
-        if (grupoNivel != null) grupoNivel.selectToggle(null);
-    }
-
-    // ================================================================
     // NAVEGAÇÃO SIDEBAR
     // ================================================================
 
     @FXML private void handleVoltar(MouseEvent e)            { voltarInicial(); }
     @FXML private void handleMenuDisciplinas(MouseEvent e)   { voltarInicial(); }
-    @FXML private void handleMenuBuscar(MouseEvent e)        { alerta("Buscar", "Em breve!"); }
+    @FXML private void handleMenuBuscar(MouseEvent e)        { abrirTelaBuscar(); }
     @FXML private void handleMenuGerarProva(MouseEvent e)    { alerta("Gerar Prova", "Em breve!"); }
-    @FXML private void handleMenuRelatorio(MouseEvent e)     { alerta("Relatório", "Em breve!"); }
-    @FXML private void handleMenuProvas(MouseEvent e)        { alerta("Provas", "Em breve!"); }
+    @FXML private void handleMenuRelatorio(MouseEvent e)     { alerta("Relatório",   "Em breve!"); }
+    @FXML private void handleMenuProvas(MouseEvent e)        { alerta("Provas",      "Em breve!"); }
+
+    /* ── Abrir Tela Buscar ────────────────────────────────────── */
+    private void abrirTelaBuscar() {
+        try {
+            System.out.println("🔍 Abrindo tela de buscar...");
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaBuscarView.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaBuscarStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) fieldCodigo.getScene().getWindow();
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Buscar");
+
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+            System.out.println("✅ Tela de buscar aberta com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            alerta("Erro", "Não foi possível abrir a tela de buscar: " + e.getMessage());
+        }
+    }
 
     private void voltarInicial() {
         try {

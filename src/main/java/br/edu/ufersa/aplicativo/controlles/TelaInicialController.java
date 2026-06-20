@@ -1,6 +1,5 @@
 package br.edu.ufersa.aplicativo.controlles;
 
-import br.edu.ufersa.aplicativo.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -89,16 +88,87 @@ public class TelaInicialController implements Initializable {
         carregarDisciplinas();
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // NAVEGAÇÃO PARA TELA DE BUSCAR
+    // ═══════════════════════════════════════════════════════════════════
     @FXML
     private void handleMenuBuscar(MouseEvent event) {
-        selecionarMenu(menuBuscar);
-        topbarTitle.setText("Buscar");
+        try {
+            System.out.println("🔍 Abrindo tela de buscar...");
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaBuscarView.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+
+            // Carregar CSS específico
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaBuscarStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) menuBuscar.getScene().getWindow();
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Buscar");
+
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+            System.out.println("✅ Tela de buscar aberta com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Erro ao abrir tela de buscar: " + e.getMessage());
+        }
     }
 
     @FXML
     private void handleMenuGerarProva(MouseEvent event) {
-        selecionarMenu(menuGerarProva);
-        topbarTitle.setText("Gerar Prova");
+        try {
+            System.out.println(" Abrindo tela de gerar prova...");
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaGerarProvaView.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+
+            // Carregar CSS específico
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaGerarProvaStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) menuGerarProva.getScene().getWindow();
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Gerar Prova");
+
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+            System.out.println(" Tela de gerar prova aberta com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(" Erro ao abrir tela de gerar prova: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -114,11 +184,10 @@ public class TelaInicialController implements Initializable {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // FAB - ABRE POPUP COM OPÇÕES (AGORA FECHA AO CLICAR FORA)
+    // FAB - ABRE POPUP COM OPÇÕES
     // ═══════════════════════════════════════════════════════════════════
     @FXML
     private void handleAddDisciplina() {
-        // Se o popup já estiver aberto, fecha
         if (popupStage != null && popupStage.isShowing()) {
             popupStage.close();
             return;
@@ -127,16 +196,10 @@ public class TelaInicialController implements Initializable {
     }
 
     private void mostrarPopupOpcoes() {
-        // Criar o popup
         popupStage = new Stage();
         popupStage.initStyle(StageStyle.TRANSPARENT);
         popupStage.setAlwaysOnTop(true);
-        // ═══════════════════════════════════════════════════════════════
-        // REMOVER MODALIDADE - AGORA NÃO BLOQUEIA MAIS A TELA
-        // ═══════════════════════════════════════════════════════════════
-        // popupStage.initModality(Modality.APPLICATION_MODAL); ← REMOVIDO
 
-        // Criar o conteúdo do popup
         VBox popupContent = new VBox();
         popupContent.setSpacing(8);
         popupContent.setAlignment(Pos.CENTER);
@@ -147,7 +210,6 @@ public class TelaInicialController implements Initializable {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 5);"
         );
 
-        // Label do título
         Label tituloLabel = new Label("Adicionar");
         tituloLabel.setStyle(
                 "-fx-text-fill: white;" +
@@ -156,50 +218,36 @@ public class TelaInicialController implements Initializable {
                         "-fx-font-family: 'Segoe UI', Arial, sans-serif;"
         );
 
-        // Botão: Adicionar Disciplina
-        HBox btnDisciplina = criarOpcao(" Adicionar Disciplina", () -> {
+        HBox btnDisciplina = criarOpcao("📚 Adicionar Disciplina", () -> {
             popupStage.close();
             abrirTelaAdicionarDisciplina();
         });
 
-        // Botão: Adicionar Questão
-        HBox btnQuestao = criarOpcao(" Adicionar Questão", () -> {
+        HBox btnQuestao = criarOpcao("📝 Adicionar Questão", () -> {
             popupStage.close();
             abrirTelaAdicionarQuestao();
         });
 
         popupContent.getChildren().addAll(tituloLabel, btnDisciplina, btnQuestao);
 
-        // Configurar a cena do popup
         Scene popupScene = new Scene(popupContent);
         popupScene.setFill(Color.TRANSPARENT);
         popupStage.setScene(popupScene);
 
-        // ═══════════════════════════════════════════════════════════════
-        // FECHAR O POPUP AO CLICAR FORA (QUALQUER LUGAR DA TELA)
-        // ═══════════════════════════════════════════════════════════════
-        // Adicionar um listener para fechar quando perder o foco
         popupStage.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal && popupStage.isShowing()) {
                 popupStage.close();
             }
         });
 
-        // Posicionar o popup ao lado do FAB
         posicionarPopupAoTab();
-
         popupStage.show();
 
-        // ═══════════════════════════════════════════════════════════════
-        // FECHAR O POPUP AO CLICAR EM QUALQUER LUGAR DA TELA PRINCIPAL
-        // ═══════════════════════════════════════════════════════════════
-        // Adicionar um evento de clique na cena principal
         Scene mainScene = fabButton.getScene();
         if (mainScene != null) {
             mainScene.setOnMouseClicked(event -> {
                 if (popupStage != null && popupStage.isShowing()) {
                     popupStage.close();
-                    // Remover o listener depois que fechar
                     mainScene.setOnMouseClicked(null);
                 }
             });
@@ -272,34 +320,27 @@ public class TelaInicialController implements Initializable {
 
     private void abrirTelaAdicionarDisciplina() {
         try {
-            System.out.println("Abrindo tela para adicionar disciplina...");
+            System.out.println("📚 Abrindo tela para adicionar disciplina...");
 
-            // Carregar a tela de adicionar disciplina
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaAdicionarDiscView.fxml")
             );
             Parent root = loader.load();
 
-            // Criar a nova cena
             Scene scene = new Scene(root, 1280, 750);
 
-            // Carregar CSS específico
             URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaAdicionarDiscStyle.css");
             if (cssUrl != null) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            // Pegar o Stage atual
             Stage stage = (Stage) fabButton.getScene().getWindow();
-
-            // Salvar o estado de tela cheia
             boolean isFullScreen = stage.isFullScreen();
             boolean isMaximized = stage.isMaximized();
 
             stage.setScene(scene);
             stage.setTitle("Gerador de Provas - Adicionar Disciplina");
 
-            // Restaurar estado
             if (isFullScreen) {
                 stage.setFullScreen(true);
             }
@@ -309,41 +350,33 @@ public class TelaInicialController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println(" Erro ao abrir tela de adicionar disciplina: " + e.getMessage());
-            showAlert("Erro", "Não foi possível abrir a tela de adicionar disciplina!");
+            System.err.println("❌ Erro ao abrir tela de adicionar disciplina: " + e.getMessage());
         }
     }
 
     private void abrirTelaAdicionarQuestao() {
         try {
-            System.out.println(" Abrindo tela para adicionar questão...");
+            System.out.println("📝 Abrindo tela para adicionar questão...");
 
-            // Carregar a tela de adicionar questão
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaAdicionarQuestView.fxml")
             );
             Parent root = loader.load();
 
-            // Criar a nova cena
             Scene scene = new Scene(root, 1280, 750);
 
-            // Carregar CSS específico
             URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaAdicionarQuestStyle.css");
             if (cssUrl != null) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            // Pegar o Stage atual
             Stage stage = (Stage) fabButton.getScene().getWindow();
-
-            // Salvar o estado de tela cheia
             boolean isFullScreen = stage.isFullScreen();
             boolean isMaximized = stage.isMaximized();
 
             stage.setScene(scene);
             stage.setTitle("Gerador de Provas - Adicionar Questão");
 
-            // Restaurar estado
             if (isFullScreen) {
                 stage.setFullScreen(true);
             }
@@ -353,8 +386,7 @@ public class TelaInicialController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println(" Erro ao abrir tela de adicionar questão: " + e.getMessage());
-            showAlert("Erro", "Não foi possível abrir a tela de adicionar questão!");
+            System.err.println("❌ Erro ao abrir tela de adicionar questão: " + e.getMessage());
         }
     }
 

@@ -205,16 +205,93 @@ public class QuestoesController implements Initializable {
         handleVoltar();
     }
     @FXML private void handleMenuBuscar(MouseEvent e) {
-        selecionarMenu(menuBuscar);
+        abrirTelaBuscar();
     }
-    @FXML private void handleMenuGerarProva(MouseEvent e) {
-        selecionarMenu(menuGerarProva);
+    @FXML
+    private void handleMenuGerarProva(MouseEvent event) {
+        try {
+            System.out.println(" Abrindo tela de gerar prova...");
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaGerarProvaView.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+
+            // Carregar CSS específico
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaGerarProvaStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) menuGerarProva.getScene().getWindow();
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Gerar Prova");
+
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+            System.out.println(" Tela de gerar prova aberta com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(" Erro ao abrir tela de gerar prova: " + e.getMessage());
+        }
     }
+
     @FXML private void handleMenuRelatorio(MouseEvent e) {
         selecionarMenu(menuRelatorio);
     }
     @FXML private void handleMenuProvas(MouseEvent e) {
         selecionarMenu(menuProvas);
+    }
+
+
+
+    private void abrirTelaBuscar() {
+        try {
+            System.out.println("🔍 Abrindo tela de buscar...");
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaBuscarView.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaBuscarStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) topbarTitle.getScene().getWindow();
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Buscar");
+
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+            System.out.println("✅ Tela de buscar aberta com sucesso!");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("❌ Erro ao abrir tela de buscar: " + ex.getMessage());
+        }
     }
 
     private void carregarQuestoes() {

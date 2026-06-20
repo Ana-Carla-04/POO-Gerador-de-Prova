@@ -55,7 +55,7 @@ public class TelaAdicionarDiscController implements Initializable {
     /* ── Menu: Buscar ────────────────────────────────────────── */
     @FXML
     private void handleMenuBuscar(MouseEvent event) {
-        showAlert("Buscar", "Tela de busca em breve!");
+        abrirTelaBuscar();
     }
 
     /* ── Menu: Gerar Prova ───────────────────────────────────── */
@@ -82,13 +82,11 @@ public class TelaAdicionarDiscController implements Initializable {
         String nome = fieldNome.getText().trim();
         String codigo = fieldCodigo.getText().trim();
 
-        // Validar campos obrigatórios
         if (nome.isEmpty() || codigo.isEmpty()) {
             showAlert("Erro", "Preencha todos os campos obrigatórios!");
             return;
         }
 
-        // TODO: Salvar no banco de dados via DisciplinaDAO
         System.out.println("📚 Adicionando disciplina:");
         System.out.println("   Nome: " + nome);
         System.out.println("   Código: " + codigo);
@@ -98,9 +96,46 @@ public class TelaAdicionarDiscController implements Initializable {
         System.out.println("   Assunto 4: " + fieldAssunto4.getText());
 
         showAlert("Sucesso", "Disciplina '" + nome + "' adicionada com sucesso!");
-
-        // Voltar para a tela inicial
         voltarParaTelaInicial();
+    }
+
+    /* ── Abrir Tela Buscar ────────────────────────────────────── */
+    private void abrirTelaBuscar() {
+        try {
+            System.out.println("🔍 Abrindo tela de buscar...");
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaBuscarView.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaBuscarStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) fieldNome.getScene().getWindow();
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Buscar");
+
+            if (isFullScreen) {
+                stage.setFullScreen(true);
+            }
+            if (isMaximized) {
+                stage.setMaximized(true);
+            }
+
+            System.out.println(" Tela de buscar aberta com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erro", "Não foi possível abrir a tela de buscar: " + e.getMessage());
+        }
     }
 
     /* ── Voltar para Tela Inicial ────────────────────────────── */
