@@ -1,6 +1,5 @@
 package br.edu.ufersa.aplicativo.controlles;
 
-import br.edu.ufersa.aplicativo.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

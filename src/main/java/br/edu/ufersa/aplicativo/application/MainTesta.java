@@ -1,4 +1,4 @@
-package br.edu.ufersa.aplicativo;
+package br.edu.ufersa.aplicativo.application;
 
 import br.edu.ufersa.aplicativo.model.DAO.*;
 import br.edu.ufersa.aplicativo.model.entities.*;
