@@ -1,5 +1,9 @@
 package br.edu.ufersa.aplicativo.controlles;
 
+import br.edu.ufersa.aplicativo.model.entities.Nivel;
+import br.edu.ufersa.aplicativo.model.entities.Questao;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -11,9 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class TelaGerarProvaController implements Initializable {
 
@@ -29,7 +31,6 @@ public class TelaGerarProvaController implements Initializable {
     @FXML private StackPane cardGerarManual;
 
     @FXML private TextField numeroQuestoesField;
-    @FXML private TextField tipoField;
     @FXML private TextField professorField;
     @FXML private TextField instituicaoField;
 
@@ -37,15 +38,15 @@ public class TelaGerarProvaController implements Initializable {
     @FXML private RadioButton nivel2Op1, nivel2Op2, nivel2Op3, nivel2Op4, nivel2Op5;
     @FXML private RadioButton nivel3Op1, nivel3Op2, nivel3Op3, nivel3Op4, nivel3Op5;
 
-    @FXML private Button gerarButton;
+    @FXML private ComboBox<String> disciplinaComboBox;
 
     private List<StackPane> menuItems;
     private int totalQuestoes = 0;
     private boolean isUpdating = false;
 
-    // Arrays para facilitar o gerenciamento
+    /** niveisRadioButtons[0] = Fácil, [1] = Médio, [2] = Difícil. */
     private RadioButton[][] niveisRadioButtons;
-    private RadioButton[][] todosRadioButtons;
+    private static final Nivel[] ORDEM_NIVEIS = { Nivel.FACIL, Nivel.MEDIO, Nivel.DIFICIL };
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -54,23 +55,36 @@ public class TelaGerarProvaController implements Initializable {
         );
         selecionarMenu(menuGerarProva);
 
-        // Inicializa o array de radio buttons
         niveisRadioButtons = new RadioButton[][]{
                 {nivel1Op1, nivel1Op2, nivel1Op3, nivel1Op4, nivel1Op5},
                 {nivel2Op1, nivel2Op2, nivel2Op3, nivel2Op4, nivel2Op5},
                 {nivel3Op1, nivel3Op2, nivel3Op3, nivel3Op4, nivel3Op5}
         };
 
-        // Desabilita todos os níveis inicialmente
         desabilitarTodosNiveis();
 
-        // Adiciona listener para o campo de número de questões
         numeroQuestoesField.textProperty().addListener((obs, oldVal, newVal) -> {
             handleNumeroQuestoesChanged();
         });
 
-        // Adiciona listeners para todos os radio buttons
         adicionarListenersNiveis();
+
+        // Carregar disciplinas no ComboBox
+        carregarDisciplinas();
+    }
+
+    private void carregarDisciplinas() {
+        List<Questao> questoes = ProvaSessao.bancoDeQuestoes();
+        Set<String> disciplinasSet = new HashSet<>();
+        for (Questao q : questoes) {
+            if (q.getDisciplina() != null) {
+                disciplinasSet.add(q.getDisciplina().getNome());
+            }
+        }
+
+        ObservableList<String> itens = FXCollections.observableArrayList(disciplinasSet);
+        FXCollections.sort(itens);
+        disciplinaComboBox.setItems(itens);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -98,44 +112,8 @@ public class TelaGerarProvaController implements Initializable {
 
     @FXML
     private void handleMenuGerarProva(MouseEvent event) {
-        try {
-            System.out.println(" Abrindo tela de gerar prova...");
-
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaGerarProvaView.fxml")
-            );
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root, 1280, 750);
-
-            // Carregar CSS específico
-            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaGerarProvaStyle.css");
-            if (cssUrl != null) {
-                scene.getStylesheets().add(cssUrl.toExternalForm());
-            }
-
-            Stage stage = (Stage) menuGerarProva.getScene().getWindow();
-            boolean isFullScreen = stage.isFullScreen();
-            boolean isMaximized = stage.isMaximized();
-
-            stage.setScene(scene);
-            stage.setTitle("Gerador de Provas - Gerar Prova");
-
-            if (isFullScreen) {
-                stage.setFullScreen(true);
-            }
-            if (isMaximized) {
-                stage.setMaximized(true);
-            }
-
-            System.out.println(" Tela de gerar prova aberta com sucesso!");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(" Erro ao abrir tela de gerar prova: " + e.getMessage());
-        }
+        // já estou aqui
     }
-
 
     @FXML
     private void handleMenuRelatorio(MouseEvent event) {
@@ -168,12 +146,8 @@ public class TelaGerarProvaController implements Initializable {
             stage.setScene(scene);
             stage.setTitle(tituloJanela);
 
-            if (isFullScreen) {
-                stage.setFullScreen(true);
-            }
-            if (isMaximized) {
-                stage.setMaximized(true);
-            }
+            if (isFullScreen) stage.setFullScreen(true);
+            if (isMaximized) stage.setMaximized(true);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,54 +158,131 @@ public class TelaGerarProvaController implements Initializable {
     // ═══════════════════════════════════════════════════════════════════
     // CARDS DE OPÇÃO (GERAR ALEATÓRIO / GERAR MANUAL)
     // ═══════════════════════════════════════════════════════════════════
+
     @FXML
     private void handleGerarAleatorio(MouseEvent event) {
-        System.out.println("🎲 Modo de geração: Aleatório");
-        // TODO: lógica de seleção aleatória de questões
+        DadosFormulario dados = validarFormulario();
+        if (dados == null) return;
+
+        // Filtra questões pela disciplina selecionada
+        List<Questao> questoesDisciplina = new ArrayList<>();
+        for (Questao q : ProvaSessao.bancoDeQuestoes()) {
+            if (q.getDisciplina() != null && q.getDisciplina().getNome().equals(dados.disciplina)) {
+                questoesDisciplina.add(q);
+            }
+        }
+
+        List<Questao> sorteadas = sortearQuestoes(questoesDisciplina, dados.qtdNivel1, dados.qtdNivel2, dados.qtdNivel3);
+        if (sorteadas == null) return;
+
+        ProvaSessao sessao = ProvaSessao.getInstance();
+        sessao.setProfessor(dados.professor);
+        sessao.setInstituicao(dados.instituicao);
+        sessao.setDisciplina(dados.disciplina);
+        sessao.setTotalQuestoes(dados.totalQuestoes);
+        sessao.setQuestoes(sorteadas);
+
+        abrirTelaGerarAuto();
     }
 
     @FXML
     private void handleGerarManual(MouseEvent event) {
-        System.out.println("✌️ Modo de geração: Manual");
+        DadosFormulario dados = validarFormulario();
+        if (dados == null) return;
+
+        ProvaSessao sessao = ProvaSessao.getInstance();
+        sessao.setProfessor(dados.professor);
+        sessao.setInstituicao(dados.instituicao);
+        sessao.setDisciplina(dados.disciplina);
+        sessao.setTotalQuestoes(dados.totalQuestoes);
+        sessao.setQuestoes(Collections.emptyList());
 
         try {
-            // Carrega a tela de gerar prova manual
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaGerarProvaManualView.fxml"));
             Parent root = loader.load();
 
-            // Cria a nova cena
-            Scene scene = new Scene(root, 1280, 750);
+            TelaGerarProvaManualController controller = loader.getController();
+            controller.setDisciplinaSelecionada(dados.disciplina);
+            controller.setQuantidadePredefinida(dados.totalQuestoes);
 
-            // Adiciona o CSS
+            Scene scene = new Scene(root, 1280, 750);
             URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaGerarProvaManualStyle.css");
             if (cssUrl != null) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            // Obtém a janela atual
             Stage stage = (Stage) cardGerarManual.getScene().getWindow();
-
-            // Salva o estado da janela (fullscreen/maximizado)
             boolean isFullScreen = stage.isFullScreen();
             boolean isMaximized = stage.isMaximized();
 
-            // Troca a cena
             stage.setScene(scene);
             stage.setTitle("Gerador de Provas - Manual");
 
-            // Restaura o estado
-            if (isFullScreen) {
-                stage.setFullScreen(true);
-            }
-            if (isMaximized) {
-                stage.setMaximized(true);
-            }
+            if (isFullScreen) stage.setFullScreen(true);
+            if (isMaximized) stage.setMaximized(true);
 
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("❌ Erro ao navegar para TelaGerarProvaManualView: " + e.getMessage());
             showAlert("Erro", "Não foi possível abrir a tela de geração manual.");
         }
+    }
+
+    private void abrirTelaGerarAuto() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaGerarAutoView.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaGerarAutoStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) cardGerarAleatorio.getScene().getWindow();
+            boolean isFullScreen = stage.isFullScreen();
+            boolean isMaximized = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Prova Gerada");
+
+            if (isFullScreen) stage.setFullScreen(true);
+            if (isMaximized) stage.setMaximized(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Erro ao navegar para TelaGerarAutoView: " + e.getMessage());
+            showAlert("Erro", "Não foi possível abrir a tela de prova gerada.");
+        }
+    }
+
+    private List<Questao> sortearQuestoes(List<Questao> questoesDisciplina, int qtdNivel1, int qtdNivel2, int qtdNivel3) {
+        List<Questao> resultado = new ArrayList<>();
+        int[] quantidades = {qtdNivel1, qtdNivel2, qtdNivel3};
+
+        for (int i = 0; i < ORDEM_NIVEIS.length; i++) {
+            int qtd = quantidades[i];
+            if (qtd == 0) continue;
+            Nivel nivel = ORDEM_NIVEIS[i];
+
+            List<Questao> doNivel = new ArrayList<>();
+            for (Questao q : questoesDisciplina) {
+                if (q.getNivel() == nivel) doNivel.add(q);
+            }
+            Collections.shuffle(doNivel);
+
+            if (doNivel.size() < qtd) {
+                showAlert("Questões insuficientes",
+                        "Não há questões suficientes cadastradas no nível " + nivel.getValor() +
+                                " para a disciplina " + disciplinaComboBox.getSelectionModel().getSelectedItem() +
+                                ".");
+                return null;
+            }
+            resultado.addAll(doNivel.subList(0, qtd));
+        }
+
+        Collections.shuffle(resultado);
+        return resultado;
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -256,7 +307,6 @@ public class TelaGerarProvaController implements Initializable {
                 return;
             }
 
-            // Reset all selections when total changes
             isUpdating = true;
             limparTodasSelecoes();
             atualizarOpcoesNiveis();
@@ -294,29 +344,16 @@ public class TelaGerarProvaController implements Initializable {
         }
 
         isUpdating = true;
-
-        // 🔥 NOVA LÓGICA: Cada nível pode ter no máximo 5, independente do total
-        // A limitação será feita na lógica de seleção (handleNivelChanged)
-        int maxPorNivel = 5; // Sempre permite até 5
-
-        // Atualiza cada nível
         for (RadioButton[] nivel : niveisRadioButtons) {
-            atualizarGrupoNivel(nivel, maxPorNivel);
+            for (RadioButton rb : nivel) {
+                rb.setDisable(false);
+            }
         }
-
         isUpdating = false;
     }
 
-    private void atualizarGrupoNivel(RadioButton[] options, int max) {
-        for (int i = 0; i < options.length; i++) {
-            // Habilita todas as opções (sempre permite até 5)
-            options[i].setDisable(false);
-            // Se estiver selecionado, mantém
-        }
-    }
-
     // ═══════════════════════════════════════════════════════════════════
-    // LISTENERS PARA RADIO BUTTONS - LÓGICA CORRIGIDA
+    // LISTENERS PARA RADIO BUTTONS
     // ═══════════════════════════════════════════════════════════════════
     private void adicionarListenersNiveis() {
         for (RadioButton[] nivel : niveisRadioButtons) {
@@ -330,25 +367,17 @@ public class TelaGerarProvaController implements Initializable {
     private void handleNivelChanged() {
         if (isUpdating || totalQuestoes == 0) return;
 
-        // Obtém quantidades atuais
         int[] quantidades = obterQuantidadesAtuais();
         int somaAtual = quantidades[0] + quantidades[1] + quantidades[2];
 
-        // 🔥 NOVA LÓGICA: Se soma ultrapassou o total, desmarca a última seleção
         if (somaAtual > totalQuestoes) {
             isUpdating = true;
             desmarcarUltimaSelecao();
             isUpdating = false;
-            mostrarResumoDistribuicao();
-            return;
         }
-
-        // Se soma é igual ao total ou menor, mantém como está
-        mostrarResumoDistribuicao();
     }
 
     private void desmarcarUltimaSelecao() {
-        // Verifica qual nível tem a última seleção e desmarca
         for (int nivel = 2; nivel >= 0; nivel--) {
             RadioButton[] options = niveisRadioButtons[nivel];
             for (int i = options.length - 1; i >= 0; i--) {
@@ -382,73 +411,44 @@ public class TelaGerarProvaController implements Initializable {
         };
     }
 
-    private void mostrarResumoDistribuicao() {
-        int[] qtds = obterQuantidadesAtuais();
-        int soma = qtds[0] + qtds[1] + qtds[2];
-        System.out.println("📊 Distribuição: N1=" + qtds[0] + " | N2=" + qtds[1] + " | N3=" + qtds[2] +
-                " | Total=" + soma + "/" + totalQuestoes);
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // GERAR PROVA
-    // ═══════════════════════════════════════════════════════════════════
-    @FXML
-    private void handleGerar() {
-        // Valida se o número de questões foi definido
+    private DadosFormulario validarFormulario() {
         if (totalQuestoes == 0) {
             showAlert("Campo obrigatório", "Defina o número de questões (1 a 10).");
-            return;
+            return null;
         }
 
-        String tipo = tipoField.getText();
+        String disciplina = disciplinaComboBox.getSelectionModel().getSelectedItem();
         String professor = professorField.getText();
         String instituicao = instituicaoField.getText();
 
-        // Valida campos obrigatórios
-        if (professor.isBlank() || instituicao.isBlank()) {
+        if (professor == null || professor.isBlank() || instituicao == null || instituicao.isBlank()) {
             showAlert("Campos obrigatórios", "Preencha o Professor e a Instituição.");
-            return;
+            return null;
         }
 
-        // Obtém quantidades
+        if (disciplina == null || disciplina.isEmpty()) {
+            showAlert("Campo obrigatório", "Selecione uma disciplina.");
+            return null;
+        }
+
         int qtdNivel1 = obterQuantidadeSelecionada(niveisRadioButtons[0]);
         int qtdNivel2 = obterQuantidadeSelecionada(niveisRadioButtons[1]);
         int qtdNivel3 = obterQuantidadeSelecionada(niveisRadioButtons[2]);
 
-        // Verifica se a soma total é igual ao número de questões
         int somaTotal = qtdNivel1 + qtdNivel2 + qtdNivel3;
         if (somaTotal != totalQuestoes) {
             showAlert("Distribuição incompleta",
                     String.format("A distribuição de questões (%d) não corresponde ao total definido (%d).\nAjuste a distribuição antes de gerar.",
                             somaTotal, totalQuestoes));
-            return;
+            return null;
         }
 
-        // Verifica se pelo menos uma questão foi selecionada
         if (somaTotal == 0) {
             showAlert("Nenhuma questão", "Selecione pelo menos uma questão para gerar a prova.");
-            return;
+            return null;
         }
 
-        // Se passou em todas as validações
-        System.out.println("📄 Gerando prova com " + totalQuestoes + " questões...");
-        System.out.println("   Tipo: " + (tipo.isBlank() ? "Padrão" : tipo));
-        System.out.println("   Nível 1: " + qtdNivel1 + " questões");
-        System.out.println("   Nível 2: " + qtdNivel2 + " questões");
-        System.out.println("   Nível 3: " + qtdNivel3 + " questões");
-        System.out.println("   Professor: " + professor);
-        System.out.println("   Instituição: " + instituicao);
-
-        // Mostra mensagem de sucesso
-        showAlert("Sucesso", "Prova gerada com sucesso!\n\n" +
-                "Distribuição:\n" +
-                "• Nível 1: " + qtdNivel1 + " questões\n" +
-                "• Nível 2: " + qtdNivel2 + " questões\n" +
-                "• Nível 3: " + qtdNivel3 + " questões\n\n" +
-                "Professor: " + professor + "\n" +
-                "Instituição: " + instituicao);
-
-        // TODO: chamar serviço de geração da prova com os dados acima
+        return new DadosFormulario(totalQuestoes, disciplina, professor, instituicao, qtdNivel1, qtdNivel2, qtdNivel3);
     }
 
     private void showAlert(String titulo, String mensagem) {
@@ -465,6 +465,27 @@ public class TelaGerarProvaController implements Initializable {
         }
         if (!item.getStyleClass().contains("menu-item-selected")) {
             item.getStyleClass().add("menu-item-selected");
+        }
+    }
+
+    private static class DadosFormulario {
+        final int totalQuestoes;
+        final String disciplina;
+        final String professor;
+        final String instituicao;
+        final int qtdNivel1;
+        final int qtdNivel2;
+        final int qtdNivel3;
+
+        DadosFormulario(int totalQuestoes, String disciplina, String professor, String instituicao,
+                        int qtdNivel1, int qtdNivel2, int qtdNivel3) {
+            this.totalQuestoes = totalQuestoes;
+            this.disciplina = disciplina == null ? "" : disciplina;
+            this.professor = professor;
+            this.instituicao = instituicao;
+            this.qtdNivel1 = qtdNivel1;
+            this.qtdNivel2 = qtdNivel2;
+            this.qtdNivel3 = qtdNivel3;
         }
     }
 }

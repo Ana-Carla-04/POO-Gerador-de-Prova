@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ComboBox?>
 <BorderPane
         prefWidth="1280"
         prefHeight="750"
@@ -134,14 +135,16 @@
                             <Insets top="22" right="28" bottom="26" left="28"/>
                         </padding>
 
-                        <!-- NUMERO DE QUESTOES / TIPO -->
+
+
+                        <!-- NUMERO DE QUESTOES / DISCIPLINA -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Label styleClass="form-label" text="Número de questões:"/>
                             <TextField fx:id="numeroQuestoesField" styleClass="form-field-small" prefWidth="64"/>
                             <Label styleClass="form-label-hint" text="(1 a 10)" style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Label styleClass="form-label" text="Tipo:"/>
-                            <TextField fx:id="tipoField" styleClass="form-field-small" prefWidth="120"/>
+                            <Label styleClass="form-label" text="Disciplina:"/>
+                            <ComboBox fx:id="disciplinaComboBox" styleClass="form-field-small" prefWidth="180" promptText="Selecione uma disciplina"/>
                             <Region prefWidth="100"/>
                         </HBox>
 
@@ -206,12 +209,6 @@
                                 <TextField fx:id="instituicaoField" styleClass="form-field" HBox.hgrow="ALWAYS"/>
                             </HBox>
                         </VBox>
-
-                        <!-- BOTÃO GERAR -->
-                        <StackPane alignment="CENTER">
-                            <padding><Insets top="6"/></padding>
-                            <Button fx:id="gerarButton" styleClass="gerar-button" text="Gerar" onAction="#handleGerar"/>
-                        </StackPane>
                     </VBox>
                 </VBox>
             </ScrollPane>

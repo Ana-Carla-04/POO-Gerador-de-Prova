@@ -1,5 +1,8 @@
 package br.edu.ufersa.aplicativo.controlles;
 
+import br.edu.ufersa.aplicativo.model.entities.MultiplaEscolha;
+import br.edu.ufersa.aplicativo.model.entities.Nivel;
+import br.edu.ufersa.aplicativo.model.entities.Questao;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,47 +66,59 @@ public class TelaGerarProvaManualController implements Initializable {
 
     // ── Estado ──────────────────────────────────────────────────────
 
-    /** Quantidade máxima de questões definida na tela anterior. */
+    /** Quantidade máxima de questões definida na tela anterior (TelaGerarProva). */
     private int quantidadePredefinida = 10;
 
     /** Filtro de nível atualmente escolhido (null = todos). */
-    private Integer filtroNivel = null;
+    private Nivel filtroNivel = null;
 
     /** Questão atualmente exibida no card de detalhe. */
-    private QuestaoItem questaoSelecionadaNaLista = null;
+    private Questao questaoSelecionadaNaLista = null;
 
     /** Conjunto (ordenado) das questões já escolhidas para compor a prova. */
-    private final Set<QuestaoItem> questoesEscolhidas = new LinkedHashSet<>();
+    private final Set<Questao> questoesEscolhidas = new LinkedHashSet<>();
 
     /** Linhas da lista mapeadas por questão, para atualizar o ícone sem re-renderizar tudo. */
-    private final java.util.Map<QuestaoItem, Label> iconePorQuestao = new java.util.HashMap<>();
+    private final java.util.Map<Questao, Label> iconePorQuestao = new java.util.HashMap<>();
 
-    // ── Dados mock ──────────────────────────────────────────────────
-    private final List<QuestaoItem> todasQuestoes = new ArrayList<>();
-    private final List<Integer> niveisDisponiveis = Arrays.asList(1, 2, 3);
+    // ── Dados ───────────────────────────────────────────────────────
+    private final List<Questao> todasQuestoes = new ArrayList<>();
+
+    /** Disciplina selecionada na tela anterior */
+    private String disciplinaSelecionada = null;
 
     // ================================================================
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Configura o ComboBox igual ao QuestoesView
         nivelCombo.setItems(FXCollections.observableArrayList(
-                "Todos", "Nível 1", "Nível 2", "Nível 3"
+                "Todos", "Nível 1 - Fácil", "Nível 2 - Médio", "Nível 3 - Difícil"
         ));
         nivelCombo.setPromptText("nível da questão");
         nivelCombo.getSelectionModel().selectFirst();
 
-        // Listener para quando o filtro mudar
         nivelCombo.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldVal, newVal) -> {
-                    aplicarFiltroNivel();
-                }
+                (obs, oldVal, newVal) -> aplicarFiltroNivel()
         );
 
-        gerarDadosMock();
+        // Usa o mesmo banco de questões do sistema
+        todasQuestoes.addAll(ProvaSessao.bancoDeQuestoes());
+
+        // Carrega a quantidade e as questões já definidas na tela anterior
+        ProvaSessao sessao = ProvaSessao.getInstance();
+        if (sessao.getTotalQuestoes() > 0) {
+            quantidadePredefinida = sessao.getTotalQuestoes();
+        }
+        questoesEscolhidas.addAll(sessao.getQuestoes());
+
+        // Pega a disciplina da sessão se não foi definida diretamente
+        if (disciplinaSelecionada == null || disciplinaSelecionada.isEmpty()) {
+            disciplinaSelecionada = sessao.getDisciplina();
+        }
+
         renderizarLista();
         atualizarCardDetalhe(null);
         aplicarEstilosPadrao();
-        atualizarBotoesAcao(); // Inicializa os botões como ocultos
+        atualizarBotoesAcao();
     }
 
     /** Chamado pela tela anterior para definir quantas questões a prova deve ter. */
@@ -111,12 +126,16 @@ public class TelaGerarProvaManualController implements Initializable {
         this.quantidadePredefinida = quantidade;
     }
 
+    /** Chamado pela tela anterior para definir a disciplina selecionada. */
+    public void setDisciplinaSelecionada(String disciplina) {
+        this.disciplinaSelecionada = disciplina;
+    }
+
     // ================================================================
     // ESTILOS PADRÃO
     // ================================================================
 
     private void aplicarEstilosPadrao() {
-        // Aplica os estilos de caixinha aos labels
         lblCodigo.getStyleClass().addAll("caixinha-valor", "det-codigo");
         lblNivel.getStyleClass().add("caixinha-valor");
         lblTipo.getStyleClass().add("caixinha-valor");
@@ -126,7 +145,6 @@ public class TelaGerarProvaManualController implements Initializable {
         lblStatusIcone.getStyleClass().add("status-caixinha");
         boxGabarito.getStyleClass().add("caixinha-gabarito");
 
-        // Adiciona estilos às alternativas
         alt1a.getStyleClass().add("det-normal");
         alt1b.getStyleClass().add("det-normal");
         alt2a.getStyleClass().add("det-normal");
@@ -141,64 +159,14 @@ public class TelaGerarProvaManualController implements Initializable {
         String selected = nivelCombo.getSelectionModel().getSelectedItem();
         if (selected == null || selected.equals("Todos")) {
             filtroNivel = null;
-        } else if (selected.equals("Nível 1")) {
-            filtroNivel = 1;
-        } else if (selected.equals("Nível 2")) {
-            filtroNivel = 2;
-        } else if (selected.equals("Nível 3")) {
-            filtroNivel = 3;
+        } else if (selected.startsWith("Nível 1")) {
+            filtroNivel = Nivel.FACIL;
+        } else if (selected.startsWith("Nível 2")) {
+            filtroNivel = Nivel.MEDIO;
+        } else if (selected.startsWith("Nível 3")) {
+            filtroNivel = Nivel.DIFICIL;
         }
         renderizarLista();
-    }
-
-    // ================================================================
-    // DADOS MOCK
-    // ================================================================
-
-    private void gerarDadosMock() {
-        String[] discs = {"Biologia", "Matemática", "Português", "História"};
-        String[] assArr = {"fauna", "flora", "Álgebra", "Gramática"};
-
-        for (int i = 1; i <= 12; i++) {
-            int nivel = ((i - 1) % 3) + 1;
-            String disc = discs[i % discs.length];
-            String ass  = assArr[i % assArr.length];
-            String enunciado = "lorem ipsum lorem ipsum lorem ipsum lorem ipsum " +
-                    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum";
-
-            List<String> alternativas;
-            int respostaCorreta;
-
-            // Cria alternativas diferentes para cada questão
-            if (i % 2 == 0) {
-                alternativas = Arrays.asList(
-                        "a) primeira alternativa",
-                        "b) segunda alternativa",
-                        "c) terceira alternativa",
-                        "d) quarta alternativa"
-                );
-                respostaCorreta = 0;
-            } else {
-                alternativas = Arrays.asList(
-                        "a) opção A",
-                        "b) opção B",
-                        "c) opção C"
-                );
-                respostaCorreta = 1;
-            }
-
-            QuestaoItem q = new QuestaoItem(
-                    "Q" + String.format("%03d", i),
-                    nivel,
-                    "multipla escolha",
-                    enunciado,
-                    alternativas,
-                    respostaCorreta,
-                    ass,
-                    disc
-            );
-            todasQuestoes.add(q);
-        }
     }
 
     // ================================================================
@@ -209,20 +177,35 @@ public class TelaGerarProvaManualController implements Initializable {
         listaContainer.getChildren().clear();
         iconePorQuestao.clear();
 
-        List<QuestaoItem> filtradas = new ArrayList<>();
-        for (QuestaoItem q : todasQuestoes) {
-            if (filtroNivel != null && q.nivel != filtroNivel) continue;
+        List<Questao> filtradas = new ArrayList<>();
+        for (Questao q : todasQuestoes) {
+            // Filtra por nível se selecionado
+            if (filtroNivel != null && q.getNivel() != filtroNivel) continue;
+
+            // Filtra por disciplina se selecionada
+            if (disciplinaSelecionada != null && !disciplinaSelecionada.isEmpty()) {
+                if (q.getDisciplina() == null || !q.getDisciplina().getNome().equals(disciplinaSelecionada)) {
+                    continue;
+                }
+            }
+
             filtradas.add(q);
         }
 
         if (filtradas.isEmpty()) {
-            Label vazio = new Label("Nenhuma questão encontrada.");
+            String mensagem = "Nenhuma questão encontrada";
+            if (disciplinaSelecionada != null && !disciplinaSelecionada.isEmpty()) {
+                mensagem += " para a disciplina \"" + disciplinaSelecionada + "\"";
+            }
+            mensagem += ".";
+
+            Label vazio = new Label(mensagem);
             vazio.setStyle("-fx-text-fill: #4a6a7a; -fx-font-size: 14px; -fx-padding: 20;");
             listaContainer.getChildren().add(vazio);
             return;
         }
 
-        for (QuestaoItem q : filtradas) {
+        for (Questao q : filtradas) {
             StackPane row = new StackPane();
             row.getStyleClass().add("lista-item");
             row.setAlignment(Pos.CENTER_LEFT);
@@ -233,7 +216,9 @@ public class TelaGerarProvaManualController implements Initializable {
             conteudo.setMaxWidth(Double.MAX_VALUE);
             StackPane.setAlignment(conteudo, Pos.CENTER_LEFT);
 
-            Label lblTexto = new Label("Assunto: " + q.assunto);
+            // Mostra disciplina e assunto na lista
+            String disciplinaLabel = q.getDisciplina() != null ? q.getDisciplina().getNome() : "Sem disciplina";
+            Label lblTexto = new Label(disciplinaLabel + " - " + q.getAssunto());
             lblTexto.getStyleClass().add("lista-item-label");
             HBox.setHgrow(lblTexto, javafx.scene.layout.Priority.ALWAYS);
 
@@ -249,6 +234,10 @@ public class TelaGerarProvaManualController implements Initializable {
 
             iconePorQuestao.put(q, icone);
 
+            if (escolhida) {
+                row.getStyleClass().add("lista-item-ativa");
+            }
+
             row.setOnMouseClicked(e -> {
                 selecionarNaLista(q, row);
                 e.consume();
@@ -258,8 +247,7 @@ public class TelaGerarProvaManualController implements Initializable {
         }
     }
 
-    /** Marca visualmente a linha clicada e exibe a questão no card de detalhe. */
-    private void selecionarNaLista(QuestaoItem q, StackPane row) {
+    private void selecionarNaLista(Questao q, StackPane row) {
         for (javafx.scene.Node n : listaContainer.getChildren()) {
             n.getStyleClass().remove("lista-item-ativa");
         }
@@ -267,61 +255,33 @@ public class TelaGerarProvaManualController implements Initializable {
 
         questaoSelecionadaNaLista = q;
         atualizarCardDetalhe(q);
-        atualizarBotoesAcao(); // Atualiza os botões baseado na seleção
+        atualizarBotoesAcao();
     }
 
     // ================================================================
-    // CARD DE DETALHE - VERSÃO COM CAIXINHAS
+    // CARD DE DETALHE
     // ================================================================
 
-    private void atualizarCardDetalhe(QuestaoItem q) {
+    private void atualizarCardDetalhe(Questao q) {
         if (q == null) {
             lblCodigo.setText("codigo");
-            lblCodigo.getStyleClass().addAll("caixinha-valor", "det-codigo");
-
             lblNivel.setText("-");
-            lblNivel.getStyleClass().add("caixinha-valor");
-
             lblTipo.setText("multipla escolha");
-            lblTipo.getStyleClass().add("caixinha-valor");
-
             lblEnunciado.setText("Selecione uma questão na lista ao lado.");
-            lblEnunciado.getStyleClass().add("caixinha-valor-enunciado");
-
             limparGabarito();
-
             lblAssunto.setText("-");
-            lblAssunto.getStyleClass().add("caixinha-valor");
-
             lblDisciplina.setText("-");
-            lblDisciplina.getStyleClass().add("caixinha-valor");
-
             lblStatusIcone.setText("❌");
-            lblStatusIcone.getStyleClass().add("status-caixinha");
-
             return;
         }
 
-        lblCodigo.setText(q.codigo);
-        lblCodigo.getStyleClass().addAll("caixinha-valor", "det-codigo");
-
-        lblNivel.setText(String.valueOf(q.nivel));
-        lblNivel.getStyleClass().add("caixinha-valor");
-
-        lblTipo.setText(q.tipo);
-        lblTipo.getStyleClass().add("caixinha-valor");
-
-        lblEnunciado.setText(q.enunciado);
-        lblEnunciado.getStyleClass().add("caixinha-valor-enunciado");
-
+        lblCodigo.setText(String.valueOf(q.getCodigo()));
+        lblNivel.setText(String.valueOf(q.getNivel().getValor()));
+        lblTipo.setText(q instanceof MultiplaEscolha ? "multipla escolha" : q.getClass().getSimpleName());
+        lblEnunciado.setText(q.getEnunciado());
         preencherGabarito(q);
-
-        lblAssunto.setText(q.assunto);
-        lblAssunto.getStyleClass().add("caixinha-valor");
-
-        lblDisciplina.setText(q.disciplina);
-        lblDisciplina.getStyleClass().add("caixinha-valor");
-
+        lblAssunto.setText(q.getAssunto());
+        lblDisciplina.setText(q.getDisciplina() != null ? q.getDisciplina().getNome() : "-");
         atualizarStatusIcone(questoesEscolhidas.contains(q));
     }
 
@@ -331,75 +291,42 @@ public class TelaGerarProvaManualController implements Initializable {
         alt2a.setText("");
         alt2b.setText("");
 
-        alt1a.getStyleClass().remove("det-gabarito");
-        alt1b.getStyleClass().remove("det-gabarito");
-        alt2a.getStyleClass().remove("det-gabarito");
-        alt2b.getStyleClass().remove("det-gabarito");
+        for (Label l : Arrays.asList(alt1a, alt1b, alt2a, alt2b)) {
+            l.getStyleClass().remove("det-gabarito");
+            if (!l.getStyleClass().contains("det-normal")) l.getStyleClass().add("det-normal");
+        }
 
-        alt1a.getStyleClass().add("det-normal");
-        alt1b.getStyleClass().add("det-normal");
-        alt2a.getStyleClass().add("det-normal");
-        alt2b.getStyleClass().add("det-normal");
-
-        // Esconde as linhas vazias
         linhaAlt1.setVisible(false);
         linhaAlt1.setManaged(false);
         linhaAlt2.setVisible(false);
         linhaAlt2.setManaged(false);
     }
 
-    private void preencherGabarito(QuestaoItem q) {
+    private void preencherGabarito(Questao q) {
         limparGabarito();
 
-        // Adiciona estilo de caixinha ao container do gabarito
-        boxGabarito.getStyleClass().add("caixinha-gabarito");
-
-        List<Label> alvos = Arrays.asList(alt1a, alt1b, alt2a, alt2b);
-        int metade = (int) Math.ceil(q.alternativas.size() / 2.0);
-
-        for (int i = 0; i < q.alternativas.size() && i < alvos.size(); i++) {
-            Label lbl = alvos.get(i);
-            lbl.setText(q.alternativas.get(i));
-            lbl.getStyleClass().remove("det-normal");
-            lbl.getStyleClass().remove("det-gabarito");
-            lbl.getStyleClass().add("det-normal");
-
-            if (i == q.respostaCorretaIndex) {
-                lbl.getStyleClass().remove("det-normal");
-                lbl.getStyleClass().add("det-gabarito");
-            }
-
-            // Define qual linha mostrar baseado na posição
-            if (i < metade) {
-                // Primeira linha (alt1a, alt1b)
-                if (i == 0) {
-                    alt1a.setText(q.alternativas.get(i));
-                    alt1a.setVisible(true);
-                    alt1a.setManaged(true);
-                    alt1a.getStyleClass().add(i == q.respostaCorretaIndex ? "det-gabarito" : "det-normal");
-                } else if (i == 1) {
-                    alt1b.setText(q.alternativas.get(i));
-                    alt1b.setVisible(true);
-                    alt1b.setManaged(true);
-                    alt1b.getStyleClass().add(i == q.respostaCorretaIndex ? "det-gabarito" : "det-normal");
-                }
-            } else {
-                // Segunda linha (alt2a, alt2b)
-                if (i == metade) {
-                    alt2a.setText(q.alternativas.get(i));
-                    alt2a.setVisible(true);
-                    alt2a.setManaged(true);
-                    alt2a.getStyleClass().add(i == q.respostaCorretaIndex ? "det-gabarito" : "det-normal");
-                } else if (i == metade + 1) {
-                    alt2b.setText(q.alternativas.get(i));
-                    alt2b.setVisible(true);
-                    alt2b.setManaged(true);
-                    alt2b.getStyleClass().add(i == q.respostaCorretaIndex ? "det-gabarito" : "det-normal");
-                }
-            }
+        if (!(q instanceof MultiplaEscolha)) {
+            return;
         }
 
-        // Mostra as linhas que têm conteúdo
+        MultiplaEscolha me = (MultiplaEscolha) q;
+        List<String> alternativas = me.getAlternativas();
+        String respostaCorreta = me.getResposta();
+
+        List<Label> alvos = Arrays.asList(alt1a, alt1b, alt2a, alt2b);
+
+        for (int i = 0; i < alternativas.size() && i < alvos.size(); i++) {
+            Label lbl = alvos.get(i);
+            String texto = alternativas.get(i);
+            lbl.setText(letraAlternativa(i) + ") " + texto);
+            lbl.setVisible(true);
+            lbl.setManaged(true);
+
+            lbl.getStyleClass().remove("det-normal");
+            lbl.getStyleClass().remove("det-gabarito");
+            lbl.getStyleClass().add(texto.equals(respostaCorreta) ? "det-gabarito" : "det-normal");
+        }
+
         boolean temAlt1 = !alt1a.getText().isEmpty() || !alt1b.getText().isEmpty();
         boolean temAlt2 = !alt2a.getText().isEmpty() || !alt2b.getText().isEmpty();
 
@@ -409,31 +336,26 @@ public class TelaGerarProvaManualController implements Initializable {
         linhaAlt2.setManaged(temAlt2);
     }
 
+    private String letraAlternativa(int index) {
+        return String.valueOf((char) ('a' + index));
+    }
+
     private void atualizarStatusIcone(boolean escolhida) {
         lblStatusIcone.setText(escolhida ? "\u2705" : "\u274C");
-        lblStatusIcone.getStyleClass().add("status-caixinha");
     }
 
     // ================================================================
     // CONTROLE DOS BOTÕES (Dinâmico)
     // ================================================================
 
-    /**
-     * Atualiza a visibilidade dos botões baseado no estado atual:
-     * - Se nenhuma questão está selecionada: ambos ocultos
-     * - Se a questão não está selecionada: mostra apenas "SELECIONAR"
-     * - Se a questão já está selecionada: mostra apenas "DESELECIONAR"
-     */
     private void atualizarBotoesAcao() {
         boolean temQuestao = questaoSelecionadaNaLista != null;
         boolean escolhida = temQuestao && questoesEscolhidas.contains(questaoSelecionadaNaLista);
 
-        // Botão SELECIONAR: visível apenas quando há questão NÃO selecionada
         boolean mostrarSelecionar = temQuestao && !escolhida;
         btnSelecionar.setVisible(mostrarSelecionar);
         btnSelecionar.setManaged(mostrarSelecionar);
 
-        // Botão DESELECIONAR: visível apenas quando há questão JÁ selecionada
         boolean mostrarDeselecionar = temQuestao && escolhida;
         btnDeselecionar.setVisible(mostrarDeselecionar);
         btnDeselecionar.setManaged(mostrarDeselecionar);
@@ -459,7 +381,7 @@ public class TelaGerarProvaManualController implements Initializable {
         questoesEscolhidas.add(questaoSelecionadaNaLista);
         atualizarIconeLista(questaoSelecionadaNaLista, true);
         atualizarStatusIcone(true);
-        atualizarBotoesAcao(); // Atualiza os botões após selecionar
+        atualizarBotoesAcao();
     }
 
     @FXML
@@ -471,10 +393,10 @@ public class TelaGerarProvaManualController implements Initializable {
         questoesEscolhidas.remove(questaoSelecionadaNaLista);
         atualizarIconeLista(questaoSelecionadaNaLista, false);
         atualizarStatusIcone(false);
-        atualizarBotoesAcao(); // Atualiza os botões após deselecionar
+        atualizarBotoesAcao();
     }
 
-    private void atualizarIconeLista(QuestaoItem q, boolean escolhida) {
+    private void atualizarIconeLista(Questao q, boolean escolhida) {
         Label icone = iconePorQuestao.get(q);
         if (icone == null) return;
         icone.setText(escolhida ? "\u2705" : "\u2297");
@@ -484,7 +406,7 @@ public class TelaGerarProvaManualController implements Initializable {
     }
 
     // ================================================================
-    // GERAR PROVA
+    // GERAR PROVA — envia as questões escolhidas para a TelaGerarAuto
     // ================================================================
 
     @FXML
@@ -494,10 +416,40 @@ public class TelaGerarProvaManualController implements Initializable {
             alerta("Gerar Prova", "Selecione ao menos uma questão antes de gerar a prova.");
             return;
         }
-        alerta("Gerar Prova",
-                "Prova gerada com " + questoesEscolhidas.size() + " de " +
-                        quantidadePredefinida + " questões selecionadas.");
-        // TODO: integrar com a geração/exportação real da prova.
+
+        ProvaSessao sessao = ProvaSessao.getInstance();
+        sessao.setQuestoes(new ArrayList<>(questoesEscolhidas));
+        sessao.setTotalQuestoes(quantidadePredefinida);
+
+        navegarParaAuto();
+    }
+
+    private void navegarParaAuto() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaGerarAutoView.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 1280, 750);
+            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaGerarAutoStyle.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            Stage stage = (Stage) listaContainer.getScene().getWindow();
+            boolean fs  = stage.isFullScreen();
+            boolean max = stage.isMaximized();
+
+            stage.setScene(scene);
+            stage.setTitle("Gerador de Provas - Prova Gerada");
+
+            if (fs)  stage.setFullScreen(true);
+            if (max) stage.setMaximized(true);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            alerta("Erro", "Não foi possível abrir a tela de prova gerada.");
+        }
     }
 
     // ================================================================
@@ -570,46 +522,5 @@ public class TelaGerarProvaManualController implements Initializable {
         a.setHeaderText(null);
         a.setContentText(msg);
         a.showAndWait();
-    }
-
-    // ================================================================
-    // MODELO DE DADOS
-    // ================================================================
-
-    public static class QuestaoItem {
-        final String codigo;
-        final int nivel;
-        final String tipo;
-        final String enunciado;
-        final List<String> alternativas;
-        final int respostaCorretaIndex;
-        final String assunto;
-        final String disciplina;
-
-        public QuestaoItem(String codigo, int nivel, String tipo, String enunciado,
-                           List<String> alternativas, int respostaCorretaIndex,
-                           String assunto, String disciplina) {
-            this.codigo = codigo;
-            this.nivel = nivel;
-            this.tipo = tipo;
-            this.enunciado = enunciado;
-            this.alternativas = alternativas;
-            this.respostaCorretaIndex = respostaCorretaIndex;
-            this.assunto = assunto;
-            this.disciplina = disciplina;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            QuestaoItem that = (QuestaoItem) o;
-            return codigo.equals(that.codigo);
-        }
-
-        @Override
-        public int hashCode() {
-            return codigo.hashCode();
-        }
     }
 }

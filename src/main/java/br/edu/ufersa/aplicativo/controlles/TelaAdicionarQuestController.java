@@ -59,6 +59,111 @@ public class TelaAdicionarQuestController implements Initializable {
     }
 
     // ================================================================
+    // MÉTODO ADICIONAR - CORRIGIDO
+    // ================================================================
+
+    @FXML
+    private void handleAdicionar(javafx.event.ActionEvent event) {
+        try {
+            // Validação básica
+            if (fieldCodigo.getText().isEmpty()) {
+                alerta("Erro", "O campo Código é obrigatório.");
+                return;
+            }
+
+            if (tipoAtual == TipoQuestao.NENHUM) {
+                alerta("Erro", "Selecione um tipo de questão.");
+                return;
+            }
+
+            if (fieldEnunciado == null || fieldEnunciado.getText().isEmpty()) {
+                alerta("Erro", "O campo Enunciado é obrigatório.");
+                return;
+            }
+
+            if (fieldDisciplina == null || fieldDisciplina.getText().isEmpty()) {
+                alerta("Erro", "O campo Disciplina é obrigatório.");
+                return;
+            }
+
+            if (fieldAssunto == null || fieldAssunto.getText().isEmpty()) {
+                alerta("Erro", "O campo Assunto é obrigatório.");
+                return;
+            }
+
+            if (grupoNivel == null || grupoNivel.getSelectedToggle() == null) {
+                alerta("Erro", "Selecione o nível de dificuldade.");
+                return;
+            }
+
+            // Validação específica por tipo
+            switch (tipoAtual) {
+                case MULTIPLA_ESCOLHA:
+                    if (fieldAltA.getText().isEmpty() || fieldAltB.getText().isEmpty() ||
+                            fieldAltC.getText().isEmpty() || fieldAltD.getText().isEmpty()) {
+                        alerta("Erro", "Preencha todas as alternativas.");
+                        return;
+                    }
+                    if (grupoGabarito == null || grupoGabarito.getSelectedToggle() == null) {
+                        alerta("Erro", "Selecione o gabarito.");
+                        return;
+                    }
+                    break;
+                case DISCURSIVA:
+                    if (fieldGabarito.getText().isEmpty()) {
+                        alerta("Erro", "Preencha o gabarito.");
+                        return;
+                    }
+                    break;
+                case VERDADEIRO_FALSO:
+                    if (grupoGabarito == null || grupoGabarito.getSelectedToggle() == null) {
+                        alerta("Erro", "Selecione o gabarito (Verdadeiro ou Falso).");
+                        return;
+                    }
+                    break;
+            }
+
+            // Aqui você adiciona a lógica para salvar a questão
+            System.out.println("✅ Questão adicionada com sucesso!");
+            System.out.println("   Código: " + fieldCodigo.getText());
+            System.out.println("   Tipo: " + tipoAtual);
+            System.out.println("   Enunciado: " + fieldEnunciado.getText());
+            System.out.println("   Disciplina: " + fieldDisciplina.getText());
+            System.out.println("   Assunto: " + fieldAssunto.getText());
+            System.out.println("   Nível: " + ((RadioButton) grupoNivel.getSelectedToggle()).getText());
+
+            // Mostrar mensagem de sucesso
+            alerta("Sucesso", "Questão adicionada com sucesso!");
+
+            // Limpar campos ou fechar tela
+            limparCampos();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            alerta("Erro", "Erro ao adicionar questão: " + e.getMessage());
+        }
+    }
+
+    private void limparCampos() {
+        fieldCodigo.clear();
+        if (fieldEnunciado != null) fieldEnunciado.clear();
+        if (fieldGabarito != null) fieldGabarito.clear();
+        if (fieldDisciplina != null) fieldDisciplina.clear();
+        if (fieldAssunto != null) fieldAssunto.clear();
+        if (fieldAltA != null) fieldAltA.clear();
+        if (fieldAltB != null) fieldAltB.clear();
+        if (fieldAltC != null) fieldAltC.clear();
+        if (fieldAltD != null) fieldAltD.clear();
+        if (grupoGabarito != null) grupoGabarito.selectToggle(null);
+        if (grupoNivel != null) grupoNivel.selectToggle(null);
+        tipoAtual = TipoQuestao.NENHUM;
+        tipoLabel.setText("escolha o tipo de questão");
+        camposDinamicos.getChildren().clear();
+        boxBtnAdicionar.setVisible(false);
+        boxBtnAdicionar.setManaged(false);
+    }
+
+    // ================================================================
     // POPUP DE TIPO
     // ================================================================
 
