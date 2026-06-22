@@ -165,7 +165,6 @@ public class QuestoesController implements Initializable {
     private void handleVoltar() {
         try {
             GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaInicialView.fxml", "/br/edu/ufersa/aplicativo/css/TelaInicialStyle.css", "Gerador de Provas - Disciplinas");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,49 +174,21 @@ public class QuestoesController implements Initializable {
         selecionarMenu(menuDisciplinas);
         handleVoltar();
     }
+
     @FXML private void handleMenuBuscar(MouseEvent e) {
         abrirTelaBuscar();
     }
     @FXML
     private void handleMenuGerarProva(MouseEvent event) {
-        abrirTelaGerarProva();
-    }
-
-    @FXML private void handleMenuRelatorio(MouseEvent e) {
-        selecionarMenu(menuRelatorio);
-        abrirRelatorio();
-    }
-
-
-
-    // NAVEGAÇÃO PARA TELA DE RELATÓRIO
-
-    private void abrirRelatorio() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaRelatorioView.fxml")
-            );
-            Parent root = loader.load();
-            Scene scene = new Scene(root, 1280, 750);
-
-            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaRelatorioStyle.css");
-            if (cssUrl != null) scene.getStylesheets().add(cssUrl.toExternalForm());
-
-            Stage stage = (Stage) menuRelatorio.getScene().getWindow();
-            boolean isFullScreen = stage.isFullScreen();
-            boolean isMaximized = stage.isMaximized();
-
-            stage.setScene(scene);
-            stage.setTitle("Gerador de Provas - Relatório");
-
-            if (isFullScreen) stage.setFullScreen(true);
-            if (isMaximized) stage.setMaximized(true);
-
-        } catch (Exception e) {
+            System.out.println(" Abrindo tela de gerar prova...");
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaGerarProvaView.fxml", "/br/edu/ufersa/aplicativo/css/TelaGerarProvaStyle.css", "Gerador de Provas - Gerar Prova");
+            System.out.println(" Tela de gerar prova aberta com sucesso!");
+            } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Erro ao abrir tela de relatório: " + e.getMessage());
-        }
+            System.err.println(" Erro ao abrir tela de gerar prova: " + e.getMessage());
     }
+        }
 
     /* ── Abrir Tela Gerar Prova ────────────────────────────────────── */
     private void abrirTelaGerarProva(){

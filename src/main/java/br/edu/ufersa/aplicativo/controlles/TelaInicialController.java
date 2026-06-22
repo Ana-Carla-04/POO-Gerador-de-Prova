@@ -379,7 +379,6 @@ public class TelaInicialController implements Initializable {
     private void handleCardDisciplina(DisciplinaInfo info) {
         try {
             System.out.println("Disciplina selecionada: " + info.getNome());
-
             Contexto.setDisciplinaSelecionada(info);
             GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/QuestoesView.fxml", "/br/edu/ufersa/aplicativo/css/TelaInicialStyle.css", "Gerador de Provas - " + info.getNome());
 
