@@ -88,9 +88,22 @@ public class TelaInicialController implements Initializable {
 
     @FXML
     private void handleMenuDisciplinas(MouseEvent event) {
-        selecionarMenu(menuDisciplinas);
-        topbarTitle.setText("Disciplinas: Minhas Disciplinas");
-        carregarDisciplinas();
+        try {
+            System.out.println(" Abrindo tela de Questões...");
+
+
+            GerenteDeCena.carregarCena(
+                    "/br/edu/ufersa/aplicativo/views/QuestoesView.fxml",
+                    "/br/edu/ufersa/aplicativo/css/QuestoesStyle.css",
+                    "Gerador de Provas - Questões"
+            );
+
+            System.out.println(" Tela de Questões aberta com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(" Erro ao abrir tela de questões: " + e.getMessage());
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -101,7 +114,9 @@ public class TelaInicialController implements Initializable {
         try {
             System.out.println("🔍 Abrindo tela de buscar...");
 
-            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaBuscarView.fxml", "/br/edu/ufersa/aplicativo/css/TelaBuscarStyle.css", "Gerador de Provas - Buscar");
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaBuscarView.fxml",
+                    "/br/edu/ufersa/aplicativo/css/TelaBuscarStyle.css",
+                    "Gerador de Provas - Buscar");
 
             System.out.println(" Tela de buscar aberta com sucesso!");
 
@@ -115,7 +130,9 @@ public class TelaInicialController implements Initializable {
     private void handleMenuGerarProva(MouseEvent event) {
         try {
             System.out.println(" Abrindo tela de gerar prova...");
-            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaGerarProvaView.fxml", "/br/edu/ufersa/aplicativo/css/TelaGerarProvaStyle.css", "Gerador de Provas - Gerar Prova");
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaGerarProvaView.fxml",
+                    "/br/edu/ufersa/aplicativo/css/TelaGerarProvaStyle.css",
+                    "Gerador de Provas - Gerar Prova");
 
             System.out.println("Tela de gerar prova aberta com sucesso!");
         } catch (Exception e) {

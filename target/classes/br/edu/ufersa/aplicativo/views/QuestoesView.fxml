@@ -91,14 +91,7 @@
                 </HBox>
             </StackPane>
 
-            <!-- Menu: Relatório -->
-            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
-                <HBox alignment="CENTER_LEFT" spacing="12">
-                    <padding><Insets left="18"/></padding>
-                    <Label styleClass="menu-icon" text="&#128202;"/>
-                    <Label styleClass="menu-label" text="Relatório"/>
-                </HBox>
-            </StackPane>
+
         </VBox>
     </left>
 
