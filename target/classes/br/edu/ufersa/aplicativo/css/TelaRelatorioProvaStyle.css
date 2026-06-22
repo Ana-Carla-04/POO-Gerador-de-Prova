@@ -1,0 +1,350 @@
+/* ============================================================
+   TelaRelatorioProvaStyle.css — Relatório de Prova
+   Exibe prova sem gabarito e com gabarito lado a lado
+   ============================================================ */
+
+.root-main {
+    -fx-background-color: #6EA2B3;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+.topbar {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-background-color: transparent;
+}
+
+.topbar-brand {
+    -fx-background-color: #001D39;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+}
+
+.topbar-brand-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.topbar-title-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+}
+
+.topbar-title-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-width: 56;
+    -fx-min-width: 56;
+    -fx-max-width: 56;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.topbar-icon-area:hover {
+    -fx-background-color: #6A9FB0;
+}
+
+.topbar-seta-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 20px;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+.sidebar {
+    -fx-background-color: #0A4174;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-padding: 16 0 0 0;
+    -fx-spacing: 2;
+}
+
+.menu-item {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.20);
+}
+
+.menu-item-selected {
+    -fx-background-color: rgba(189, 216, 233, 0.40);
+}
+
+.menu-item-selected:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.50);
+}
+
+.menu-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.menu-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ── ÁREA CENTRAL ───────────────────────────────────────────── */
+.content-area {
+    -fx-background-color: #6EA2B3;
+}
+
+/* ── BARRA DE AÇÕES ─────────────────────────────────────────── */
+.acoes-bar {
+    -fx-background-color: #5A92A3;
+    -fx-min-height: 52;
+    -fx-pref-height: 52;
+    -fx-border-color: transparent transparent #4A8293 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* ── BOTÕES DE AÇÃO ─────────────────────────────────────────── */
+.acao-btn {
+    -fx-background-radius: 6;
+    -fx-pref-width: 110;
+    -fx-pref-height: 36;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 4, 0, 0, 2);
+    -fx-background-color: #4E8EA2;
+    -fx-border-color: #3A7A8E;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+}
+
+.acao-btn:hover {
+    -fx-background-color: #5A9EB2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 6, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.acao-btn:pressed {
+    -fx-background-color: #3A7A8E;
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+
+
+.acao-btn-label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.acao-btn-icone {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+/* ── SCROLL PRINCIPAL ───────────────────────────────────────── */
+.scroll-principal {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-principal .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-principal .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+
+.scroll-principal .scroll-bar .thumb {
+    -fx-background-color: #8a9ba8;
+    -fx-background-radius: 4;
+}
+
+.scroll-principal .scroll-bar .thumb:hover {
+    -fx-background-color: #6a7b88;
+}
+
+.scroll-principal .scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-principal .scroll-bar .increment-button,
+.scroll-principal .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ── TÍTULOS DAS COLUNAS ────────────────────────────────────── */
+.coluna-titulo {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #001D39;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.folhas-coluna {
+    -fx-alignment: TOP_CENTER;
+}
+
+/* ── FOLHA (PÁGINA A4) ──────────────────────────────────────── */
+.folha {
+    -fx-background-color: white;
+    -fx-background-radius: 3;
+    -fx-border-color: #c0c0c0;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
+    -fx-pref-width: 480;
+    -fx-max-width: 480;
+    -fx-min-width: 480;
+    -fx-spacing: 4;
+    -fx-min-height: 678;
+}
+
+/* ── CABEÇALHO ──────────────────────────────────────────────── */
+.folha-cabecalho-completo {
+    -fx-border-color: #cccccc;
+    -fx-border-width: 0 0 2px 0;
+    -fx-padding: 0 0 8 0;
+    -fx-spacing: 3;
+}
+
+.folha-cabecalho-instituicao {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #001D39;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+}
+
+.folha-cabecalho-titulo {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-padding: 2 0 3 0;
+}
+
+.folha-cabecalho-rotulo {
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #444444;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-min-width: 44px;
+}
+
+.folha-cabecalho-valor {
+    -fx-font-size: 9px;
+    -fx-text-fill: #333333;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-border-color: transparent transparent #cccccc transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-min-height: 16;
+    -fx-padding: 0 4 0 4;
+}
+
+/* ── TÍTULO DO EXERCÍCIO ───────────────────────────────────── */
+.folha-titulo-exercicio {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #001D39;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-padding: 4 0 2 0;
+}
+
+.folha-separador {
+    -fx-font-size: 10px;
+    -fx-text-fill: #999999;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+}
+
+/* ── QUESTÕES ───────────────────────────────────────────────── */
+.folha-questao {
+    -fx-padding: 4 0 2 0;
+}
+
+.folha-enunciado {
+    -fx-text-fill: #111111;
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-line-spacing: 1.2;
+}
+
+.folha-alternativa {
+    -fx-padding: 0.5 0 0.5 10;
+    -fx-spacing: 3;
+}
+
+.folha-alternativa-texto {
+    -fx-text-fill: #222222;
+    -fx-font-size: 9px;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+}
+
+/* Alternativa marcada como gabarito */
+.folha-alternativa-gabarito {
+    -fx-text-fill: #1a5c1a;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+}
+
+.folha-marcador {
+    -fx-text-fill: #222222;
+    -fx-font-size: 9px;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-min-width: 34;
+}
+
+/* Marcador quando é gabarito (mostra X dentro) */
+.folha-marcador-gabarito {
+    -fx-text-fill: #1a5c1a;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-min-width: 34;
+}
+
+.folha-vazio {
+    -fx-text-fill: #888888;
+    -fx-font-size: 11px;
+    -fx-padding: 20 0 0 0;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+}
+
+/* ── RODAPÉ ─────────────────────────────────────────────────── */
+.folha-rodape {
+    -fx-text-fill: #555555;
+    -fx-font-size: 9px;
+    -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
+    -fx-padding: 8 0 0 0;
+}
+
+/* ── WRAPPER GERAL DAS FOLHAS ───────────────────────────────── */
+.folhas-wrapper {
+    -fx-background-color: transparent;
+}
