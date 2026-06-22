@@ -7,6 +7,13 @@ public class Professor {
     private String senha;
 
     //construtor
+    public Professor(int id, String nome, String email, String senha) {
+        setId(id);
+        setNome(nome);
+        setEmail(email);
+        setSenha(senha);
+    }
+
     public Professor(String nome, String email, String senha) {
         setNome(nome);
         setEmail(email);

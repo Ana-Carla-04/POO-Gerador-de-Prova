@@ -1,6 +1,7 @@
 package br.edu.ufersa.aplicativo.controlles;
 
-import br.edu.ufersa.aplicativo.Main;
+import java.util.Optional;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -10,7 +11,19 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import br.edu.ufersa.aplicativo.model.entities.Professor;
+import br.edu.ufersa.aplicativo.model.dto.TentarLoginDTO;
+import br.edu.ufersa.aplicativo.model.service.AutenticacaoService;
+import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
+
+import br.edu.ufersa.aplicativo.application.GerenteDeCena;
+
 public class LoginController {
+    private final AutenticacaoService autenticacaoService;
+
+    public LoginController() {
+        autenticacaoService = ServiceFactory.criarAutenticacaoService();
+    }
 
     @FXML private TextField     emailField;
     @FXML private PasswordField passwordField;
@@ -20,7 +33,7 @@ public class LoginController {
     // ── LOGIN ──────────────────────────────────────────────────────────────
     @FXML
     private void handleLogin(ActionEvent event) {
-        String email    = emailField.getText().trim();
+        String email = emailField.getText().trim();
         String password = passwordField.getText().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
@@ -29,38 +42,13 @@ public class LoginController {
             return;
         }
 
-        // ═══════════════════════════════════════════════════════════════
-        // LOGIN BEM SUCEDIDO - VAI PARA TELA INICIAL
-        // ═══════════════════════════════════════════════════════════════
-        if (email.equals("q") && password.equals("q")) {
-            try {
-                // Salvar o estado atual (tela cheia/maximizado)
-                boolean currentFullScreen = Main.isFullScreen();
-                boolean currentMaximized = Main.isMaximized();
+        TentarLoginDTO dto = new TentarLoginDTO(email, password);
 
-                // Carregar a tela inicial
-                Main.carregarTela("/br/edu/ufersa/aplicativo/views/TelaInicialView.fxml",
-                        "Gerador de Provas - Início");
-
-                // Restaurar o estado
-                javafx.application.Platform.runLater(() -> {
-                    if (currentFullScreen) {
-                        Main.enterFullScreen();
-                    }
-                    if (currentMaximized) {
-                        Main.toggleMaximized();
-                    }
-                });
-
-            } catch (Exception e) {
-                showAlert(AlertType.ERROR, "Erro", "Erro de navegação",
-                        "Não foi possível carregar a tela inicial: " + e.getMessage());
-                e.printStackTrace();
-            }
+        Optional<Professor> professorLogado = autenticacaoService.tentarLogin(dto);
+        if (professorLogado.isEmpty()) {
+            showAlert(AlertType.ERROR, "Falha no login", "Erro", "Email ou senha incorreto.");
         } else {
-            showAlert(AlertType.ERROR, "Falha no login", "Erro",
-                    "Email ou senha incorretos.");
-            passwordField.clear();
+            System.out.println("LOGADO COM SUCESSO");
         }
     }
 
@@ -68,26 +56,8 @@ public class LoginController {
     @FXML
     private void handleRegister(ActionEvent event) {
         try {
-            System.out.println("Abrindo Cadastro - FullScreen atual: " + Main.isFullScreen());
-
-            // Salvar o estado atual
-            boolean currentFullScreen = Main.isFullScreen();
-            boolean currentMaximized = Main.isMaximized();
-
             // Carregar a nova tela
-            Main.carregarTela("/br/edu/ufersa/aplicativo/views/CadastroView.fxml",
-                    "Gerador de Provas - Cadastro");
-
-            // Forçar a restauração do estado (redundante, mas seguro)
-            javafx.application.Platform.runLater(() -> {
-                if (currentFullScreen) {
-                    Main.enterFullScreen();
-                }
-                if (currentMaximized) {
-                    Main.toggleMaximized();
-                }
-            });
-
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/CadastroView.fxml", "/br/edu/ufersa/aplicativo/css/LoginStyle.css","Gerador de Provas - Cadastro");
         } catch (Exception e) {
             showAlert(AlertType.ERROR, "Erro", "Erro de navegação",
                     "Não foi possível carregar a tela de cadastro: " + e.getMessage());

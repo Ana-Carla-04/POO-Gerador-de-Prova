@@ -1,6 +1,7 @@
 package br.edu.ufersa.aplicativo.controlles;
 
-import br.edu.ufersa.aplicativo.Main;
+import br.edu.ufersa.aplicativo.application.GerenteDeCena;
+import br.edu.ufersa.aplicativo.application.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -61,26 +62,8 @@ public class CadastroController {
 
     private void irParaLogin(ActionEvent event) {
         try {
-            System.out.println("Voltando para Login - FullScreen atual: " + Main.isFullScreen());
-
-            // Salvar o estado atual
-            boolean currentFullScreen = Main.isFullScreen();
-            boolean currentMaximized = Main.isMaximized();
-
             // Carregar a nova tela
-            Main.carregarTela("/br/edu/ufersa/aplicativo/views/LoginView.fxml",
-                    "Gerador de Provas - Login");
-
-            // Forçar a restauração do estado
-            javafx.application.Platform.runLater(() -> {
-                if (currentFullScreen) {
-                    Main.enterFullScreen();
-                }
-                if (currentMaximized) {
-                    Main.toggleMaximized();
-                }
-            });
-
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/LoginView.fxml", "/br/edu/ufersa/aplicativo/css/LoginStyle.css", "Gerente de provas - Login");
         } catch (Exception e) {
             showAlert(AlertType.ERROR, "Erro", "Erro de navegação",
                     "Não foi possível carregar a tela de login: " + e.getMessage());

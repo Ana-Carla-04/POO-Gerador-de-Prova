@@ -12,15 +12,21 @@ import java.sql.Statement;
 
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Optional;
 
 public class ProfessorDAO implements DAO<Professor> { //usou a interface para definou que não será mais tipo genérico e sim tipo Professor
     //inseri na tabela Professor do banco de dados:
     private static final String sql_inserir = "INSERT INTO professor (nome, email, senha) VALUES (?, ?, ?);"; //inseri nome, email e senha
     private static final String sql_alterar = "UPDATE professor SET nome = ?, email = ?, senha = ? WHERE id = ?;"; //altera o email e a senha baseado no nome
     private static final String sql_deletar = "DELETE FROM professor WHERE id = ?;"; //deleta baseado no nome
-    private static final String sql_listar = "SELECT * FROM professor;"; //list a todos os professores
+    private static final String sql_listar = "SELECT id, nome, email, senha FROM professor;"; //list a todos os professores
+    private static final String sql_buscar_por_email = "SELECT nome, email, senha FROM professor WHERE email = ?;";
 
-    private Connection conexao; //armazena a conexao com o banco de dados, como um atributo
+    private final Connection conexao; //armazena a conexao com o banco de dados, como um atributo
+
+    private Professor mapear(ResultSet rs) throws SQLException {
+        return new Professor(rs.getInt("id"), rs.getString("nome"), rs.getString("email"), rs.getString("senha"));
+    }
 
     //construtor da classe usando o atributo de conexão
     public ProfessorDAO(Connection conexao) throws SQLException {
@@ -89,16 +95,22 @@ public class ProfessorDAO implements DAO<Professor> { //usou a interface para de
             try(ResultSet rs = st.executeQuery(sql_listar)) { //ResultSet é como se fosse uma Tabela virtual que contem os dados retornado pela exaução da query sql_listar
                 LinkedList<Professor> professores = new LinkedList<>(); //cria uma lista vazia para armazenar os resultados
                 while (rs.next()) { //.next avança pra proxima linha, e o while retorna falso quando não há mais linha
-                    int id = rs.getInt("id");
-                    String nome = rs.getString("nome"); //pega o valor da coluna nome e transforma de sql para String
-                    String email = rs.getString("email");  //pega o valor da coluna email e transforma de sql para String
-                    String senha = rs.getString("senha");  //pega o valor da coluna senha e transforma de sql para String
-                    Professor professor = new Professor(nome, email, senha); //chama o construtor de Professor e cria um objeto Professor com seus parâmetros
-                    professor.setId(id);
-                    professores.add(professor); //adiciona o objeto professor a lista de professores
+                    professores.add(mapear(rs)); //adiciona o objeto professor a lista de professores
                 }
                 return professores; //retorna a lista de professores
             }
         }
+    }
+
+    public Optional<Professor> buscarPorEmail(String email) throws SQLException {
+        try (PreparedStatement stmt = conexao.prepareStatement(sql_buscar_por_email)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapear(rs));
+                }
+            }
+        }
+        return Optional.empty();
     }
 }
