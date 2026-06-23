@@ -1,6 +1,8 @@
 package br.edu.ufersa.aplicativo.controlles;
 
 import br.edu.ufersa.aplicativo.application.Contexto;
+import br.edu.ufersa.aplicativo.model.service.DisciplinaService;
+import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -35,32 +37,31 @@ public class TelaInicialController implements Initializable {
     private List<StackPane> menuItems;
     private List<DisciplinaInfo> disciplinasInfo;
     private Stage popupStage;
+    private DisciplinaService disciplinaService;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        disciplinaService = ServiceFactory.criarDisciplinaService();
         menuItems = Arrays.asList(
                 menuDisciplinas, menuBuscar, menuGerarProva, menuRelatorio
         );
 
-        inicializarDisciplinas();
+        carregarDisciplinasDoBanco();
         configurarGridResponsivo();
         carregarDisciplinas();
     }
 
-    private void inicializarDisciplinas() {
-        disciplinasInfo = Arrays.asList(
-                new DisciplinaInfo("Matemática", "MAT001", 3, "Prof. Silva"),
-                new DisciplinaInfo("Português", "POR001", 2, "Prof. Santos"),
-                new DisciplinaInfo("História", "HIS001", 1, "Prof. Oliveira"),
-                new DisciplinaInfo("Geografia", "GEO001", 0, "Prof. Costa"),
-                new DisciplinaInfo("Física", "FIS001", 1, "Prof. Lima"),
-                new DisciplinaInfo("Química", "QUI001", 0, "Prof. Almeida"),
-                new DisciplinaInfo("Biologia", "BIO001", 1, "Prof. Ferreira"),
-                new DisciplinaInfo("Inglês", "ING001", 0, "Prof. Pereira"),
-                new DisciplinaInfo("Artes", "ART001", 0, "Prof. Carvalho")
-        );
+    private void carregarDisciplinasDoBanco() {
+        try {
+            disciplinasInfo = disciplinaService.listarDisciplinasInfo();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Erro ao carregar disciplinas: " + e.getMessage());
+            // Pode ser bom exibir um alerta aqui
+        }
     }
+
 
     private void configurarGridResponsivo() {
         disciplinasGrid.getColumnConstraints().clear();
@@ -368,11 +369,14 @@ public class TelaInicialController implements Initializable {
             Label nomeLabel = new Label(info.getNome());
             nomeLabel.getStyleClass().add("disciplina-label");
 
+            Label codigoLabel = new Label(info.getCodigo());
+            codigoLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #666; -fx-font-weight: bold;");
+
             Label qtdLabel = new Label(info.getQuantidade() + " questões");
             qtdLabel.getStyleClass().add("disciplina-qtd-label");
             qtdLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #0A4174;");
 
-            cardContent.getChildren().addAll(nomeLabel, qtdLabel);
+            cardContent.getChildren().addAll(nomeLabel, codigoLabel, qtdLabel);
             card.getChildren().add(cardContent);
 
             card.setUserData(info);

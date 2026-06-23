@@ -13,9 +13,21 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import br.edu.ufersa.aplicativo.model.DAO.DisciplinaDAO;
+import br.edu.ufersa.aplicativo.model.entities.*;
+import br.edu.ufersa.aplicativo.model.service.DisciplinaService;
+import br.edu.ufersa.aplicativo.model.service.QuestaoService;
+import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
+import br.edu.ufersa.aplicativo.util.Conexao;
+
 public class TelaAdicionarQuestController implements Initializable {
+
+    private QuestaoService questaoService;
 
     // ── FXML fixos ──────────────────────────────────────────────────
     @FXML private TextField    fieldCodigo;
@@ -55,7 +67,7 @@ public class TelaAdicionarQuestController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Inicialização vazia
+        questaoService = ServiceFactory.criarQuestaoService();
     }
 
     // ================================================================
@@ -124,19 +136,64 @@ public class TelaAdicionarQuestController implements Initializable {
             }
 
             // Aqui você adiciona a lógica para salvar a questão
-            System.out.println("✅ Questão adicionada com sucesso!");
-            System.out.println("   Código: " + fieldCodigo.getText());
-            System.out.println("   Tipo: " + tipoAtual);
-            System.out.println("   Enunciado: " + fieldEnunciado.getText());
-            System.out.println("   Disciplina: " + fieldDisciplina.getText());
-            System.out.println("   Assunto: " + fieldAssunto.getText());
-            System.out.println("   Nível: " + ((RadioButton) grupoNivel.getSelectedToggle()).getText());
+            DisciplinaDAO disciplinaDAO = new DisciplinaDAO(Conexao.abrirConexao());
+            Disciplina disciplina = disciplinaDAO.buscarPorCodigo(fieldDisciplina.getText());
+            if (disciplina == null) {
+                alerta("Erro", "Disciplina não encontrada com o código: " + fieldDisciplina.getText());
+                return;
+            }
 
-            // Mostrar mensagem de sucesso
-            alerta("Sucesso", "Questão adicionada com sucesso!");
+            Questao questao = null;
+            String nivelText = ((RadioButton) grupoNivel.getSelectedToggle()).getText();
+            Nivel nivel;
+            if (nivelText.equalsIgnoreCase("Fácil")) nivel = Nivel.FACIL;
+            else if (nivelText.equalsIgnoreCase("Médio")) nivel = Nivel.MEDIO;
+            else nivel = Nivel.DIFICIL;
 
-            // Limpar campos ou fechar tela
-            limparCampos();
+            switch (tipoAtual) {
+                case MULTIPLA_ESCOLHA -> {
+                    MultiplaEscolha me = new MultiplaEscolha();
+                    me.setEnunciado(fieldEnunciado.getText());
+                    me.setDisciplina(disciplina);
+                    me.setNivel(nivel);
+                    me.setAssunto(fieldAssunto.getText());
+                    List<String> alts = Arrays.asList(fieldAltA.getText(), fieldAltB.getText(), fieldAltC.getText(), fieldAltD.getText());
+                    me.setAlternativas(alts);
+                    // Definir o gabarito como a alternativa selecionada
+                    RadioButton rbSelecionado = (RadioButton) grupoGabarito.getSelectedToggle();
+                    me.setResposta(rbSelecionado.getText()); 
+                    questao = me;
+                }
+                case DISCURSIVA -> {
+                    Discursiva d = new Discursiva();
+                    d.setEnunciado(fieldEnunciado.getText());
+                    d.setDisciplina(disciplina);
+                    d.setNivel(nivel);
+                    d.setAssunto(fieldAssunto.getText());
+                    d.setResposta(fieldGabarito.getText());
+                    questao = d;
+                }
+                case VERDADEIRO_FALSO -> {
+                    VerdadeiroFalso vf = new VerdadeiroFalso();
+                    vf.setEnunciado(fieldEnunciado.getText());
+                    vf.setDisciplina(disciplina);
+                    vf.setNivel(nivel);
+                    vf.setAssunto(fieldAssunto.getText());
+                    
+                    // Ajuste para salvar alternativas VF
+                    vf.getAlternativas().add("Verdadeiro");
+                    vf.getAlternativas().add("Falso");
+                    
+                    vf.setResposta(((RadioButton) grupoGabarito.getSelectedToggle()).getText());
+                    questao = vf;
+                }
+            }
+
+            if (questao != null) {
+                questaoService.inserir(questao);
+                alerta("Sucesso", "Questão adicionada com sucesso!");
+                limparCampos();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

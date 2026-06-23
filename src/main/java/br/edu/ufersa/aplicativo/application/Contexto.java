@@ -20,4 +20,8 @@ public class Contexto {
     public static DisciplinaInfo getDisciplinaSelecionada() {
         return disciplinaSelecionada;
     }
+
+    public static Professor getProfessorLogado() {
+        return professorLogado;
+    }
 }

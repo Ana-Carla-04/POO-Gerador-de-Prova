@@ -1,6 +1,6 @@
 package br.edu.ufersa.aplicativo.model.entities;
 
-public abstract class   Questao {
+public abstract class Questao {
     private int codigo;
     private String enunciado;
     private String assunto;

@@ -5,6 +5,7 @@ import br.edu.ufersa.aplicativo.model.entities.Nivel;
 import br.edu.ufersa.aplicativo.model.entities.MultiplaEscolha;
 import br.edu.ufersa.aplicativo.model.entities.Questao;
 import br.edu.ufersa.aplicativo.model.entities.VerdadeiroFalso;
+import br.edu.ufersa.aplicativo.model.entities.Discursiva;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -156,6 +157,19 @@ public class QuestaoDAO implements DAO<Questao> {
         }
     }
 
+    public int contarPorDisciplina(int disciplinaId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM questao WHERE disciplina_id = ?;";
+        try (PreparedStatement ps = conexao.prepareStatement(sql)) {
+            ps.setInt(1, disciplinaId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
     @Override
     public List<Questao> listar() throws SQLException {
         try (Statement st = conexao.createStatement();
@@ -244,13 +258,15 @@ public class QuestaoDAO implements DAO<Questao> {
             return vf;
 
         } else {
-            MultiplaEscolha padrao = new MultiplaEscolha();
-            padrao.setCodigo(idQuestao);
-            padrao.setEnunciado(enunciado);
-            padrao.setNivel(nivel);
-            padrao.setDisciplina(disciplina);
-            padrao.setAssunto(assunto);
-            return padrao;
+            Discursiva discursiva = new Discursiva();
+            discursiva.setCodigo(idQuestao);
+            discursiva.setEnunciado(enunciado);
+            discursiva.setNivel(nivel);
+            discursiva.setDisciplina(disciplina);
+            discursiva.setAssunto(assunto);
+            // Assumindo que a resposta discursiva está em 'assunto' ou campo equivalente se 'tipo' for discursiva
+            // Você pode precisar ajustar como a resposta é recuperada se estiver em outra tabela.
+            return discursiva;
         }
     }
 
