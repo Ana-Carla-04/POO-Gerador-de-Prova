@@ -3,6 +3,8 @@ package br.edu.ufersa.aplicativo.controlles;
 import br.edu.ufersa.aplicativo.model.entities.MultiplaEscolha;
 import br.edu.ufersa.aplicativo.model.entities.Prova;
 import br.edu.ufersa.aplicativo.model.entities.Questao;
+import br.edu.ufersa.aplicativo.model.service.ProvaService;
+import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -38,6 +40,8 @@ public class TelaGerarAutoController implements Initializable {
     @FXML private StackPane menuGerarProva;
     @FXML private StackPane menuRelatorio;
 
+    private ProvaService provaService;
+
 
     // Constantes para controle de páginas
     private static final double ALTURA_MAXIMA_PAGINA = 680; // Altura máxima em pixels
@@ -46,6 +50,7 @@ public class TelaGerarAutoController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        provaService = ServiceFactory.criarProvaService();
         renderizarFolha();
     }
 
@@ -397,6 +402,8 @@ public class TelaGerarAutoController implements Initializable {
         }
 
         Prova prova = sessao.registrarProvaSalva();
+
+        provaService.salvarProva(prova);
 
         alerta("Prova salva",
                 "A prova \"" + prova.getCodigo() + "\" foi salva com sucesso!\n" +

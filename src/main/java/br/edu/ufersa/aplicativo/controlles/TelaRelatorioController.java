@@ -98,7 +98,7 @@ public class TelaRelatorioController implements Initializable {
 
         // Se não houver provas na sessão, adicionar algumas de exemplo
         if (todasAsProvas.isEmpty()) {
-            adicionarProvasExemplo();
+            //adicionarProvasExemplo();
         }
 
         provasFiltradas = new ArrayList<>(todasAsProvas);

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import br.edu.ufersa.aplicativo.model.DAO.ProfessorDAO;
 import br.edu.ufersa.aplicativo.model.DAO.DisciplinaDAO;
 import br.edu.ufersa.aplicativo.model.DAO.QuestaoDAO;
+import br.edu.ufersa.aplicativo.model.DAO.ProvaDAO;
 import br.edu.ufersa.aplicativo.util.Conexao;
 
 public class ServiceFactory {
@@ -26,6 +27,14 @@ public class ServiceFactory {
     public static QuestaoService criarQuestaoService() {
         try {
             return new QuestaoService(new QuestaoDAO(Conexao.abrirConexao()));
+        } catch (SQLException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    public static ProvaService criarProvaService() {
+        try {
+            return new ProvaService(new ProvaDAO(Conexao.abrirConexao()));
         } catch (SQLException e) {
             throw new ServiceException(e.getMessage(), e);
         }
