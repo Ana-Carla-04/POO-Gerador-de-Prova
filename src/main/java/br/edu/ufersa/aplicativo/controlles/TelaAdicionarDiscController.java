@@ -1,5 +1,9 @@
 package br.edu.ufersa.aplicativo.controlles;
 
+import br.edu.ufersa.aplicativo.application.Contexto;
+import br.edu.ufersa.aplicativo.model.entities.Disciplina;
+import br.edu.ufersa.aplicativo.model.service.DisciplinaService;
+import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,6 +20,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class TelaAdicionarDiscController implements Initializable {
+
+    private DisciplinaService disciplinaService;
 
     /* ── FXML ─────────────────────────────────────────────────── */
     @FXML private TextField fieldNome;
@@ -35,7 +41,7 @@ public class TelaAdicionarDiscController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Inicialização vazia
+        disciplinaService = ServiceFactory.criarDisciplinaService();
     }
 
     /* ── VOLTAR (SETA) ───────────────────────────────────────── */
@@ -80,16 +86,16 @@ public class TelaAdicionarDiscController implements Initializable {
             return;
         }
 
-        System.out.println("📚 Adicionando disciplina:");
-        System.out.println("   Nome: " + nome);
-        System.out.println("   Código: " + codigo);
-        System.out.println("   Assunto 1: " + fieldAssunto1.getText());
-        System.out.println("   Assunto 2: " + fieldAssunto2.getText());
-        System.out.println("   Assunto 3: " + fieldAssunto3.getText());
-        System.out.println("   Assunto 4: " + fieldAssunto4.getText());
-
-        showAlert("Sucesso", "Disciplina '" + nome + "' adicionada com sucesso!");
-        voltarParaTelaInicial();
+        try {
+            Disciplina novaDisciplina = new Disciplina(nome, codigo, Contexto.getProfessorLogado(), null);
+            disciplinaService.inserir(novaDisciplina);
+            
+            showAlert("Sucesso", "Disciplina '" + nome + "' adicionada com sucesso!");
+            voltarParaTelaInicial();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erro", "Erro ao adicionar disciplina: " + e.getMessage());
+        }
     }
 
 

@@ -3,9 +3,10 @@ package br.edu.ufersa.aplicativo.controlles;
 import br.edu.ufersa.aplicativo.application.Contexto;
 import br.edu.ufersa.aplicativo.application.GerenteDeCena;
 import br.edu.ufersa.aplicativo.controlles.TelaInicialController.DisciplinaInfo;
-import br.edu.ufersa.aplicativo.model.DAO.QuestaoDAO;
+import br.edu.ufersa.aplicativo.model.service.QuestaoService;
+import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
+import br.edu.ufersa.aplicativo.model.entities.Discursiva;
 import br.edu.ufersa.aplicativo.model.entities.Questao;
-import br.edu.ufersa.aplicativo.util.Conexao;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class QuestoesController implements Initializable {
+
+    private QuestaoService questaoService;
 
     /* ── FXML ─────────────────────────────────────────────────── */
     @FXML private Label topbarTitle;
@@ -60,6 +63,7 @@ public class QuestoesController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        questaoService = ServiceFactory.criarQuestaoService();
         disciplinaInfo = Contexto.getDisciplinaSelecionada();
         menuItems = Arrays.asList(
                 menuDisciplinas, menuBuscar, menuGerarProva, menuRelatorio
@@ -80,8 +84,7 @@ public class QuestoesController implements Initializable {
         questoesPorDisciplina = new HashMap<>();
 
         try {
-            QuestaoDAO questaoDAO = new QuestaoDAO(Conexao.abrirConexao());
-            List<Questao> todasAsQuestoesDoBanco = questaoDAO.listar();
+            List<Questao> todasAsQuestoesDoBanco = questaoService.listarQuestoes();
 
             for (Questao q : todasAsQuestoesDoBanco) {
                 String nomeDisciplina = (q.getDisciplina() != null) ? q.getDisciplina().getNome() : "Geral";
@@ -128,13 +131,43 @@ public class QuestoesController implements Initializable {
 
     @FXML
     private void handleExcluir() {
+        if (itemSelecionado == null) {
+            showAlert("Erro", "Selecione uma questão para excluir.");
+            return;
+        }
+
+        QuestaoInfo info = (QuestaoInfo) itemSelecionado.getUserData();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Excluir questão");
         alert.setHeaderText("Confirmar exclusão");
-        alert.setContentText("Deseja realmente excluir esta questão?");
+        alert.setContentText("Deseja realmente excluir a questão: " + info.getEnunciado().substring(0, Math.min(info.getEnunciado().length(), 20)) + "...?");
+        
         alert.showAndWait().ifPresent(resp -> {
-            carregarQuestoes();
+            if (resp == javafx.scene.control.ButtonType.OK) {
+                try {
+                    Discursiva q = new Discursiva();
+                    q.setCodigo(Integer.parseInt(info.getCodigo()));
+                    questaoService.deletar(q);
+                    
+                    // Remover da lista local para atualizar a UI sem recarregar tudo
+                    questoesPorDisciplina.get(disciplinaInfo.getNome()).remove(info);
+                    
+                    carregarQuestoes();
+                    showAlert("Sucesso", "Questão excluída com sucesso.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert("Erro", "Erro ao excluir questão: " + e.getMessage());
+                }
+            }
         });
+    }
+
+    private void showAlert(String titulo, String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 
     @FXML
