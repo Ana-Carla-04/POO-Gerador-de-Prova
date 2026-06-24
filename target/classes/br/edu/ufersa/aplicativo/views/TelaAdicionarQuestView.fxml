@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.Region?>
+<BorderPane
+        prefWidth="1280"
+        prefHeight="750"
+        styleClass="root-main"
+        stylesheets="@../css/TelaAdicionarQuestStyle.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.edu.ufersa.aplicativo.controlles.TelaAdicionarQuestController">
+
+    <!-- TOPBAR -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <StackPane styleClass="topbar-brand">
+                <Label styleClass="topbar-brand-label" text="Gerador de Provas"/>
+            </StackPane>
+            <HBox styleClass="topbar-title-area" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <padding><Insets left="24"/></padding>
+                <Label styleClass="topbar-title-label" text="Disciplinas:Adicionar Questão"/>
+            </HBox>
+            <StackPane styleClass="topbar-icon-area" onMouseClicked="#handleVoltar">
+                <Label styleClass="topbar-seta-label" text="←"/>
+            </StackPane>
+            <StackPane styleClass="topbar-icon-area">
+                <Label styleClass="topbar-icon-label" text="&#128209;"/>
+            </StackPane>
+        </HBox>
+    </top>
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200">
+            <StackPane fx:id="menuDisciplinas" styleClass="menu-item, menu-item-selected" onMouseClicked="#handleMenuDisciplinas">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128209;"/>
+                    <Label styleClass="menu-label" text="Disciplinas"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuBuscar" styleClass="menu-item" onMouseClicked="#handleMenuBuscar">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128269;"/>
+                    <Label styleClass="menu-label" text="Buscar"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuGerarProva" styleClass="menu-item" onMouseClicked="#handleMenuGerarProva">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128196;"/>
+                    <Label styleClass="menu-label" text="Gerar Prova"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128202;"/>
+                    <Label styleClass="menu-label" text="Relatório"/>
+                </HBox>
+            </StackPane>
+        </VBox>
+    </left>
+
+    <!-- CENTRO -->
+    <center>
+        <!-- StackPane permite sobrepor o popup ao card -->
+        <StackPane styleClass="content-area">
+
+            <!-- CARD PRINCIPAL (formulário) -->
+            <VBox styleClass="form-card" spacing="14" maxWidth="560" maxHeight="560"
+                  StackPane.alignment="CENTER">
+
+                <!-- Cabeçalho -->
+                <HBox alignment="CENTER_LEFT" spacing="12" styleClass="form-card-header">
+                    <Label styleClass="form-card-icon" text="&#128209;+"/>
+                    <Label styleClass="form-card-title" text="Adicionar Questão:"/>
+                </HBox>
+
+                <!-- Código -->
+                <VBox spacing="5">
+                    <Label styleClass="field-label" text="Codigo:"/>
+                    <TextField fx:id="fieldCodigo" styleClass="field-input" maxWidth="180"/>
+                </VBox>
+
+
+                <!-- Tipo — clique abre o popup (IGUAL AO COMBOBOX) -->
+                <VBox spacing="0">
+                    <Label styleClass="field-label" text="Tipo:"/>
+                    <StackPane fx:id="tipoSelector" styleClass="tipo-selector"
+                               maxWidth="240" onMouseClicked="#handleAbrirTipoPopup">
+                        <HBox alignment="CENTER_LEFT" spacing="0">
+                            <padding>
+                                <Insets left="12" right="10" top="0" bottom="0"/>
+                            </padding>
+                            <Label fx:id="tipoLabel" styleClass="tipo-label" text="escolha o tipo de questão"/>
+                            <Region HBox.hgrow="ALWAYS"/>  <!-- EMPURRADOR - joga a seta para a direita -->
+                            <Label styleClass="tipo-arrow" text="▼"/>
+                        </HBox>
+                    </StackPane>
+                </VBox>
+
+                <!-- Área dinâmica — preenchida pelo controller -->
+                <VBox fx:id="camposDinamicos" spacing="12"/>
+
+                <!-- Botão Adicionar — inicialmente oculto -->
+                <HBox fx:id="boxBtnAdicionar" alignment="CENTER" visible="false" managed="false">
+                    <Button fx:id="btnAdicionar"
+                            styleClass="btn-adicionar"
+                            text="Adicionar"
+                            onAction="#handleAdicionar"/>
+                </HBox>
+
+            </VBox>
+
+            <!-- POPUP DE TIPO (invisível por padrão) -->
+            <VBox fx:id="tipoPopup" styleClass="tipo-popup" spacing="6"
+                  maxWidth="200" visible="false" managed="false"
+                  StackPane.alignment="CENTER">
+                <padding><Insets top="0" bottom="0" left="14" right="14"/></padding>
+
+                <Label fx:id="popupOpcaoMultipla" styleClass="popup-opcao"
+                       text="multipla-escolha" onMouseClicked="#handleSelecionarMultipla"/>
+                <Label fx:id="popupOpcaoDiscursiva" styleClass="popup-opcao"
+                       text="discursiva"      onMouseClicked="#handleSelecionarDiscursiva"/>
+                <Label fx:id="popupOpcaoVF" styleClass="popup-opcao"
+                       text="Verdadeiro ou Falso" onMouseClicked="#handleSelecionarVF"/>
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

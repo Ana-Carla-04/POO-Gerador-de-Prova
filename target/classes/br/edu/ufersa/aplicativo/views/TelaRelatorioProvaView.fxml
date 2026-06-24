@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        prefWidth="1280"
+        prefHeight="750"
+        styleClass="root-main"
+        stylesheets="@../css/TelaRelatorioProvaStyle.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.edu.ufersa.aplicativo.controlles.TelaRelatorioProvaController">
+
+    <!-- TOPBAR -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <StackPane styleClass="topbar-brand">
+                <Label styleClass="topbar-brand-label" text="Gerador de Provas"/>
+            </StackPane>
+            <HBox styleClass="topbar-title-area" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <padding><Insets left="24"/></padding>
+                <Label styleClass="topbar-title-label" text="Relatório"/>
+            </HBox>
+            <StackPane styleClass="topbar-icon-area" onMouseClicked="#handleVoltar">
+                <Label styleClass="topbar-seta-label" text="&#8594;"/>
+            </StackPane>
+            <StackPane styleClass="topbar-icon-area">
+                <Label styleClass="topbar-icon-label" text="&#128209;"/>
+            </StackPane>
+        </HBox>
+    </top>
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200">
+            <StackPane fx:id="menuDisciplinas" styleClass="menu-item" onMouseClicked="#handleMenuDisciplinas">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128209;"/>
+                    <Label styleClass="menu-label" text="Disciplinas"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuBuscar" styleClass="menu-item" onMouseClicked="#handleMenuBuscar">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128269;"/>
+                    <Label styleClass="menu-label" text="Buscar"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuGerarProva" styleClass="menu-item" onMouseClicked="#handleMenuGerarProva">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128196;"/>
+                    <Label styleClass="menu-label" text="Gerar Prova"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128202;"/>
+                    <Label styleClass="menu-label" text="Relatório"/>
+                </HBox>
+            </StackPane>
+        </VBox>
+    </left>
+
+    <!-- CENTRO -->
+    <center>
+        <StackPane styleClass="content-area">
+            <VBox spacing="0">
+
+                <!-- BARRA DE AÇÕES (Editar / Excluir / Imprimir) -->
+                <HBox styleClass="acoes-bar" alignment="CENTER_RIGHT" spacing="12">
+                    <padding><Insets top="10" right="24" bottom="10" left="24"/></padding>
+
+                    <!-- TODOS OS BOTÕES IGUAIS -->
+                    <StackPane fx:id="btnEditar" styleClass="acao-btn" onMouseClicked="#handleEditar">
+                        <Label styleClass="acao-btn-label" text="Editar"/>
+                    </StackPane>
+
+                    <StackPane fx:id="btnExcluir" styleClass="acao-btn" onMouseClicked="#handleExcluir">
+                        <Label styleClass="acao-btn-label" text="Excluir"/>
+                    </StackPane>
+
+                    <StackPane fx:id="btnImprimir" styleClass="acao-btn" onMouseClicked="#handleImprimir">
+                        <Label styleClass="acao-btn-label" text="🖨 Imprimir"/>
+                    </StackPane>
+                </HBox>
+
+                <!-- ÁREA DAS DUAS FOLHAS LADO A LADO -->
+                <ScrollPane fx:id="scrollPrincipal" styleClass="scroll-principal"
+                            fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED"
+                            VBox.vgrow="ALWAYS">
+
+                    <HBox styleClass="folhas-wrapper" spacing="32" alignment="TOP_CENTER">
+                        <padding><Insets top="20" right="30" bottom="30" left="30"/></padding>
+
+                        <!-- COLUNA: PROVA SEM GABARITO -->
+                        <VBox spacing="8" alignment="TOP_CENTER">
+                            <Label styleClass="coluna-titulo" text="Prova"/>
+                            <VBox fx:id="folhaSemGabarito" styleClass="folhas-coluna" spacing="16" alignment="TOP_CENTER"/>
+                        </VBox>
+
+                        <!-- COLUNA: PROVA COM GABARITO -->
+                        <VBox spacing="8" alignment="TOP_CENTER">
+                            <Label styleClass="coluna-titulo" text="Prova com gabarito"/>
+                            <VBox fx:id="folhaComGabarito" styleClass="folhas-coluna" spacing="16" alignment="TOP_CENTER"/>
+                        </VBox>
+
+                    </HBox>
+                </ScrollPane>
+
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

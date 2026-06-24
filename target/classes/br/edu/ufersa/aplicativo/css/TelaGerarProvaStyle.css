@@ -1,0 +1,250 @@
+/* ============================================================
+   TelaGerarProvaStyle.css — Gerador de Provas
+   1280 x 750
+   Segue a mesma paleta da TelaInicialStyle.css
+   ============================================================ */
+
+.root-main {
+    -fx-background-color: #6EA2B3;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+.topbar {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-background-color: transparent;
+}
+
+.topbar-brand {
+    -fx-background-color: #001D39;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+}
+.topbar-brand-label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.topbar-title-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-height: 52;
+}
+
+.topbar-title-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-height: 52;
+}
+
+.topbar-icon-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+.sidebar {
+    -fx-background-color: #0A4174;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-padding: 16 0 0 0;
+    -fx-spacing: 2;
+}
+
+.menu-item {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.20);
+}
+
+.menu-item-selected {
+    -fx-background-color: rgba(189, 216, 233, 0.40);
+}
+
+.menu-item-selected:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.50);
+}
+
+.menu-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.menu-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ── ÁREA CENTRAL ───────────────────────────────────────────── */
+.content-area {
+    -fx-background-color: #6EA2B3;
+}
+
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.content-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.gerar-container {
+    -fx-background-color: transparent;
+}
+
+/* ── CARDS DE OPÇÃO (GERAR ALEATÓRIO / GERAR MANUAL) ──────────── */
+.opcao-card {
+    -fx-background-color: #BDD8E9;
+    -fx-background-radius: 8;
+    -fx-min-height: 130;
+    -fx-pref-height: 130;
+    -fx-max-height: 150;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 2);
+}
+
+.opcao-card:hover {
+    -fx-background-color: #a8c8dc;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.28), 8, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.opcao-icon {
+    -fx-font-size: 34px;
+    -fx-text-fill: #000000;
+}
+
+.opcao-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* ── PAINEL DE CONFIGURAÇÃO ────────────────────────────────────── */
+.config-panel {
+    -fx-background-color: #BDD8E9;  /* Mude de #7DACBC para #BDD8E9 */
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 4, 0, 0, 2);
+}
+
+.form-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.quantidade-header-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+.form-field {
+    -fx-background-color: white;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+    -fx-padding: 6 10 6 10;
+    -fx-font-size: 13px;
+    -fx-text-fill: #001D39;
+}
+
+.form-field-small {
+    -fx-background-color: white;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+    -fx-padding: 5 8 5 8;
+    -fx-font-size: 13px;
+    -fx-text-fill: #001D39;
+}
+
+/* ================================================================
+   RADIO BUTTONS CORRIGIDOS
+   ================================================================ */
+.radio-nivel {
+    -fx-font-size: 13px;
+    -fx-alignment: center;
+}
+
+.radio-nivel .radio {
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-background-color: white;
+    -fx-border-width: 2px;
+}
+
+/* Remove o ponto padrão quando NÃO selecionado */
+.radio-nivel .dot {
+    -fx-pref-width: 10px;
+    -fx-pref-height: 10px;
+    -fx-background-color: transparent;  /* Muda de #3498db para transparent */
+    -fx-background-radius: 50%;
+    -fx-opacity: 0;  /* Adiciona opacidade 0 quando não selecionado */
+}
+
+/* Mostra o ponto apenas quando selecionado */
+.radio-nivel:selected .dot {
+    -fx-background-color: #3498db;
+    -fx-opacity: 1;
+}
+
+/* Estilo para quando está selecionado */
+.radio-nivel:selected .radio {
+    -fx-border-color: #3498db;
+    -fx-background-color: white;
+}
+
+/* Estilo para quando está desabilitado */
+.radio-nivel:disabled .radio {
+    -fx-border-color: #dce1e8;
+    -fx-background-color: #f5f5f5;
+}
+
+.radio-nivel:disabled .dot {
+    -fx-background-color: transparent;
+    -fx-opacity: 0;
+}
+
+.radio-nivel:disabled:selected .dot {
+    -fx-background-color: #bdc3c7;
+    -fx-opacity: 1;
+}
+
+
+
+/* ── COMBOBOX ────────────────────────────────────────────────── */
+.nivel-combo {
+    -fx-background-color: white;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+    -fx-padding: 4 8 4 8;
+    -fx-font-size: 13px;
+    -fx-text-fill: #001D39;
+}
+
+.nivel-combo .arrow-button {
+    -fx-background-color: transparent;
+}

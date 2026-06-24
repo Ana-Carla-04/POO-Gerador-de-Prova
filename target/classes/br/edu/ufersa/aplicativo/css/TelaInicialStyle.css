@@ -1,0 +1,238 @@
+/* ============================================================
+   TelaInicialStyle.css — Gerador de Provas
+   1280 x 750
+   ============================================================ */
+
+.root-main {
+    -fx-background-color: #6EA2B3;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+.topbar {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-background-color: transparent;
+}
+/*quadrado do GERADOR DE PROVAS*/
+.topbar-brand {
+    -fx-background-color: #001D39;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+}
+.topbar-brand-label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/*quadrado de cima, a faixa de cima*/
+.topbar-title-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-height: 52;
+}
+
+.topbar-title-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-width: 59;
+    -fx-pref-height: 55;
+    -fx-alignment: CENTER;
+}
+
+.topbar-icon-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 20px;
+}
+
+/* ── SIDEBAR(barra lateral) ────────────────────────────────────────────────── */
+.sidebar {
+    -fx-background-color: #0A4174;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-padding: 16 0 0 0;
+    -fx-spacing: 2;
+}
+
+.menu-item {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.20);
+}
+
+/* Item selecionado — #BDD8E9 com 40% */
+.menu-item-selected {
+    -fx-background-color: rgba(189, 216, 233, 0.40);
+}
+
+.menu-item-selected:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.50);
+}
+
+.menu-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.menu-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ── ÁREA CENTRAL ───────────────────────────────────────────── */
+.content-area {
+    -fx-background-color: #6EA2B3;
+}
+
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.content-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.disciplinas-grid {
+    -fx-background-color: transparent;
+}
+
+/* ── CARDS DE DISCIPLINA (#BDD8E9) ──────────────────────────── */
+.disciplina-card {
+    -fx-background-color: #BDD8E9;
+    -fx-background-radius: 6;
+    -fx-min-height: 160;          /* Altura mínima */
+    -fx-pref-height: 160;         /* Altura preferencial */
+    -fx-max-height: 150;          /* Altura máxima */
+
+    -fx-min-width: 250;           /* Largura mínima */
+    -fx-pref-width: 300;          /* Largura preferencial */
+    -fx-max-width: 350;           /* Largura máxima */
+
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 2);
+}
+
+.disciplina-card:hover {
+    -fx-background-color: #a8c8dc;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.28), 8, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.disciplina-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+}
+
+/* ── FAB (#538CC0) — círculo canto inferior direito ─────────── */
+.fab-button {
+    -fx-background-color: #538CC0;
+    -fx-background-radius: 50%;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+
+    -fx-pref-width: 75;
+    -fx-pref-height: 75;
+    -fx-min-width: 75;
+    -fx-min-height: 75;
+    -fx-max-width: 75;
+    -fx-max-height: 75;
+
+    -fx-text-fill: black;
+    -fx-font-size: 23px;
+    -fx-cursor: hand;
+    /* sombra para "flutuar" sobre os cards */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0, 0, 4);
+}
+
+.fab-button:hover {
+    -fx-background-color: #3a6fa0;
+    -fx-scale-x: 1.10;
+    -fx-scale-y: 1.10;
+}
+
+.fab-button:pressed {
+    -fx-scale-x: 0.93;
+    -fx-scale-y: 0.93;
+    -fx-background-color: #2d5a88;
+}
+
+/* ── POPUP DE OPÇÕES ────────────────────────────────────────────── */
+.popup-overlay {
+    -fx-background-color: transparent;
+}
+
+.popup-content {
+    -fx-background-color: #0A4174;
+    -fx-background-radius: 12;
+    -fx-padding: 16 20 16 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 5);
+}
+
+.popup-item {
+    -fx-background-color: rgba(189, 216, 233, 0.15);
+    -fx-background-radius: 6;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+    -fx-min-width: 180;
+}
+
+.popup-item:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.35);
+}
+
+/* ── BOTÃO EXCLUIR DISCIPLINA ─────────────────────────────────── */
+.btn-excluir-disciplina {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cc0000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0 6 0 6;
+    -fx-background-radius: 50%;
+    -fx-min-width: 28;
+    -fx-min-height: 28;
+    -fx-max-width: 28;
+    -fx-max-height: 28;
+}
+
+.btn-excluir-disciplina:hover {
+    -fx-background-color: rgba(204, 0, 0, 0.15);
+    -fx-background-radius: 50%;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+}
+
+.btn-excluir-disciplina:pressed {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+    -fx-text-fill: #990000;
+}
+
+/* Estilo para o card com hover */
+.disciplina-card:hover .btn-excluir-disciplina {
+    -fx-opacity: 1.0;
+}
+
+.btn-excluir-disciplina {
+    -fx-opacity: 0.6;
+}

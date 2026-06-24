@@ -1,0 +1,390 @@
+/* ============================================================
+   QuestoesStyle.css — Gerador de Provas
+   ============================================================ */
+
+.root-main {
+    -fx-background-color: #6EA2B3;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* TOPBAR */
+.topbar {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-background-color: transparent;
+}
+
+.topbar-brand {
+    -fx-background-color: #001D39;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+}
+
+.topbar-brand-label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.topbar-title-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-height: 52;
+}
+
+.topbar-title-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-width: 56;
+    -fx-min-width: 56;
+    -fx-max-width: 56;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.topbar-icon-area:hover {
+    -fx-background-color: #6A9FB0;
+}
+
+/* Classe específica para a seta */
+.topbar-seta-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 28px;        /* ← Tamanho da seta */
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* SIDEBAR */
+.sidebar {
+    -fx-background-color: #0A4174;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-padding: 16 0 0 0;
+    -fx-spacing: 2;
+}
+
+.menu-item {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.20);
+}
+
+.menu-item-selected {
+    -fx-background-color: rgba(189, 216, 233, 0.40);
+}
+
+.menu-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.menu-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ÁREA CENTRAL */
+.content-area {
+    -fx-background-color: #6EA2B3;
+}
+
+.painel-branco {
+    -fx-background-color: #E5E5E5;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 10, 0, 0, 3);
+}
+
+.nivel-combo {
+    -fx-background-color: white;
+    -fx-background-radius: 4;
+    -fx-border-color: #BDD8E9;
+    -fx-border-radius: 4;
+    -fx-font-size: 13px;
+}
+
+.lista-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.lista-container {
+    -fx-background-color: transparent;
+}
+
+.questao-item {
+    -fx-background-color: #BDD8E9;
+    -fx-background-radius: 4;
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+}
+
+.questao-item:hover {
+    -fx-background-color: #a8c8dc;
+}
+
+.questao-item-selected {
+    -fx-background-color: #7AAFC0;
+}
+
+.questao-item-selected .questao-item-label {
+    -fx-text-fill: white;
+}
+
+.questao-item-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+}
+
+.painel-detalhe {
+    -fx-background-color: rgba(78, 142, 162, 0.42);
+    -fx-background-radius: 4;
+}
+.det-label-enunciado {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: normal;
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1); /* Sombra no texto */
+
+}
+
+.det-bold {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1); /* Sombra no texto */
+}
+
+.det-normal {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1); /* Sombra no texto */
+}
+
+.det-codigo {
+    -fx-text-fill: #C0392B;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1); /* Sombra no texto */
+}
+
+.det-tipo {
+    -fx-text-fill: #8E44AD;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1); /* Sombra no texto */
+}
+
+.det-gabarito {
+    -fx-text-fill: #C0392B;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1); /* Sombra no texto */
+}
+
+.btn-acao {
+    -fx-background-color: #BDD8E9;
+    -fx-background-radius: 4;
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 24;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 3, 0, 0, 1); /* Sombra no texto */
+}
+
+.btn-acao:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+
+}
+
+.btn-acao:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* Estilos adicionais para elementos específicos da view QuestoesView */
+
+/* Ajuste para o GridPane dentro do painel de detalhe */
+.painel-detalhe .grid-pane {
+    -fx-hgap: 30;
+    -fx-vgap: 3;
+}
+
+.painel-detalhe .grid-pane .label {
+    -fx-font-size: 13px;
+}
+
+/* Estilo para os campos de texto que podem ser editáveis */
+.text-field-editable {
+    -fx-background-color: white;
+    -fx-background-radius: 4;
+    -fx-border-color: #BDD8E9;
+    -fx-border-radius: 4;
+    -fx-padding: 4 8;
+}
+
+/* Estilo para o container do gabarito */
+.gabarito-container {
+    -fx-spacing: 4;
+}
+
+/* Estilo para labels de alternativas */
+.alternativa-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 13px;
+}
+
+.alternativa-correta {
+    -fx-text-fill: #27AE60;
+    -fx-font-weight: bold;
+}
+
+/* Estilo para scrollbars personalizadas */
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #E5E5E5;
+    -fx-border-color: #BDD8E9;
+    -fx-background-radius: 5;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #7AAFC0;
+    -fx-background-radius: 5;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #6A9FB0;
+}
+
+/* Estilo para separadores */
+.separator-line {
+    -fx-background-color: #BDD8E9;
+    -fx-pref-height: 1;
+}
+
+/* Estilos para estados de hover e foco em campos */
+.combo-box:focused {
+    -fx-border-color: #6EA2B3;
+    -fx-border-width: 2;
+}
+
+.button:focused {
+    -fx-border-color: #6EA2B3;
+    -fx-border-width: 1;
+}
+
+/* Estilo para mensagens de status ou informação */
+.status-message {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
+
+.status-error {
+    -fx-text-fill: #C0392B;
+    -fx-font-weight: bold;
+}
+
+.status-success {
+    -fx-text-fill: #27AE60;
+    -fx-font-weight: bold;
+}
+
+/* Estilo para tooltips personalizados */
+.tooltip-custom {
+    -fx-background-color: #001D39;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-background-radius: 4;
+    -fx-padding: 8 12;
+}
+
+/* Ajustes responsivos para a área de detalhe */
+.detalhe-content {
+    -fx-spacing: 12;
+    -fx-padding: 16;
+}
+
+.detalhe-row {
+    -fx-spacing: 4;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Estilo para o cabeçalho do detalhe */
+.detalhe-header {
+    -fx-background-color: rgba(0, 29, 57, 0.08);
+    -fx-background-radius: 4;
+    -fx-padding: 8 12;
+    -fx-border-radius: 4;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CAIXINHAS AO REDOR DOS LABELS
+   ════════════════════════════════════════════════════════════════ */
+
+/* Caixinha do título (ex: "Questão :", "Nível :", "tipo:") */
+.caixinha {
+    -fx-background-color: rgba(0, 29, 57, 0.12);
+    -fx-background-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+
+/* Caixinha do valor (ex: "QST001", "Nível 2") */
+.caixinha-valor {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-min-width: 60;
+}
+
+/* Caixinha do enunciado (maior) */
+.caixinha-valor-enunciado {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+
+/* Caixinha do gabarito */
+.caixinha-gabarito {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}

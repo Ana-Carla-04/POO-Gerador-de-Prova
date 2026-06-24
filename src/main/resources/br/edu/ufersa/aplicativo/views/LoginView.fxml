@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+    prefWidth="1280"
+    prefHeight="750"
+    styleClass="root"
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="br.edu.ufersa.aplicativo.controlles.LoginController">
+
+    <center>
+
+        <!-- ═══════════════════════════════════════════
+             CARD CENTRAL  (#0A4174)
+             ═══════════════════════════════════════════ -->
+        <VBox
+            styleClass="login-panel"
+            alignment="CENTER"
+            spacing="20"
+            BorderPane.alignment="CENTER">
+
+            <padding>
+                <Insets top="48" right="40" bottom="44" left="40"/>
+            </padding>
+
+            <!-- ── TÍTULO ───────────────────────────── -->
+            <Label
+                styleClass="title-label"
+                text="GERADOR DE PROVAS"
+                maxWidth="340"/>
+
+            <!-- ── BOX LOGIN ────────────────────────── -->
+            <StackPane styleClass="login-box">
+                <Label styleClass="login-box-label" text="LOGIN"/>
+            </StackPane>
+
+            <!-- espaço entre login-box e campos -->
+            <Region prefHeight="8"/>
+
+            <!-- ── CAMPO E-MAIL ─────────────────────── -->
+            <!--
+                HBox = field-row (borda arredondada)
+                  StackPane = icon-box  (40% opacidade, ícone envelope)
+                  Region    = separador vertical
+                  TextField = input-text (80% opacidade)
+            -->
+            <HBox styleClass="field-row" alignment="CENTER_LEFT">
+                <StackPane styleClass="icon-box">
+                    <!-- ícone envelope Unicode -->
+                    <Label styleClass="icon-label" text="&#9993;"/>
+                </StackPane>
+                <Region styleClass="field-separator"/>
+                <TextField
+                    fx:id="emailField"
+                    styleClass="input-text"
+                    promptText="Digite seu Email"/>
+            </HBox>
+
+            <!-- ── CAMPO SENHA ──────────────────────── -->
+            <HBox styleClass="field-row" alignment="CENTER_LEFT">
+                <StackPane styleClass="icon-box">
+                    <!-- ícone cadeado Unicode -->
+                    <Label styleClass="icon-label" text="&#128274;"/>
+                </StackPane>
+                <Region styleClass="field-separator"/>
+                <PasswordField
+                    fx:id="passwordField"
+                    styleClass="input-password"
+                    promptText="Digite sua Senha"/>
+            </HBox>
+
+            <!-- espaço antes do botão -->
+            <Region prefHeight="14"/>
+
+            <!-- ── BOTÃO ENTRAR ─────────────────────── -->
+            <Button
+                fx:id="loginButton"
+                styleClass="login-button"
+                text="Entrar"
+                onAction="#handleLogin"/>
+
+            <!-- ── LINK CADRATRE-SE ─────────────────── -->
+            <Hyperlink
+                fx:id="registerLink"
+                styleClass="register-link"
+                text="Cadratre-se"
+                onAction="#handleRegister"/>
+
+        </VBox>
+
+    </center>
+
+</BorderPane>

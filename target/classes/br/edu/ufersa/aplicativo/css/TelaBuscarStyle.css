@@ -1,0 +1,336 @@
+/* ============================================================
+   TelaBuscarStyle.css — Gerador de Provas
+   1280 x 750  |  Tela: Buscar
+   ============================================================ */
+
+.root-main {
+    -fx-background-color: #6EA2B3;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+.topbar {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-background-color: transparent;
+}
+
+.topbar-brand {
+    -fx-background-color: #001D39;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+}
+
+.topbar-brand-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.topbar-title-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+}
+
+.topbar-title-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-width: 56;
+    -fx-min-width: 56;
+    -fx-max-width: 56;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.topbar-icon-area:hover {
+    -fx-background-color: #6A9FB0;
+}
+
+.topbar-seta-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 20px;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+.sidebar {
+    -fx-background-color: #0A4174;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-padding: 16 0 0 0;
+    -fx-spacing: 2;
+}
+
+.menu-item {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.20);
+}
+
+.menu-item-selected {
+    -fx-background-color: rgba(189, 216, 233, 0.40);
+}
+
+.menu-item-selected:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.50);
+}
+
+.menu-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.menu-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ── ÁREA CENTRAL ───────────────────────────────────────────── */
+.content-area {
+    -fx-background-color: #6EA2B3;
+}
+
+/* ── CARD DA LISTA ──────────────────────────────────────────── */
+.lista-card {
+    -fx-background-color: #BDD8E9;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 10, 0, 0, 3);
+    -fx-min-height: 400;
+    -fx-pref-height: 560;
+    -fx-min-width: 700;
+    -fx-pref-width: 660;
+}
+
+.lista-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.lista-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.lista-container {
+    -fx-background-color: transparent;
+}
+
+/* ── ITEM DA LISTA ──────────────────────────────────────────── */
+.lista-item {
+    -fx-background-color: #9BBFD3;
+    -fx-background-radius: 5;
+    -fx-pref-height: 38;
+    -fx-min-height: 38;
+    -fx-cursor: hand;
+    -fx-padding: 0 12 0 12;
+}
+
+.lista-item:hover {
+    -fx-background-color: #82afc6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 1);
+}
+
+.lista-item-selected {
+    -fx-background-color: #538CC0;
+}
+
+.lista-item-selected:hover {
+    -fx-background-color: #3a6fa0;
+}
+
+.lista-item-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 14px;
+}
+
+.lista-item-label-selected {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ── PAINEL DE FILTROS ──────────────────────────────────────── */
+.filtro-section-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* Selector principal (selecione ∨) */
+.filtro-selector {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #7AAFC0;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-pref-height: 32;
+}
+
+.filtro-selector:hover {
+    -fx-background-color: #eef6fb;
+    -fx-border-color: #4a8fa8;
+}
+
+.filtro-selector-label {
+    -fx-text-fill: #666666;
+    -fx-font-size: 13px;
+}
+
+.filtro-selector-label-active {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.filtro-arrow {
+    -fx-text-fill: #4a8fa8;
+    -fx-font-size: 12px;
+}
+
+/* Botões Prova / Questões */
+.tipo-btn {
+    -fx-background-color: #7AAFC0;
+    -fx-background-radius: 5;
+    -fx-pref-height: 36;
+    -fx-pref-width: 100;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 4, 0, 0, 1);
+}
+
+.tipo-btn:hover {
+    -fx-background-color: #4a8fa8;
+}
+
+.tipo-btn-selected {
+    -fx-background-color: #538CC0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 6, 0, 0, 2);
+}
+
+.tipo-btn-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.tipo-btn-label-selected {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Chips de sub-filtro */
+.chip-filtro {
+    -fx-background-color: #9BBFD3;
+    -fx-background-radius: 5;
+    -fx-pref-height: 30;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+    -fx-padding: 0 14 0 14;
+}
+
+.chip-filtro:hover {
+    -fx-background-color: #7AAFC0;
+}
+
+.chip-filtro-ativo {
+    -fx-background-color: #538CC0;
+}
+
+.chip-filtro-ativo:hover {
+    -fx-background-color: #3a6fa0;
+}
+
+.chip-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 13px;
+}
+
+.chip-label-ativo {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* ── POPUP FLUTUANTE ────────────────────────────────────────── */
+.popup-flutuante {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #7AAFC0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.28), 12, 0, 0, 4);
+}
+
+.popup-opcao {
+    -fx-cursor: hand;
+    -fx-text-fill: #001D39;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 8 8 8;
+    -fx-background-radius: 4;
+
+    /* Fundo com gradiente suave */
+    -fx-background-color: linear-gradient(
+            to bottom,
+            rgba(78, 142, 162, 0.35),
+            rgba(78, 142, 162, 0.20)
+    );
+
+    -fx-cursor: hand;
+    -fx-min-width: 200;
+    -fx-pref-height: 38;
+
+    -fx-border-color: rgba(78, 142, 162, 0.20);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(gaussian, rgba(78, 142, 162, 0.25), 4, 0, 0, 2);
+}
+
+.popup-opcao:hover {
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(
+            to bottom,
+            rgba(78, 142, 162, 0.70),
+            rgba(78, 142, 162, 0.50)
+    );
+    -fx-border-color: rgba(78, 142, 162, 0.50);
+    -fx-effect: dropshadow(gaussian, rgba(78, 142, 162, 0.5), 8, 0, 0, 4);
+}
+.popup-opcao:first-child {
+    -fx-background-radius: 4 4 0 0;
+}
+
+.popup-opcao:last-child {
+    -fx-background-radius: 0 0 4 4;
+}
+/* Separador dentro de popup */
+.popup-separator {
+    -fx-border-color: #BDD8E9;
+    -fx-border-width: 1 0 0 0;
+    -fx-pref-height: 1;
+}

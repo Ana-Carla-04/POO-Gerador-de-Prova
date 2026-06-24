@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        prefWidth="1280"
+        prefHeight="750"
+        styleClass="root-main"
+        stylesheets="@../css/TelaBuscarStyle.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.edu.ufersa.aplicativo.controlles.TelaBuscarController">
+
+    <!-- TOPBAR -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <StackPane styleClass="topbar-brand">
+                <Label styleClass="topbar-brand-label" text="Gerador de Provas"/>
+            </StackPane>
+            <HBox styleClass="topbar-title-area" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <padding><Insets left="24"/></padding>
+                <Label styleClass="topbar-title-label" text="Buscar"/>
+            </HBox>
+            <StackPane styleClass="topbar-icon-area" onMouseClicked="#handleVoltar">
+                <Label styleClass="topbar-seta-label" text="←"/>
+            </StackPane>
+            <StackPane styleClass="topbar-icon-area">
+                <Label styleClass="topbar-icon-label" text="&#128209;"/>
+            </StackPane>
+        </HBox>
+    </top>
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200">
+            <StackPane fx:id="menuDisciplinas" styleClass="menu-item" onMouseClicked="#handleMenuDisciplinas">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128209;"/>
+                    <Label styleClass="menu-label" text="Disciplinas"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuBuscar" styleClass="menu-item, menu-item-selected" onMouseClicked="#handleMenuBuscar">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128269;"/>
+                    <Label styleClass="menu-label" text="Buscar"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuGerarProva" styleClass="menu-item" onMouseClicked="#handleMenuGerarProva">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128196;"/>
+                    <Label styleClass="menu-label" text="Gerar Prova"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128202;"/>
+                    <Label styleClass="menu-label" text="Relatório"/>
+                </HBox>
+            </StackPane>
+
+        </VBox>
+    </left>
+
+    <!-- CENTRO -->
+    <center>
+        <!-- StackPane raiz do centro: permite sobrepor popups -->
+        <StackPane fx:id="centerRoot" styleClass="content-area"
+                   onMouseClicked="#handleFecharTodosPopups">
+
+            <!-- LAYOUT PRINCIPAL (lista + filtros) -->
+            <HBox spacing="20" StackPane.alignment="CENTER">
+                <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+                <!-- ── CARD DA LISTA ──────────────────────── -->
+                <VBox styleClass="lista-card" prefWidth="440" minWidth="320" spacing="0">
+
+                    <ScrollPane fx:id="listaScroll" styleClass="lista-scroll"
+                                fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                                VBox.vgrow="ALWAYS">
+                        <VBox fx:id="listaContainer" styleClass="lista-container" spacing="6">
+                            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                            <!-- itens gerados pelo controller -->
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+
+                <!-- ── PAINEL DE FILTROS ──────────────────── -->
+                <VBox spacing="16" alignment="TOP_LEFT" prefWidth="220">
+
+                    <!-- Seletor principal: Prova / Questões -->
+                    <VBox spacing="8">
+                        <Label styleClass="filtro-section-label" text="Filtrar por:"/>
+
+                        <!-- Botão selector tipo -->
+                        <StackPane fx:id="selectorTipo" styleClass="filtro-selector"
+                                   onMouseClicked="#handleAbrirPopupTipo">
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <padding><Insets left="5" right="5" top="5" bottom="5"/></padding>
+                                <Label fx:id="selectorTipoLabel" styleClass="filtro-selector-label"
+                                       text="selecione" HBox.hgrow="ALWAYS"/>
+                                <Label styleClass="filtro-arrow" text="∨"/>
+                            </HBox>
+                        </StackPane>
+
+                        <!-- Botões Prova / Questões (aparecem após escolha) -->
+                        <HBox fx:id="boxTipoBotoes" spacing="8" visible="false" managed="false">
+                            <StackPane fx:id="btnProva" styleClass="tipo-btn"
+                                       onMouseClicked="#handleSelecionarProva">
+                                <Label styleClass="tipo-btn-label" text="Prova"/>
+                            </StackPane>
+                            <StackPane fx:id="btnQuestoes" styleClass="tipo-btn"
+                                       onMouseClicked="#handleSelecionarQuestoes">
+                                <Label styleClass="tipo-btn-label" text="Questões"/>
+                            </StackPane>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Sub-filtros Prova (disciplina + semestre) -->
+                    <VBox fx:id="subfiltroProva" spacing="8" visible="false" managed="false">
+                        <Label styleClass="filtro-section-label" text="Filtrar prova por:"/>
+
+                        <StackPane fx:id="chipDisciplinaProva" styleClass="chip-filtro"
+                                   onMouseClicked="#handleToggleChipDisciplinaProva">
+                            <Label styleClass="chip-label" text="disciplina"/>
+                        </StackPane>
+
+                        <StackPane fx:id="chipSemestre" styleClass="chip-filtro"
+                                   onMouseClicked="#handleToggleChipSemestre">
+                            <Label styleClass="chip-label" text="semestre"/>
+                        </StackPane>
+                    </VBox>
+
+                    <!-- Sub-filtros Questões (disciplina + assunto + dificuldade) -->
+                    <VBox fx:id="subfiltroQuestoes" spacing="8" visible="false" managed="false">
+                        <Label styleClass="filtro-section-label" text="Filtrar questão por:"/>
+
+                        <StackPane fx:id="chipDisciplinaQuest" styleClass="chip-filtro"
+                                   onMouseClicked="#handleToggleChipDisciplinaQuest">
+                            <Label styleClass="chip-label" text="disciplina"/>
+                        </StackPane>
+
+                        <StackPane fx:id="chipAssunto" styleClass="chip-filtro"
+                                   onMouseClicked="#handleToggleChipAssunto">
+                            <Label styleClass="chip-label" text="assuntos"/>
+                        </StackPane>
+
+                        <StackPane fx:id="chipDificuldade" styleClass="chip-filtro"
+                                   onMouseClicked="#handleToggleChipDificuldade">
+                            <Label styleClass="chip-label" text="dificuldade"/>
+                        </StackPane>
+                    </VBox>
+
+                </VBox>
+            </HBox>
+
+            <!-- ── POPUP TIPO (Prova / Questões) ─────────────────────── -->
+            <VBox fx:id="popupTipo" styleClass="popup-flutuante" spacing="4"
+                  maxWidth="180" visible="false" managed="false"
+                  StackPane.alignment="TOP_LEFT" onMouseClicked="#handleConsumir">
+                <padding><Insets top="10" bottom="10" left="12" right="12"/></padding>
+                <Label fx:id="popupOpcaoProva"    styleClass="popup-opcao" text="Prova"
+                       onMouseClicked="#handlePopupEscolherProva"/>
+                <Label fx:id="popupOpcaoQuestoes" styleClass="popup-opcao" text="Questões"
+                       onMouseClicked="#handlePopupEscolherQuestoes"/>
+            </VBox>
+
+            <!-- ── POPUP DISCIPLINA PROVA ─────────────────────────────── -->
+            <VBox fx:id="popupDisciplinaProva" styleClass="popup-flutuante" spacing="4"
+                  maxWidth="200" visible="false" managed="false"
+                  StackPane.alignment="TOP_LEFT" onMouseClicked="#handleConsumir">
+                <padding><Insets top="10" bottom="10" left="12" right="12"/></padding>
+                <!-- preenchido pelo controller -->
+            </VBox>
+
+            <!-- ── POPUP SEMESTRE ─────────────────────────────────────── -->
+            <VBox fx:id="popupSemestre" styleClass="popup-flutuante" spacing="4"
+                  maxWidth="200" visible="false" managed="false"
+                  StackPane.alignment="TOP_LEFT" onMouseClicked="#handleConsumir">
+                <padding><Insets top="10" bottom="10" left="12" right="12"/></padding>
+            </VBox>
+
+            <!-- ── POPUP DISCIPLINA QUESTÕES ──────────────────────────── -->
+            <VBox fx:id="popupDisciplinaQuest" styleClass="popup-flutuante" spacing="4"
+                  maxWidth="200" visible="false" managed="false"
+                  StackPane.alignment="TOP_LEFT" onMouseClicked="#handleConsumir">
+                <padding><Insets top="10" bottom="10" left="12" right="12"/></padding>
+            </VBox>
+
+            <!-- ── POPUP ASSUNTO ──────────────────────────────────────── -->
+            <VBox fx:id="popupAssunto" styleClass="popup-flutuante" spacing="4"
+                  maxWidth="200" visible="false" managed="false"
+                  StackPane.alignment="TOP_LEFT" onMouseClicked="#handleConsumir">
+                <padding><Insets top="10" bottom="10" left="12" right="12"/></padding>
+            </VBox>
+
+            <!-- ── POPUP DIFICULDADE ──────────────────────────────────── -->
+            <VBox fx:id="popupDificuldade" styleClass="popup-flutuante" spacing="4"
+                  maxWidth="200" visible="false" managed="false"
+                  StackPane.alignment="TOP_LEFT" onMouseClicked="#handleConsumir">
+                <padding><Insets top="10" bottom="10" left="12" right="12"/></padding>
+                <Label styleClass="popup-opcao" text="Fácil"    onMouseClicked="#handleEscolherDificuldade"/>
+                <Label styleClass="popup-opcao" text="Médio"    onMouseClicked="#handleEscolherDificuldade"/>
+                <Label styleClass="popup-opcao" text="Difícil"  onMouseClicked="#handleEscolherDificuldade"/>
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

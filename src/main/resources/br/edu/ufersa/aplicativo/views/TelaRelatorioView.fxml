@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        prefWidth="1280"
+        prefHeight="750"
+        styleClass="root-main"
+        stylesheets="@../css/TelaRelatorioStyle.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.edu.ufersa.aplicativo.controlles.TelaRelatorioController">
+
+    <!-- TOPBAR -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <StackPane styleClass="topbar-brand">
+                <Label styleClass="topbar-brand-label" text="Gerador de Provas"/>
+            </StackPane>
+            <HBox styleClass="topbar-title-area" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <padding><Insets left="24"/></padding>
+                <Label fx:id="topbarTitle" styleClass="topbar-title-label" text="Relatório"/>
+            </HBox>
+            <StackPane styleClass="topbar-icon-area">
+                <Label styleClass="topbar-icon-label" text="&#128209;"/>
+            </StackPane>
+        </HBox>
+    </top>
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200">
+            <StackPane fx:id="menuDisciplinas" styleClass="menu-item" onMouseClicked="#handleMenuDisciplinas">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128209;"/>
+                    <Label styleClass="menu-label" text="Disciplinas"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuBuscar" styleClass="menu-item" onMouseClicked="#handleMenuBuscar">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128269;"/>
+                    <Label styleClass="menu-label" text="Buscar"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuGerarProva" styleClass="menu-item" onMouseClicked="#handleMenuGerarProva">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128196;"/>
+                    <Label styleClass="menu-label" text="Gerar Prova"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128202;"/>
+                    <Label styleClass="menu-label" text="Relatório"/>
+                </HBox>
+            </StackPane>
+        </VBox>
+    </left>
+
+    <!-- CENTRO -->
+    <center>
+        <AnchorPane styleClass="content-area">
+            <VBox
+                    AnchorPane.topAnchor="0"
+                    AnchorPane.bottomAnchor="0"
+                    AnchorPane.leftAnchor="0"
+                    AnchorPane.rightAnchor="0"
+                    spacing="0">
+
+                <!-- BARRA DE FILTROS -->
+                <HBox styleClass="filter-bar" alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets top="14" right="20" bottom="14" left="20"/></padding>
+
+                    <Label styleClass="filter-label" text="Filtrar por:"/>
+
+                    <!-- Combo de tipo de filtro -->
+                    <ComboBox
+                            fx:id="comboTipoFiltro"
+                            styleClass="filter-combo"
+                            promptText="filtro"
+                            onAction="#handleTipoFiltroChanged"
+                            prefWidth="160"/>
+
+                    <!-- Combo de valor do filtro (aparece após selecionar tipo) -->
+                    <ComboBox
+                            fx:id="comboValorFiltro"
+                            styleClass="filter-combo"
+                            promptText="selecione..."
+                            onAction="#handleValorFiltroChanged"
+                            prefWidth="200"
+                            visible="false"
+                            managed="false"/>
+
+                    <!-- Botão limpar filtro -->
+                    <Button
+                            fx:id="btnLimparFiltro"
+                            styleClass="btn-limpar"
+                            text="✕ Limpar"
+                            onAction="#handleLimparFiltro"
+                            visible="false"
+                            managed="false"/>
+
+                    <!-- Label de resultado -->
+                    <Label fx:id="labelResultado" styleClass="resultado-label" text=""/>
+                </HBox>
+
+                <!-- ÁREA DE CARDS COM SCROLL -->
+                <ScrollPane
+                        fx:id="scrollPane"
+                        styleClass="content-scroll"
+                        fitToWidth="true"
+                        VBox.vgrow="ALWAYS"
+                        hbarPolicy="NEVER"
+                        vbarPolicy="AS_NEEDED">
+
+                    <GridPane
+                            fx:id="provasGrid"
+                            styleClass="provas-grid"
+                            hgap="16"
+                            vgap="16">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                        <!-- Definindo 3 colunas com largura igual -->
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33.33" halignment="CENTER" hgrow="ALWAYS"/>
+                            <ColumnConstraints percentWidth="33.33" halignment="CENTER" hgrow="ALWAYS"/>
+                            <ColumnConstraints percentWidth="33.34" halignment="CENTER" hgrow="ALWAYS"/>
+                        </columnConstraints>
+                    </GridPane>
+                </ScrollPane>
+
+            </VBox>
+        </AnchorPane>
+    </center>
+</BorderPane>

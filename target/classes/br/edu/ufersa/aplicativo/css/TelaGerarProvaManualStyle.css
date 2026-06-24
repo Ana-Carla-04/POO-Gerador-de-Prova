@@ -1,0 +1,410 @@
+/* ============================================================
+   TelaGerarProvaManualStyle.css — Gerador de Provas
+   1280 x 750  |  Tela: Gerar Provas (multipla escolha)
+   ============================================================ */
+
+.root-main {
+    -fx-background-color: #6EA2B3;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+.topbar {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-background-color: transparent;
+}
+
+.topbar-brand {
+    -fx-background-color: #001D39;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+}
+
+.topbar-brand-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.topbar-title-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+}
+
+.topbar-title-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-area {
+    -fx-background-color: #7AAFC0;
+    -fx-pref-width: 56;
+    -fx-min-width: 56;
+    -fx-max-width: 56;
+    -fx-pref-height: 52;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.topbar-icon-area:hover {
+    -fx-background-color: #6A9FB0;
+}
+
+.topbar-seta-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.topbar-icon-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 20px;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+.sidebar {
+    -fx-background-color: #0A4174;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 200;
+    -fx-padding: 16 0 0 0;
+    -fx-spacing: 2;
+}
+
+.menu-item {
+    -fx-pref-height: 52;
+    -fx-min-height: 52;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.20);
+}
+
+.menu-item-selected {
+    -fx-background-color: rgba(189, 216, 233, 0.40);
+}
+
+.menu-item-selected:hover {
+    -fx-background-color: rgba(189, 216, 233, 0.50);
+}
+
+.menu-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.menu-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ── ÁREA CENTRAL ───────────────────────────────────────────── */
+.content-area {
+    -fx-background-color: #6EA2B3;
+}
+
+/* ── COMBOBOX (igual ao QuestoesView) ──────────────────────── */
+.form-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.nivel-combo {
+    -fx-background-color: white;
+    -fx-background-radius: 4;
+    -fx-border-color: #BDD8E9;
+    -fx-border-radius: 4;
+    -fx-font-size: 13px;
+    -fx-padding: 4 8;
+}
+
+.nivel-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.nivel-combo .arrow {
+    -fx-background-color: #001D39;
+}
+
+.nivel-combo .list-cell {
+    -fx-text-fill: #001D39;
+    -fx-padding: 4 8;
+}
+
+.nivel-combo .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #BDD8E9;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.nivel-combo .list-view .list-cell:hover {
+    -fx-background-color: #BDD8E9;
+}
+
+.nivel-combo .list-view .list-cell:selected {
+    -fx-background-color: #7AAFC0;
+    -fx-text-fill: white;
+}
+
+/* ── CARD DA LISTA DE QUESTÕES ─────────────────────────────── */
+.lista-card {
+    -fx-background-color: #BDD8E9;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 10, 0, 0, 3);
+    -fx-min-height: 420;
+    -fx-pref-height: 460;
+}
+
+.lista-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.lista-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.lista-container {
+    -fx-background-color: transparent;
+}
+
+.lista-item {
+    -fx-background-color: #9BBFD3;
+    -fx-background-radius: 5;
+    -fx-pref-height: 36;
+    -fx-min-height: 36;
+    -fx-cursor: hand;
+    -fx-padding: 0 12 0 12;
+}
+
+.lista-item:hover {
+    -fx-background-color: #82afc6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 1);
+}
+
+.lista-item-ativa {
+    -fx-background-color: #538CC0;
+}
+
+.lista-item-ativa:hover {
+    -fx-background-color: #3a6fa0;
+}
+
+.lista-item-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 13px;
+}
+
+.lista-item-icone-off {
+    -fx-text-fill: #5c7d8c;
+    -fx-font-size: 14px;
+}
+
+.lista-item-icone-on {
+    -fx-text-fill: #1f8a3b;
+    -fx-font-size: 14px;
+}
+
+/* ── CARD DE DETALHE DA QUESTÃO ────────────────────────────── */
+.detalhe-card {
+    -fx-background-color: #BDD8E9;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 10, 0, 0, 3);
+    -fx-min-height: 420;
+    -fx-pref-height: 460;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CAIXINHAS AO REDOR DOS LABELS (igual QuestoesView)
+   ════════════════════════════════════════════════════════════════ */
+
+/* Caixinha do título (ex: "Questão :", "Nível :", "tipo:") */
+.caixinha {
+    -fx-background-color: rgba(0, 29, 57, 0.12);
+    -fx-background-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #001D39;
+}
+
+/* Caixinha do valor (ex: "QST001", "Nível 2") */
+.caixinha-valor {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-min-width: 60;
+    -fx-font-size: 14px;
+    -fx-text-fill: #001D39;
+    -fx-font-weight: normal;
+}
+
+/* Caixinha do enunciado (maior) */
+.caixinha-valor-enunciado {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-text-fill: #001D39;
+    -fx-font-weight: normal;
+}
+
+/* Caixinha do gabarito */
+.caixinha-gabarito {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+
+/* Container para linhas de informação com caixinhas */
+.linha-info {
+    -fx-spacing: 6;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 3 0;
+}
+
+/* Container para o gabarito com alternativas */
+.gabarito-linha {
+    -fx-spacing: 20;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 2 0;
+}
+
+/* Estilos para alternativas no gabarito - IGUAL AO QuestoesView */
+.det-normal {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+.det-gabarito {
+    -fx-text-fill: #C0392B;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+/* Estilo para o código da questão (vermelho igual ao QuestoesView) */
+.det-codigo {
+    -fx-text-fill: #C0392B;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+/* Caixinha para o status */
+.status-caixinha {
+    -fx-background-color: rgba(255, 255, 255, 0.50);
+    -fx-background-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: rgba(0, 29, 57, 0.15);
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+    -fx-min-width: 40;
+    -fx-alignment: CENTER;
+    -fx-font-size: 16px;
+}
+
+/* ── BOTÕES SELECIONAR / DESELECIONAR ──────────────────────── */
+.acao-btn {
+    -fx-background-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 1);
+    -fx-padding: 6 16 6 16;
+    -fx-min-width: 170;
+    -fx-pref-height: 32;
+}
+
+/* Botão SELECIONAR - Verde claro */
+.acao-btn-selecionar {
+    -fx-background-color: #D4EDDA;
+    -fx-border-color: #28A745;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.acao-btn-selecionar:hover {
+    -fx-background-color: #C3E6CB;
+    -fx-border-color: #1E7E34;
+}
+
+.acao-btn-selecionar:pressed {
+    -fx-background-color: #B0D9C0;
+    -fx-border-color: #1A6B2A;
+}
+
+/* Botão DESELECIONAR - Vermelho claro */
+.acao-btn-deselecionar {
+    -fx-background-color: #F8D7DA;
+    -fx-border-color: #DC3545;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.acao-btn-deselecionar:hover {
+    -fx-background-color: #F5C6CB;
+    -fx-border-color: #C82333;
+}
+
+.acao-btn-deselecionar:pressed {
+    -fx-background-color: #F1B0B7;
+    -fx-border-color: #BD2130;
+}
+
+.acao-label {
+    -fx-text-fill: #001D39;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.acao-icone {
+    -fx-font-size: 13px;
+}
+/* ── BOTÃO GERAR ────────────────────────────────────────────── */
+.gerar-btn {
+    -fx-background-color: #3A6FA0FF;
+    -fx-background-radius: 6;
+    -fx-pref-height: 40;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 6, 0, 0, 2);
+}
+
+.gerar-btn:hover {
+    -fx-background-color: #4a8fa8;
+}
+
+.gerar-btn-label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}

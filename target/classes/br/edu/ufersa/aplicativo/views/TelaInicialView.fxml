@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        prefWidth="1280"
+        prefHeight="750"
+        styleClass="root-main"
+        stylesheets="@../css/TelaInicialStyle.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.edu.ufersa.aplicativo.controlles.TelaInicialController">
+
+    <!-- TOPBAR -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <StackPane styleClass="topbar-brand">
+                <Label styleClass="topbar-brand-label" text="Gerador de Provas"/>
+            </StackPane>
+            <HBox styleClass="topbar-title-area" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <padding><Insets left="24"/></padding>
+                <Label fx:id="topbarTitle" styleClass="topbar-title-label"
+                       text="Disciplinas: Minhas Disciplinas"/>
+            </HBox>
+            <StackPane styleClass="topbar-icon-area">
+                <Label styleClass="topbar-icon-label" text="&#128209;"/>
+            </StackPane>
+        </HBox>
+    </top>
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200">
+            <StackPane fx:id="menuDisciplinas" styleClass="menu-item, menu-item-selected" onMouseClicked="#handleMenuDisciplinas">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128209;"/>
+                    <Label styleClass="menu-label" text="Disciplinas"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuBuscar" styleClass="menu-item" onMouseClicked="#handleMenuBuscar">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128269;"/>
+                    <Label styleClass="menu-label" text="Buscar"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuGerarProva" styleClass="menu-item" onMouseClicked="#handleMenuGerarProva">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128196;"/>
+                    <Label styleClass="menu-label" text="Gerar Prova"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128202;"/>
+                    <Label styleClass="menu-label" text="Relatório"/>
+                </HBox>
+            </StackPane>
+
+        </VBox>
+    </left>
+
+    <!-- CENTRO - GridPane VAZIO (preenchido pelo controller) -->
+    <center>
+        <AnchorPane styleClass="content-area">
+            <ScrollPane
+                    fx:id="scrollPane"
+                    styleClass="content-scroll"
+                    fitToWidth="true"
+                    fitToHeight="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    AnchorPane.topAnchor="0"
+                    AnchorPane.bottomAnchor="0"
+                    AnchorPane.leftAnchor="0"
+                    AnchorPane.rightAnchor="0">
+
+                <GridPane
+                        fx:id="disciplinasGrid"
+                        styleClass="disciplinas-grid"
+                        hgap="16"
+                        vgap="16">
+
+                    <padding>
+                        <Insets top="20" right="20" bottom="80" left="20"/>
+                    </padding>
+
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" minWidth="200"/>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" minWidth="200"/>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" minWidth="200"/>
+                    </columnConstraints>
+
+                    <rowConstraints>
+                        <RowConstraints vgrow="ALWAYS" minHeight="140" prefHeight="160"/>
+                        <RowConstraints vgrow="ALWAYS" minHeight="140" prefHeight="160"/>
+                        <RowConstraints vgrow="ALWAYS" minHeight="140" prefHeight="160"/>
+                    </rowConstraints>
+
+                    <!-- OS CARDS SERÃO ADICIONADOS DINAMICAMENTE PELO CONTROLLER -->
+
+                </GridPane>
+            </ScrollPane>
+
+            <!-- FAB -->
+            <Button
+                    fx:id="fabButton"
+                    styleClass="fab-button"
+                    text="&#128209;+"
+                    onAction="#handleAddDisciplina"
+                    AnchorPane.bottomAnchor="20"
+                    AnchorPane.rightAnchor="20"/>
+        </AnchorPane>
+    </center>
+</BorderPane>

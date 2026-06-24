@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        prefWidth="1280"
+        prefHeight="750"
+        styleClass="root-main"
+        stylesheets="@../css/TelaGerarProvaManualStyle.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.edu.ufersa.aplicativo.controlles.TelaGerarProvaManualController">
+
+    <!-- TOPBAR -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <StackPane styleClass="topbar-brand">
+                <Label styleClass="topbar-brand-label" text="Gerador de Provas"/>
+            </StackPane>
+            <HBox styleClass="topbar-title-area" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <padding><Insets left="24"/></padding>
+                <Label styleClass="topbar-title-label" text="Gerar Provas: multipla escolha"/>
+            </HBox>
+            <StackPane styleClass="topbar-icon-area" onMouseClicked="#handleVoltar">
+                <Label styleClass="topbar-seta-label" text="&#8594;"/>
+            </StackPane>
+            <StackPane styleClass="topbar-icon-area">
+                <Label styleClass="topbar-icon-label" text="&#128209;"/>
+            </StackPane>
+        </HBox>
+    </top>
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200">
+            <StackPane fx:id="menuDisciplinas" styleClass="menu-item" onMouseClicked="#handleMenuDisciplinas">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128209;"/>
+                    <Label styleClass="menu-label" text="Disciplinas"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuBuscar" styleClass="menu-item" onMouseClicked="#handleMenuBuscar">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128269;"/>
+                    <Label styleClass="menu-label" text="Buscar"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuGerarProva" styleClass="menu-item, menu-item-selected" onMouseClicked="#handleMenuGerarProva">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128196;"/>
+                    <Label styleClass="menu-label" text="Gerar Prova"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128202;"/>
+                    <Label styleClass="menu-label" text="Relatório"/>
+                </HBox>
+            </StackPane>
+
+        </VBox>
+    </left>
+
+    <!-- CENTRO -->
+    <center>
+        <StackPane fx:id="centerRoot" styleClass="content-area">
+
+            <VBox spacing="16" StackPane.alignment="TOP_CENTER">
+                <padding><Insets top="24" right="30" bottom="24" left="30"/></padding>
+
+                <!-- Selector nivel da questão (ComboBox igual ao QuestoesView) -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label styleClass="form-label" text="Nível:"/>
+                    <ComboBox fx:id="nivelCombo" styleClass="nivel-combo"
+                              prefWidth="150" promptText="nível da questão"/>
+                </HBox>
+
+                <!-- LAYOUT PRINCIPAL (lista + detalhe) -->
+                <HBox spacing="20" VBox.vgrow="ALWAYS">
+
+                    <!-- ── LISTA DE QUESTÕES ───────────────── -->
+                    <VBox styleClass="lista-card" prefWidth="260" minWidth="220" spacing="0">
+                        <ScrollPane fx:id="listaScroll" styleClass="lista-scroll"
+                                    fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                                    VBox.vgrow="ALWAYS">
+                            <VBox fx:id="listaContainer" styleClass="lista-container" spacing="8">
+                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                                <!-- itens gerados pelo controller -->
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+
+                    <!-- ── CARD DE DETALHE DA QUESTÃO ─────── -->
+                    <VBox fx:id="detalheCard" styleClass="detalhe-card" spacing="12" HBox.hgrow="ALWAYS">
+                        <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+                        <!-- Linha 1: Questão e Nível -->
+                        <HBox spacing="20">
+                            <HBox styleClass="linha-info">
+                                <Label styleClass="caixinha" text="Questão :"/>
+                                <Label fx:id="lblCodigo" styleClass="caixinha-valor det-codigo" text="codigo"/>
+                            </HBox>
+                            <HBox styleClass="linha-info">
+                                <Label styleClass="caixinha" text="Nível :"/>
+                                <Label fx:id="lblNivel" styleClass="caixinha-valor" text="-"/>
+                            </HBox>
+                        </HBox>
+
+                        <!-- Linha 2: Tipo -->
+                        <HBox styleClass="linha-info">
+                            <Label styleClass="caixinha" text="tipo:"/>
+                            <Label fx:id="lblTipo" styleClass="caixinha-valor" text="multipla escolha"/>
+                        </HBox>
+
+                        <!-- Enunciado -->
+                        <VBox spacing="4">
+                            <Label styleClass="caixinha" text="Enunciado:"/>
+                            <Label fx:id="lblEnunciado" styleClass="caixinha-valor-enunciado" wrapText="true"
+                                   text="Selecione uma questão na lista ao lado."/>
+                        </VBox>
+
+                        <!-- Gabarito -->
+                        <VBox spacing="4">
+                            <Label styleClass="caixinha" text="gabarito:"/>
+                            <VBox fx:id="boxGabarito" styleClass="caixinha-gabarito" spacing="4">
+                                <HBox fx:id="linhaAlt1" styleClass="gabarito-linha">
+                                    <Label fx:id="alt1a" styleClass="det-normal" text=""/>
+                                    <Label fx:id="alt1b" styleClass="det-normal" text=""/>
+                                </HBox>
+                                <HBox fx:id="linhaAlt2" styleClass="gabarito-linha">
+                                    <Label fx:id="alt2a" styleClass="det-normal" text=""/>
+                                    <Label fx:id="alt2b" styleClass="det-normal" text=""/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+
+                        <!-- Assunto, Disciplina e Status -->
+                        <HBox spacing="20">
+                            <HBox styleClass="linha-info">
+                                <Label styleClass="caixinha" text="Assunto:"/>
+                                <Label fx:id="lblAssunto" styleClass="caixinha-valor" text="-"/>
+                            </HBox>
+                            <HBox styleClass="linha-info">
+                                <Label styleClass="caixinha" text="disciplina:"/>
+                                <Label fx:id="lblDisciplina" styleClass="caixinha-valor" text="-"/>
+                            </HBox>
+                            <HBox styleClass="linha-info" alignment="CENTER_LEFT">
+                                <Label styleClass="caixinha" text="Status:"/>
+                                <Label fx:id="lblStatusIcone" styleClass="status-caixinha" text="❌"/>
+                            </HBox>
+                        </HBox>
+
+                        <!-- Botões Selecionar / Deselecionar (Dinâmicos) -->
+                        <HBox alignment="CENTER_RIGHT" spacing="10">
+                            <StackPane fx:id="btnSelecionar" styleClass="acao-btn, acao-btn-selecionar"
+                                       onMouseClicked="#handleSelecionar" visible="false" managed="false"
+                                       prefWidth="130" prefHeight="32">
+                                <HBox alignment="CENTER" spacing="6">
+                                    <padding><Insets left="14" right="14" top="6" bottom="6"/></padding>
+                                    <Label styleClass="acao-icone" text="✓"/>
+                                    <Label styleClass="acao-label" text="SELECIONAR"/>
+                                </HBox>
+                            </StackPane>
+                            <StackPane fx:id="btnDeselecionar" styleClass="acao-btn, acao-btn-deselecionar"
+                                       onMouseClicked="#handleDeselecionar" visible="false" managed="false"
+                                       prefWidth="130" prefHeight="32">
+                                <HBox alignment="CENTER" spacing="6">
+                                    <padding><Insets left="14" right="14" top="6" bottom="6"/></padding>
+                                    <Label styleClass="acao-label" text="DESELECIONAR"/>
+                                    <Label styleClass="acao-icone" text="✖"/>
+                                </HBox>
+                            </StackPane>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- Botão Gerar -->
+                <StackPane fx:id="btnGerar" styleClass="gerar-btn" maxWidth="220"
+                           onMouseClicked="#handleGerar">
+                    <Label styleClass="gerar-btn-label" text="Gerar"/>
+                </StackPane>
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

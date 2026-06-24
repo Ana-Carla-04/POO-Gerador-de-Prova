@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ============================================================
+     IMPORTAÇÕES DOS COMPONENTES JAVAFX
+     ============================================================ -->
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- ============================================================
+     BORDERPANE - LAYOUT PRINCIPAL DA TELA
+     ============================================================ -->
+<BorderPane
+        prefWidth="1280" prefHeight="750"
+        styleClass="root-main"
+        stylesheets="@../css/QuestoesStyle.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.edu.ufersa.aplicativo.controlles.QuestoesController">
+
+    <!-- ============================================================
+         TOPO (TOPBAR) - BARRA DE CABEÇALHO
+         ============================================================ -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+
+            <!-- Logo "Gerador de Provas" -->
+            <StackPane styleClass="topbar-brand">
+                <Label styleClass="topbar-brand-label" text="Gerador de Provas"/>
+            </StackPane>
+
+            <!-- Título da disciplina -->
+            <HBox styleClass="topbar-title-area" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <padding><Insets left="24"/></padding>
+                <Label fx:id="topbarTitle" styleClass="topbar-title-label" text="Disciplina: questões"/>
+            </HBox>
+
+            <!-- Botão de voltar -->
+            <StackPane styleClass="topbar-icon-area" onMouseClicked="#handleVoltar">
+                <Label styleClass="topbar-seta-label" text="←"/>
+            </StackPane>
+
+            <!-- Ícone de caderno -->
+            <StackPane styleClass="topbar-icon-area">
+                <Label styleClass="topbar-icon-label" text="&#128209;"/>
+            </StackPane>
+
+        </HBox>
+    </top>
+
+    <!-- ============================================================
+         ESQUERDA (SIDEBAR) - MENU DE NAVEGAÇÃO
+         ============================================================ -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200">
+
+            <!-- Menu: Disciplinas (SELECIONADO) -->
+            <StackPane fx:id="menuDisciplinas" styleClass="menu-item, menu-item-selected" onMouseClicked="#handleMenuDisciplinas">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128209;"/>
+                    <Label styleClass="menu-label" text="Disciplinas"/>
+                </HBox>
+            </StackPane>
+
+            <!-- Menu: Buscar -->
+            <StackPane fx:id="menuBuscar" styleClass="menu-item" onMouseClicked="#handleMenuBuscar">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128269;"/>
+                    <Label styleClass="menu-label" text="Buscar"/>
+                </HBox>
+            </StackPane>
+
+            <!-- Menu: Gerar Prova -->
+            <StackPane fx:id="menuGerarProva" styleClass="menu-item" onMouseClicked="#handleMenuGerarProva">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128196;"/>
+                    <Label styleClass="menu-label" text="Gerar Prova"/>
+                </HBox>
+            </StackPane>
+            <StackPane fx:id="menuRelatorio" styleClass="menu-item" onMouseClicked="#handleMenuRelatorio">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <padding><Insets left="18"/></padding>
+                    <Label styleClass="menu-icon" text="&#128202;"/>
+                    <Label styleClass="menu-label" text="Relatório"/>
+                </HBox>
+            </StackPane>
+
+
+        </VBox>
+    </left>
+
+    <!-- ============================================================
+         CENTRO - ÁREA PRINCIPAL COM LISTA E DETALHE DA QUESTÃO
+         ============================================================ -->
+    <center>
+        <AnchorPane styleClass="content-area">
+
+            <!-- PAINEL BRANCO -->
+            <AnchorPane styleClass="painel-branco"
+                        AnchorPane.topAnchor="5"
+                        AnchorPane.bottomAnchor="15"
+                        AnchorPane.leftAnchor="15"
+                        AnchorPane.rightAnchor="15">
+
+                <!-- STACKPANE PARA SOBREPOSIÇÃO (NÃO ALTERA A POSIÇÃO) -->
+                <StackPane AnchorPane.topAnchor="0"
+                           AnchorPane.bottomAnchor="0"
+                           AnchorPane.leftAnchor="0"
+                           AnchorPane.rightAnchor="0">
+
+                    <!-- CAMADA 1: CONTEÚDO PRINCIPAL (MANTÉM AS POSIÇÕES ORIGINAIS) -->
+                    <AnchorPane StackPane.alignment="TOP_LEFT">
+                        <StackPane.margin>
+                            <Insets top="0" right="0" bottom="0" left="0"/>
+                        </StackPane.margin>
+
+                        <!-- COMBOBOX - POSIÇÃO ORIGINAL (MAS FICA NA CAMADA 2) -->
+
+                        <!-- HBOX - LISTA + DETALHE (POSIÇÃO ORIGINAL) -->
+                        <HBox spacing="16"
+                              AnchorPane.topAnchor="20"
+                              AnchorPane.bottomAnchor="16"
+                              AnchorPane.leftAnchor="16"
+                              AnchorPane.rightAnchor="16">
+
+                            <!-- SCROLLPANE - LISTA DE QUESTÕES -->
+                            <ScrollPane fx:id="listaScroll"
+                                        styleClass="lista-scroll"
+                                        fitToWidth="true"
+                                        hbarPolicy="NEVER"
+                                        prefWidth="220"
+                                        minWidth="200">
+
+                                <VBox fx:id="listaContainer" styleClass="lista-container" spacing="8">
+                                    <padding><Insets top="45" right="4" bottom="4" left="0"/></padding>
+                                </VBox>
+                            </ScrollPane>
+
+                            <!-- CAIXA AZUL - DETALHE DA QUESTÃO -->
+                            <AnchorPane fx:id="detalhePanel"
+                                        styleClass="painel-detalhe"
+                                        HBox.hgrow="ALWAYS">
+
+                                <!-- CONTEÚDO DO DETALHE -->
+                                <VBox spacing="12"
+                                      styleClass="detalhe-content"
+                                      AnchorPane.topAnchor="12"
+                                      AnchorPane.leftAnchor="12"
+                                      AnchorPane.rightAnchor="12"
+                                      AnchorPane.bottomAnchor="60">
+
+                                    <!-- Questão + Nível -->
+                                    <HBox spacing="4" alignment="CENTER_LEFT" styleClass="detalhe-linha">
+                                        <StackPane styleClass="caixinha">
+                                            <Label styleClass="det-bold" text="Questão : "/>
+                                        </StackPane>
+                                        <StackPane styleClass="caixinha-valor">
+                                            <Label fx:id="questaoCodigoLabel" styleClass="det-codigo" text=""/>
+                                        </StackPane>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <StackPane styleClass="caixinha">
+                                            <Label styleClass="det-bold" text="Nível : "/>
+                                        </StackPane>
+                                        <StackPane styleClass="caixinha-valor">
+                                            <Label fx:id="questaoNivelLabel" styleClass="nivel-valor" text=""/>
+                                        </StackPane>
+                                    </HBox>
+
+                                    <!-- Tipo -->
+                                    <HBox spacing="4" alignment="CENTER_LEFT" styleClass="detalhe-linha">
+                                        <StackPane styleClass="caixinha">
+                                            <Label styleClass="det-bold" text="tipo: "/>
+                                        </StackPane>
+                                        <StackPane styleClass="caixinha-valor">
+                                            <Label fx:id="questaoTipoLabel" styleClass="det-tipo" text=""/>
+                                        </StackPane>
+                                    </HBox>
+
+                                    <!-- Enunciado -->
+                                    <VBox spacing="4" styleClass="detalhe-linha">
+                                        <StackPane styleClass="caixinha">
+                                            <Label styleClass="det-bold" text="Enunciado:"/>
+                                        </StackPane>
+                                        <StackPane styleClass="caixinha-valor-enunciado">
+                                            <Label fx:id="enunciadoLabel" styleClass="det-label-enunciado" wrapText="true" text=""/>
+                                        </StackPane>
+                                    </VBox>
+
+                                    <!-- Gabarito -->
+                                    <VBox spacing="4">
+                                        <StackPane styleClass="caixinha">
+                                            <Label styleClass="det-bold" text="gabarito:"/>
+                                        </StackPane>
+                                        <StackPane styleClass="caixinha-gabarito">
+                                            <GridPane fx:id="gabaritoGrid" styleClass="gabarito-grid" hgap="30" vgap="4">
+                                                <columnConstraints>
+                                                    <ColumnConstraints prefWidth="200" hgrow="ALWAYS"/>
+                                                    <ColumnConstraints prefWidth="200" hgrow="ALWAYS"/>
+                                                </columnConstraints>
+                                            </GridPane>
+                                        </StackPane>
+                                    </VBox>
+
+                                    <!-- Assunto -->
+                                    <HBox spacing="4" alignment="CENTER_LEFT" styleClass="detalhe-linha">
+                                        <StackPane styleClass="caixinha">
+                                            <Label styleClass="det-bold" text="Assunto: "/>
+                                        </StackPane>
+                                        <StackPane styleClass="caixinha-valor">
+                                            <Label fx:id="assuntoLabel" styleClass="det-normal" text=""/>
+                                        </StackPane>
+                                    </HBox>
+
+                                    <!-- Disciplina -->
+                                    <HBox spacing="4" alignment="CENTER_LEFT" styleClass="detalhe-linha">
+                                        <StackPane styleClass="caixinha">
+                                            <Label styleClass="det-bold" text="disciplina: "/>
+                                        </StackPane>
+                                        <StackPane styleClass="caixinha-valor">
+                                            <Label fx:id="disciplinaLabel" styleClass="det-normal" text=""/>
+                                        </StackPane>
+                                    </HBox>
+
+                                </VBox>
+
+                                <!-- Botões -->
+                                <HBox spacing="12" alignment="CENTER"
+                                      AnchorPane.bottomAnchor="25"
+                                      AnchorPane.leftAnchor="0"
+                                      AnchorPane.rightAnchor="0">
+                                    <Button fx:id="excluirButton" styleClass="btn-acao"
+                                            text="EXCLUIR" onAction="#handleExcluir"/>
+                                    <Button fx:id="editarButton"  styleClass="btn-acao"
+                                            text="EDITAR"   onAction="#handleEditar"/>
+                                </HBox>
+
+                            </AnchorPane>
+
+                        </HBox>
+
+                    </AnchorPane>
+
+                    <!-- CAMADA 2: COMBOBOX - SOBREPÕE TUDO (MESMA POSIÇÃO) -->
+                    <ComboBox fx:id="nivelCombo"
+                              styleClass="nivel-combo"
+                              promptText="nível da questão"
+                              prefWidth="200"
+                              onAction="#handleNivelFiltro"
+                              StackPane.alignment="TOP_LEFT">
+                        <StackPane.margin>
+                            <Insets top="16" right="0" bottom="0" left="16"/>
+                        </StackPane.margin>
+                    </ComboBox>
+
+                </StackPane>
+
+            </AnchorPane>
+
+        </AnchorPane>
+    </center>
+
+</BorderPane>
