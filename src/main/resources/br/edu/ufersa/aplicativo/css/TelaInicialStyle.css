@@ -199,3 +199,40 @@
 .popup-item:hover {
     -fx-background-color: rgba(189, 216, 233, 0.35);
 }
+
+/* ── BOTÃO EXCLUIR DISCIPLINA ─────────────────────────────────── */
+.btn-excluir-disciplina {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cc0000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0 6 0 6;
+    -fx-background-radius: 50%;
+    -fx-min-width: 28;
+    -fx-min-height: 28;
+    -fx-max-width: 28;
+    -fx-max-height: 28;
+}
+
+.btn-excluir-disciplina:hover {
+    -fx-background-color: rgba(204, 0, 0, 0.15);
+    -fx-background-radius: 50%;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+}
+
+.btn-excluir-disciplina:pressed {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+    -fx-text-fill: #990000;
+}
+
+/* Estilo para o card com hover */
+.disciplina-card:hover .btn-excluir-disciplina {
+    -fx-opacity: 1.0;
+}
+
+.btn-excluir-disciplina {
+    -fx-opacity: 0.6;
+}

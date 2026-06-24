@@ -3,6 +3,7 @@ package br.edu.ufersa.aplicativo.controlles;
 import br.edu.ufersa.aplicativo.model.entities.MultiplaEscolha;
 import br.edu.ufersa.aplicativo.model.entities.Prova;
 import br.edu.ufersa.aplicativo.model.entities.Questao;
+import br.edu.ufersa.aplicativo.model.entities.VerdadeiroFalso;
 import br.edu.ufersa.aplicativo.model.service.ProvaService;
 import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
 import javafx.fxml.FXML;
@@ -42,11 +43,14 @@ public class TelaGerarAutoController implements Initializable {
 
     private ProvaService provaService;
 
-
-    // Constantes para controle de páginas
-    private static final double ALTURA_MAXIMA_PAGINA = 680; // Altura máxima em pixels
+    // Constantes para controle de páginas - AJUSTADAS
+    private static final double ALTURA_MAXIMA_PAGINA = 1080; // Altura máxima em pixels
     private static final double MARGEM_SUPERIOR = 45;
     private static final double MARGEM_INFERIOR = 30;
+    private static final double ALTURA_CABECALHO = 160; // Altura estimada do cabeçalho completo
+    private static final double ALTURA_TITULO = 60; // Altura do título do exercício
+    private static final double ALTURA_RODAPE = 30; // Altura do rodapé
+    private static final double ALTURA_LINHA = 30; // Altura de cada linha de alternativa
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -76,7 +80,7 @@ public class TelaGerarAutoController implements Initializable {
 
         // Cria a primeira página com cabeçalho
         VBox paginaAtual = criarPagina(sessao, nomeDisciplina);
-        double alturaAtual = MARGEM_SUPERIOR + 40; // +40 para o título
+        double alturaAtual = MARGEM_SUPERIOR + ALTURA_CABECALHO + ALTURA_TITULO; // Altura do cabeçalho + título
 
         int numero = 1;
         int paginaAtualNumero = 1;
@@ -84,18 +88,18 @@ public class TelaGerarAutoController implements Initializable {
 
         for (Questao q : questoes) {
             VBox blocoQuestao = criarBlocoQuestao(numero, q);
-            double alturaBloco = calcularAlturaBloco(blocoQuestao);
+            double alturaBloco = calcularAlturaBloco(q, blocoQuestao);
 
             // Verifica se a questão cabe na página atual
-            if (alturaAtual + alturaBloco + MARGEM_INFERIOR > ALTURA_MAXIMA_PAGINA) {
+            if (alturaAtual + alturaBloco + MARGEM_INFERIOR + ALTURA_RODAPE > ALTURA_MAXIMA_PAGINA) {
                 // Adiciona rodapé à página atual
-                adicionarRodape(paginaAtual, paginaAtualNumero, totalQuestoes);
+
                 folha.getChildren().add(paginaAtual);
 
                 // Cria nova página (sem cabeçalho, só com título)
                 paginaAtualNumero++;
                 paginaAtual = criarPaginaSemCabecalho(sessao, nomeDisciplina, paginaAtualNumero);
-                alturaAtual = 30 + 40; // Margem superior + título
+                alturaAtual = 30 + ALTURA_TITULO; // Margem superior + título
             }
 
             paginaAtual.getChildren().add(blocoQuestao);
@@ -104,7 +108,7 @@ public class TelaGerarAutoController implements Initializable {
         }
 
         // Adiciona rodapé à última página
-        adicionarRodape(paginaAtual, paginaAtualNumero, totalQuestoes);
+
         folha.getChildren().add(paginaAtual);
     }
 
@@ -184,10 +188,27 @@ public class TelaGerarAutoController implements Initializable {
         pagina.getChildren().add(rodapeWrap);
     }
 
-    private double calcularAlturaBloco(VBox bloco) {
-        // Estimativa simples: cada linha tem ~25px, mais o enunciado
-        int numLinhas = bloco.getChildren().size();
-        return numLinhas * 28 + 15; // 28px por linha + margem
+    /**
+     * Calcula a altura estimada do bloco da questão baseado no tipo e conteúdo
+     */
+    private double calcularAlturaBloco(Questao q, VBox bloco) {
+        double alturaBase = 40; // Altura mínima para o enunciado + padding
+
+        if (q instanceof MultiplaEscolha) {
+            MultiplaEscolha me = (MultiplaEscolha) q;
+            int numAlternativas = me.getAlternativas().size();
+            // Cada alternativa ocupa aproximadamente 30px
+            alturaBase += numAlternativas * ALTURA_LINHA;
+        } else if (q instanceof VerdadeiroFalso) {
+            // Verdadeiro/Falso tem 2 alternativas
+            alturaBase += 2 * ALTURA_LINHA;
+        } else {
+            // Questão discursiva - adiciona espaço para 4 linhas em branco
+            alturaBase += 4 * ALTURA_LINHA;
+        }
+
+        // Adiciona margem extra para espaçamento entre questões
+        return alturaBase + 15;
     }
 
     // ================================================================
@@ -214,7 +235,7 @@ public class TelaGerarAutoController implements Initializable {
         cabecalho.getChildren().add(instituicaoBox);
 
         // Linha 2: IDENTIFICAÇÃO DOS ALUNOS (subtítulo)
-        Label identificacaoLabel = new Label("1. IDENTIFICAÇÃO DOS ALUNOS");
+        Label identificacaoLabel = new Label("");
         identificacaoLabel.getStyleClass().add("folha-cabecalho-titulo");
         identificacaoLabel.setAlignment(Pos.CENTER);
         identificacaoLabel.setMaxWidth(Double.MAX_VALUE);
@@ -321,6 +342,9 @@ public class TelaGerarAutoController implements Initializable {
         return cabecalho;
     }
 
+    /**
+     * Cria o bloco da questão com base no seu tipo
+     */
     private VBox criarBlocoQuestao(int numero, Questao q) {
         VBox bloco = new VBox(2);
         bloco.getStyleClass().add("folha-questao");
@@ -330,6 +354,7 @@ public class TelaGerarAutoController implements Initializable {
         enunciado.setWrapText(true);
         bloco.getChildren().add(enunciado);
 
+        // Verifica o tipo da questão e adiciona as alternativas apropriadas
         if (q instanceof MultiplaEscolha) {
             MultiplaEscolha me = (MultiplaEscolha) q;
             List<String> alternativas = me.getAlternativas();
@@ -337,6 +362,22 @@ public class TelaGerarAutoController implements Initializable {
             for (int i = 0; i < alternativas.size(); i++) {
                 String texto = alternativas.get(i);
                 bloco.getChildren().add(criarLinhaAlternativa(letra(i), texto));
+            }
+        } else if (q instanceof VerdadeiroFalso) {
+            // Adiciona as alternativas de Verdadeiro/Falso
+            bloco.getChildren().add(criarLinhaAlternativa("V - ", "Verdadeiro"));
+            bloco.getChildren().add(criarLinhaAlternativa("F - ", "Falso"));
+        } else {
+            // Questão discursiva - adiciona 4 linhas em branco para resposta
+            for (int i = 0; i < 4; i++) {
+                HBox linhaBranca = new HBox();
+                linhaBranca.getStyleClass().add("folha-discursiva-linha");
+                linhaBranca.setMinHeight(30);
+                linhaBranca.setMaxHeight(30);
+                linhaBranca.setPrefHeight(30);
+                // Adiciona uma borda inferior para simular linha de papel
+                linhaBranca.setStyle("-fx-border-bottom: 1px solid #cccccc;");
+                bloco.getChildren().add(linhaBranca);
             }
         }
 
@@ -438,8 +479,6 @@ public class TelaGerarAutoController implements Initializable {
     private void handleMenuRelatorio(MouseEvent e) {
         navegarPara("TelaRelatorioView", "TelaRelatorioStyle", menuRelatorio);
     }
-
-
 
     private void navegarPara(String nomeView, String nomeCSS, javafx.scene.Node origem) {
         try {

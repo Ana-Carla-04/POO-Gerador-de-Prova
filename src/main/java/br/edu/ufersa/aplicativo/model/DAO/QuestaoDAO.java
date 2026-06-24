@@ -70,22 +70,48 @@ public class QuestaoDAO implements DAO<Questao> {
             }
         }
 
+        // Salvar alternativas/respostas
         if (questao instanceof MultiplaEscolha) {
             MultiplaEscolha me = (MultiplaEscolha) questao;
             if (me.getAlternativas() != null && !me.getAlternativas().isEmpty()) {
-                // Passa a resposta correta para marcar o campo "verdadeira" no banco
                 salvarAlternativasMultipla(me.getCodigo(), me.getAlternativas(), me.getResposta());
             }
-        }
-
-        if (questao instanceof VerdadeiroFalso) {
+        } else if (questao instanceof VerdadeiroFalso) {
             VerdadeiroFalso vf = (VerdadeiroFalso) questao;
             if (vf.getAlternativas() != null && !vf.getAlternativas().isEmpty()) {
                 salvarAlternativasEmLote(vf.getCodigo(), vf.getAlternativas(), vf.getRespostas());
             }
+        } else if (questao instanceof Discursiva) {
+            Discursiva discursiva = (Discursiva) questao;
+            if (discursiva.getResposta() != null && !discursiva.getResposta().isEmpty()) {
+                salvarRespostaDiscursiva(questao.getCodigo(), discursiva.getResposta());
+            }
         }
     }
+    private void salvarRespostaDiscursiva(int questaoId, String resposta) throws SQLException {
+        // Verifica se a coluna verdadeira existe
+        String sql = "INSERT INTO alternativa (questao_id, texto_alternativa, verdadeira) VALUES (?, ?, ?)";
 
+        try (PreparedStatement ps = conexao.prepareStatement(sql)) {
+            ps.setInt(1, questaoId);
+            ps.setString(2, resposta);
+            ps.setBoolean(3, true);  // Marca como verdadeira (gabarito)
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            // Se der erro, tenta sem a coluna verdadeira
+            if (e.getMessage().contains("Unknown column")) {
+                System.out.println("Coluna 'verdadeira' não encontrada, inserindo sem ela...");
+                String sqlSemVerdadeira = "INSERT INTO alternativa (questao_id, texto_alternativa) VALUES (?, ?)";
+                try (PreparedStatement ps2 = conexao.prepareStatement(sqlSemVerdadeira)) {
+                    ps2.setInt(1, questaoId);
+                    ps2.setString(2, resposta);
+                    ps2.executeUpdate();
+                }
+            } else {
+                throw e;
+            }
+        }
+    }
     private void salvarAlternativasEmLote(int questaoId, List<String> alternativas, List<Boolean> respostas) throws SQLException {
         try (PreparedStatement ps = conexao.prepareStatement(sql_inserirAlternativa)) {
             for (int i = 0; i < alternativas.size(); i++) {
@@ -146,17 +172,24 @@ public class QuestaoDAO implements DAO<Questao> {
             ps.executeUpdate();
         }
 
+        // Deletar alternativas antigas
         deletarAlternativas(questao.getCodigo());
 
+        // Salvar novas alternativas/respostas
         if (questao instanceof MultiplaEscolha) {
             MultiplaEscolha me = (MultiplaEscolha) questao;
             if (me.getAlternativas() != null && !me.getAlternativas().isEmpty()) {
-                salvarAlternativasEmLote(me.getCodigo(), me.getAlternativas(), null);
+                salvarAlternativasMultipla(me.getCodigo(), me.getAlternativas(), me.getResposta());
             }
         } else if (questao instanceof VerdadeiroFalso) {
             VerdadeiroFalso vf = (VerdadeiroFalso) questao;
             if (vf.getAlternativas() != null && !vf.getAlternativas().isEmpty()) {
                 salvarAlternativasEmLote(vf.getCodigo(), vf.getAlternativas(), vf.getRespostas());
+            }
+        } else if (questao instanceof Discursiva) {
+            Discursiva discursiva = (Discursiva) questao;
+            if (discursiva.getResposta() != null && !discursiva.getResposta().isEmpty()) {
+                salvarRespostaDiscursiva(questao.getCodigo(), discursiva.getResposta());
             }
         }
     }
@@ -257,7 +290,7 @@ public class QuestaoDAO implements DAO<Questao> {
                 ps.setInt(1, idQuestao);
                 try (ResultSet rsA = ps.executeQuery()) {
                     while (rsA.next()) {
-                        String texto       = rsA.getString("texto_alternativa");
+                        String texto = rsA.getString("texto_alternativa");
                         boolean verdadeira = rsA.getBoolean("verdadeira");
                         alternativas.add(texto);
                         if (verdadeira) respostaFinal = texto;
@@ -270,25 +303,30 @@ public class QuestaoDAO implements DAO<Questao> {
             if (!respostaFinal.isEmpty()) vf.setResposta(respostaFinal);
             return vf;
 
-        } else {
-            Discursiva d = new Discursiva();
-            d.setCodigo(idQuestao);
-            d.setEnunciado(enunciado);
-            d.setNivel(nivel);
-            d.setDisciplina(disciplina);
-            d.setAssunto(assunto);
+        }else {  // Discursiva
+                Discursiva d = new Discursiva();
+                d.setCodigo(idQuestao);
+                d.setEnunciado(enunciado);
+                d.setNivel(nivel);
+                d.setDisciplina(disciplina);
+                d.setAssunto(assunto);
 
-            // Busca a resposta da discursiva nas alternativas (se houver)
-            try (PreparedStatement ps = conexao.prepareStatement(sql_buscarAlternativas)) {
-                ps.setInt(1, idQuestao);
-                try (ResultSet rsA = ps.executeQuery()) {
-                    if (rsA.next()) {
-                        d.setResposta(rsA.getString("texto_alternativa"));
+                // Busca a resposta da discursiva no campo texto_alternativa
+                String sqlBuscarResposta = "SELECT texto_alternativa FROM alternativa WHERE questao_id = ? AND verdadeira = true";
+                try (PreparedStatement ps = conexao.prepareStatement(sqlBuscarResposta)) {
+                    ps.setInt(1, idQuestao);
+                    try (ResultSet rsA = ps.executeQuery()) {
+                        if (rsA.next()) {
+                            String resposta = rsA.getString("texto_alternativa");
+                            if (resposta != null && !resposta.isEmpty()) {
+                                d.setResposta(resposta);
+                            }
+                        }
                     }
                 }
+                return d;
             }
-            return d;
-        }
+
     }
 
     public void deletarTodas() throws SQLException {

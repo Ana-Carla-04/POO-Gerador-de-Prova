@@ -202,7 +202,7 @@
                                     <!-- Gabarito -->
                                     <VBox spacing="4">
                                         <StackPane styleClass="caixinha">
-                                            <Label styleClass="gabarito-titulo" text="gabarito:"/>
+                                            <Label styleClass="det-bold" text="gabarito:"/>
                                         </StackPane>
                                         <StackPane styleClass="caixinha-gabarito">
                                             <GridPane fx:id="gabaritoGrid" styleClass="gabarito-grid" hgap="30" vgap="4">

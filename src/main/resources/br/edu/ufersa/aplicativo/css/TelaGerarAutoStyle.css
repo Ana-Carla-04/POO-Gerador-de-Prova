@@ -256,7 +256,7 @@
 
 .folha-enunciado {
     -fx-text-fill: #111111;
-    -fx-font-size: 11px;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
     -fx-line-spacing: 1.4;
@@ -269,13 +269,13 @@
 
 .folha-alternativa-texto {
     -fx-text-fill: #222222;
-    -fx-font-size: 10.5px;
+    -fx-font-size: 12.5px;
     -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
 }
 
 .folha-marcador {
     -fx-text-fill: #222222;
-    -fx-font-size: 10.5px;
+    -fx-font-size: 12.5px;
     -fx-font-family: 'Times New Roman', 'Segoe UI', serif;
     -fx-min-width: 40;
 }

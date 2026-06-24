@@ -21,6 +21,7 @@ public class DisciplinaDAO implements DAO<Disciplina>{
     private static final String sql_buscarPorId = "SELECT * FROM disciplina WHERE id = ?;";
     private static final String sql_buscarPorCodigo = "SELECT * FROM disciplina WHERE codigo = ?;";
     private static final String sql_buscarPorProfessor = "SELECT * FROM disciplina WHERE professor_id = ?;";
+    private static final String sql_buscarPorNome = "SELECT * FROM disciplina WHERE nome = ?;"; // Adicionar constante
 
     private Connection conexao;
 
@@ -128,6 +129,39 @@ public class DisciplinaDAO implements DAO<Disciplina>{
         return null;
     }
 
+    // 🔥 CORREÇÃO AQUI - Usa o construtor com nome e código
+    public Disciplina buscarPorNome(String nome) throws SQLException {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome da disciplina não pode ser nulo ou vazio");
+        }
+
+        try (PreparedStatement ps = conexao.prepareStatement(sql_buscarPorNome)) {
+            ps.setString(1, nome);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // 🔥 CORRIGIDO: Usa o construtor com nome e código
+                    Disciplina disciplina = new Disciplina(
+                            rs.getString("nome"),
+                            rs.getString("codigo")
+                    );
+                    disciplina.setId(rs.getInt("id"));
+
+                    // Carrega o professor se existir
+                    int professorId = rs.getInt("professor_id");
+                    if (!rs.wasNull() && professorId > 0) {
+                        Professor professor = new Professor();
+                        professor.setId(professorId);
+                        disciplina.setProfessor(professor);
+                    }
+
+                    return disciplina;
+                }
+            }
+        }
+        return null;
+    }
+
     public List<Disciplina> buscarPorProfessor(Professor professor) throws SQLException {
         if (professor == null) {
             throw new IllegalArgumentException("Professor não pode ser nulo");
@@ -146,16 +180,20 @@ public class DisciplinaDAO implements DAO<Disciplina>{
     }
 
     private Disciplina criarDisciplinaDoResultSet(ResultSet rs) throws SQLException {
-        Professor professor = new Professor();
-        professor.setId(rs.getInt("professor_id"));
-
+        // 🔥 CRIA A DISCIPLINA COM NOME E CÓDIGO
         Disciplina disciplina = new Disciplina(
                 rs.getString("nome"),
-                rs.getString("codigo"),
-                professor,
-                null
+                rs.getString("codigo")
         );
-        disciplina.setId(rs.getInt("id")); // 🎯 Seta o ID recuperado da tabela!
+        disciplina.setId(rs.getInt("id"));
+
+        // Carrega o professor se existir
+        int professorId = rs.getInt("professor_id");
+        if (!rs.wasNull() && professorId > 0) {
+            Professor professor = new Professor();
+            professor.setId(professorId);
+            disciplina.setProfessor(professor);
+        }
 
         return disciplina;
     }

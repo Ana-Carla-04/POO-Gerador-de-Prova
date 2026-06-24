@@ -42,6 +42,7 @@ CREATE TABLE alternativa (
     texto_alternativa TEXT NOT NULL,
     questao_id INT NOT NULL,
     verdadeira BOOLEAN NULL,
+    respostaDiscursiva VARCHAR(2000),
 
     FOREIGN KEY (questao_id) REFERENCES questao(id) ON DELETE CASCADE
 );

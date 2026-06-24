@@ -44,4 +44,26 @@ public class DisciplinaService {
             ))
             .collect(java.util.stream.Collectors.toList());
     }
+    // No DisciplinaService.java
+    public boolean excluirDisciplina(String nomeDisciplina) {
+        try {
+            // Primeiro busca a disciplina pelo nome
+            Disciplina disciplina = disciplinaDAO.buscarPorNome(nomeDisciplina);
+            if (disciplina == null) {
+                System.err.println("Disciplina não encontrada: " + nomeDisciplina);
+                return false;
+            }
+
+            // Exclui a disciplina (ON DELETE CASCADE vai excluir assuntos, questões e provas)
+            disciplinaDAO.deletar(disciplina);
+            System.out.println("Disciplina excluída com sucesso: " + nomeDisciplina);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Erro ao excluir disciplina: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 }

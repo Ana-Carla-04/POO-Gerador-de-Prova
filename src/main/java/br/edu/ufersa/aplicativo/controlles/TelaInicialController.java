@@ -6,10 +6,13 @@ import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -20,6 +23,7 @@ import javafx.stage.StageStyle;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import br.edu.ufersa.aplicativo.application.GerenteDeCena;
@@ -58,10 +62,8 @@ public class TelaInicialController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Erro ao carregar disciplinas: " + e.getMessage());
-            // Pode ser bom exibir um alerta aqui
         }
     }
-
 
     private void configurarGridResponsivo() {
         disciplinasGrid.getColumnConstraints().clear();
@@ -85,42 +87,34 @@ public class TelaInicialController implements Initializable {
         }
     }
 
-
+    // ================================================================
+    // NAVEGAÇÃO
+    // ================================================================
 
     @FXML
     private void handleMenuDisciplinas(MouseEvent event) {
         try {
             System.out.println(" Abrindo tela de Questões...");
-
-
             GerenteDeCena.carregarCena(
                     "/br/edu/ufersa/aplicativo/views/QuestoesView.fxml",
                     "/br/edu/ufersa/aplicativo/css/QuestoesStyle.css",
                     "Gerador de Provas - Questões"
             );
-
             System.out.println(" Tela de Questões aberta com sucesso!");
-
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(" Erro ao abrir tela de questões: " + e.getMessage());
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // NAVEGAÇÃO PARA TELA DE BUSCAR
-    // ═══════════════════════════════════════════════════════════════════
     @FXML
     private void handleMenuBuscar(MouseEvent event) {
         try {
             System.out.println("🔍 Abrindo tela de buscar...");
-
             GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaBuscarView.fxml",
                     "/br/edu/ufersa/aplicativo/css/TelaBuscarStyle.css",
                     "Gerador de Provas - Buscar");
-
             System.out.println(" Tela de buscar aberta com sucesso!");
-
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(" Erro ao abrir tela de buscar: " + e.getMessage());
@@ -134,7 +128,6 @@ public class TelaInicialController implements Initializable {
             GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaGerarProvaView.fxml",
                     "/br/edu/ufersa/aplicativo/css/TelaGerarProvaStyle.css",
                     "Gerador de Provas - Gerar Prova");
-
             System.out.println("Tela de gerar prova aberta com sucesso!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,9 +135,6 @@ public class TelaInicialController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // NAVEGAÇÃO PARA TELA DE RELATÓRIO
-    // ═══════════════════════════════════════════════════════════════════
     @FXML
     private void handleMenuRelatorio(MouseEvent event) {
         try {
@@ -173,12 +163,10 @@ public class TelaInicialController implements Initializable {
         }
     }
 
-
-
-
-    // ═══════════════════════════════════════════════════════════════════
+    // ================================================================
     // FAB - ABRE POPUP COM OPÇÕES
-    // ═══════════════════════════════════════════════════════════════════
+    // ================================================================
+
     @FXML
     private void handleAddDisciplina() {
         if (popupStage != null && popupStage.isShowing()) {
@@ -314,9 +302,9 @@ public class TelaInicialController implements Initializable {
     private void abrirTelaAdicionarDisciplina() {
         try {
             System.out.println(" Abrindo tela para adicionar disciplina...");
-
-            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaAdicionarDiscView.fxml", "/br/edu/ufersa/aplicativo/css/TelaAdicionarDiscStyle.css", "Gerador de Provas - Adicionar Disciplina");
-
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaAdicionarDiscView.fxml",
+                    "/br/edu/ufersa/aplicativo/css/TelaAdicionarDiscStyle.css",
+                    "Gerador de Provas - Adicionar Disciplina");
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(" Erro ao abrir tela de adicionar disciplina: " + e.getMessage());
@@ -326,9 +314,9 @@ public class TelaInicialController implements Initializable {
     private void abrirTelaAdicionarQuestao() {
         try {
             System.out.println(" Abrindo tela para adicionar questão...");
-
-            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaAdicionarQuestView.fxml", "/br/edu/ufersa/aplicativo/css/TelaAdicionarQuestStyle.css", "Gerador de Provas - Adicionar Questão");
-
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/TelaAdicionarQuestView.fxml",
+                    "/br/edu/ufersa/aplicativo/css/TelaAdicionarQuestStyle.css",
+                    "Gerador de Provas - Adicionar Questão");
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(" Erro ao abrir tela de adicionar questão: " + e.getMessage());
@@ -336,9 +324,7 @@ public class TelaInicialController implements Initializable {
     }
 
     private void showAlert(String titulo, String mensagem) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.INFORMATION
-        );
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensagem);
@@ -354,13 +340,130 @@ public class TelaInicialController implements Initializable {
         }
     }
 
+    // ================================================================
+    // CARREGAR DISCIPLINAS COM BOTÃO EXCLUIR
+    // ================================================================
+
     private void carregarDisciplinas() {
         disciplinasGrid.getChildren().clear();
 
         int col = 0, row = 0;
         for (DisciplinaInfo info : disciplinasInfo) {
+            // Card principal
             StackPane card = new StackPane();
             card.getStyleClass().add("disciplina-card");
+            card.setUserData(info);
+
+            // Botão excluir (no canto superior direito)
+            Button btnExcluir = new Button("✕");
+            btnExcluir.getStyleClass().add("btn-excluir-disciplina");
+            btnExcluir.setOnAction(e -> handleExcluirDisciplina(info, card));
+
+            // Conteúdo do card
+            VBox cardContent = new VBox();
+            cardContent.setAlignment(Pos.CENTER);
+            cardContent.setSpacing(8);
+
+            Label nomeLabel = new Label(info.getNome());
+            nomeLabel.getStyleClass().add("disciplina-label");
+
+            Label codigoLabel = new Label(info.getCodigo());
+            codigoLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #666; -fx-font-weight: bold;");
+
+            Label qtdLabel = new Label(info.getQuantidade() + " questões");
+            qtdLabel.getStyleClass().add("disciplina-qtd-label");
+            qtdLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #0A4174;");
+
+            cardContent.getChildren().addAll(nomeLabel, codigoLabel, qtdLabel);
+
+            // Empilha o conteúdo e o botão
+            StackPane.setAlignment(cardContent, Pos.CENTER);
+            StackPane.setAlignment(btnExcluir, Pos.TOP_RIGHT);
+            StackPane.setMargin(btnExcluir, new Insets(8, 8, 0, 0));
+
+            card.getChildren().addAll(cardContent, btnExcluir);
+
+            // Clique no card (abre questões)
+            card.setOnMouseClicked(e -> handleCardDisciplina(info));
+
+            // Adiciona ao grid
+            GridPane.setColumnIndex(card, col);
+            GridPane.setRowIndex(card, row);
+            GridPane.setFillWidth(card, true);
+            GridPane.setFillHeight(card, true);
+
+            disciplinasGrid.getChildren().add(card);
+
+            col++;
+            if (col == 3) {
+                col = 0;
+                row++;
+            }
+        }
+    }
+
+    // ================================================================
+    // EXCLUIR DISCIPLINA
+    // ================================================================
+
+    private void handleExcluirDisciplina(DisciplinaInfo info, StackPane card) {
+        // Confirmação
+        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacao.setTitle("Excluir Disciplina");
+        confirmacao.setHeaderText("Confirmar exclusão");
+        confirmacao.setContentText("Deseja realmente excluir a disciplina \"" + info.getNome() + "\"?\n\n" +
+                "⚠️ ATENÇÃO: Todas as questões e provas associadas também serão excluídas!");
+
+        // Estiliza o alerta
+        ButtonType btnSim = new ButtonType("Sim, excluir");
+        ButtonType btnNao = new ButtonType("Não", ButtonType.CANCEL.getButtonData());
+        confirmacao.getButtonTypes().setAll(btnSim, btnNao);
+
+        Optional<ButtonType> resultado = confirmacao.showAndWait();
+        if (resultado.isPresent() && resultado.get() == btnSim) {
+            try {
+                // Chama o service para excluir
+                boolean excluido = disciplinaService.excluirDisciplina(info.getNome());
+
+                if (excluido) {
+                    // Remove da lista local
+                    disciplinasInfo.remove(info);
+
+                    // Remove o card da grid
+                    disciplinasGrid.getChildren().remove(card);
+
+                    // Reorganiza os cards
+                    reorganizarCards();
+
+                    showAlert("Sucesso", "Disciplina \"" + info.getNome() + "\" excluída com sucesso!");
+                    System.out.println("Disciplina excluída: " + info.getNome());
+                } else {
+                    showAlert("Erro", "Não foi possível excluir a disciplina. Tente novamente.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert("Erro", "Erro ao excluir disciplina: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Reorganiza os cards no grid após exclusão
+     */
+    private void reorganizarCards() {
+        // Limpa o grid mantendo as configurações
+        disciplinasGrid.getChildren().clear();
+
+        int col = 0, row = 0;
+        for (DisciplinaInfo info : disciplinasInfo) {
+            // Reconstroi o card
+            StackPane card = new StackPane();
+            card.getStyleClass().add("disciplina-card");
+            card.setUserData(info);
+
+            Button btnExcluir = new Button("✕");
+            btnExcluir.getStyleClass().add("btn-excluir-disciplina");
+            btnExcluir.setOnAction(e -> handleExcluirDisciplina(info, card));
 
             VBox cardContent = new VBox();
             cardContent.setAlignment(Pos.CENTER);
@@ -377,9 +480,12 @@ public class TelaInicialController implements Initializable {
             qtdLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #0A4174;");
 
             cardContent.getChildren().addAll(nomeLabel, codigoLabel, qtdLabel);
-            card.getChildren().add(cardContent);
 
-            card.setUserData(info);
+            StackPane.setAlignment(cardContent, Pos.CENTER);
+            StackPane.setAlignment(btnExcluir, Pos.TOP_RIGHT);
+            StackPane.setMargin(btnExcluir, new Insets(8, 8, 0, 0));
+
+            card.getChildren().addAll(cardContent, btnExcluir);
             card.setOnMouseClicked(e -> handleCardDisciplina(info));
 
             GridPane.setColumnIndex(card, col);
@@ -401,8 +507,9 @@ public class TelaInicialController implements Initializable {
         try {
             System.out.println("Disciplina selecionada: " + info.getNome());
             Contexto.setDisciplinaSelecionada(info);
-            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/QuestoesView.fxml", "/br/edu/ufersa/aplicativo/css/TelaInicialStyle.css", "Gerador de Provas - " + info.getNome());
-
+            GerenteDeCena.carregarCena("/br/edu/ufersa/aplicativo/views/QuestoesView.fxml",
+                    "/br/edu/ufersa/aplicativo/css/TelaInicialStyle.css",
+                    "Gerador de Provas - " + info.getNome());
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Erro ao abrir tela de questões: " + e.getMessage());

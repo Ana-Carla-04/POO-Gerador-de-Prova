@@ -1,6 +1,9 @@
 package br.edu.ufersa.aplicativo.controlles;
 
+import br.edu.ufersa.aplicativo.model.DAO.*;
 import br.edu.ufersa.aplicativo.model.entities.Prova;
+import br.edu.ufersa.aplicativo.model.service.ProvaService;
+import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -64,44 +67,68 @@ public class TelaRelatorioController implements Initializable {
     }
 
     // ── CARREGAR PROVAS DA SESSÃO ──────────────────────────────────────────
+
     private void carregarProvasDaSessao() {
         todasAsProvas = new ArrayList<>();
 
+        // 1) Provas da sessão atual (geradas nessa execução, ainda não salvas no banco)
         ProvaSessao sessao = ProvaSessao.getInstance();
-        List<Prova> provasSalvas = sessao.getProvasSalvas();
+        List<Prova> provasSessao = new ArrayList<>(sessao.getProvasSalvas());
 
-        System.out.println("Carregando " + provasSalvas.size() + " provas da sessão");
-
-        for (Prova prova : provasSalvas) {
-            String disciplina = prova.getDisciplina() != null
-                    ? prova.getDisciplina().getNome()
-                    : "Sem disciplina";
-
-            String data = prova.getDataDeCriacao() != null
-                    ? prova.getDataDeCriacao().format(FORMATTER)
-                    : "Data não definida";
-
-            String professor = prova.getProfessor() != null
-                    ? prova.getProfessor()
-                    : "Sem professor";
-
-            String codigo = prova.getCodigo();
-
-            // Contar questões
-            int qtdQuestoes = prova.getQuestoes() != null ? prova.getQuestoes().size() : 0;
-
-            // Determinar tipo da prova (baseado nas questões)
-            String tipo = determinarTipoProva(prova);
-
-            todasAsProvas.add(new ProvaInfo(codigo, disciplina, data, professor, tipo, qtdQuestoes, prova));
+        // 2) Provas persistidas no banco de dados
+        List<Prova> provasBanco = new ArrayList<>();
+        try {
+            ProvaService provaService = ServiceFactory.criarProvaService();
+            provasBanco = provaService.listar();
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar provas do banco: " + e.getMessage());
+            e.printStackTrace();
         }
 
-        // Se não houver provas na sessão, adicionar algumas de exemplo
-        if (todasAsProvas.isEmpty()) {
-            //adicionarProvasExemplo();
+        // 3) Une as duas listas, sem duplicatas (compara pelo código)
+        Set<String> codigosAdicionados = new HashSet<>();
+
+        for (Prova p : provasBanco) {
+            if (p.getCodigo() != null && codigosAdicionados.add(p.getCodigo())) {
+                todasAsProvas.add(converterParaProvaInfo(p));
+            }
+        }
+
+        for (Prova p : provasSessao) {
+            if (p.getCodigo() != null && codigosAdicionados.add(p.getCodigo())) {
+                todasAsProvas.add(converterParaProvaInfo(p));
+            }
         }
 
         provasFiltradas = new ArrayList<>(todasAsProvas);
+        System.out.println("Total de provas carregadas: " + todasAsProvas.size());
+    }
+
+    // Método auxiliar para converter Prova -> ProvaInfo
+    private ProvaInfo converterParaProvaInfo(Prova prova) {
+        String disciplina = prova.getDisciplina() != null
+                ? prova.getDisciplina().getNome()
+                : "Sem disciplina";
+
+        String data = prova.getDataDeCriacao() != null
+                ? prova.getDataDeCriacao().format(FORMATTER)
+                : "Data não definida";
+
+        String professor = prova.getProfessor() != null
+                ? prova.getProfessor()
+                : "Sem professor";
+
+        int qtdQuestoes = prova.getQuestoes() != null ? prova.getQuestoes().size() : 0;
+
+        return new ProvaInfo(
+                prova.getCodigo(),
+                disciplina,
+                data,
+                professor,
+                "Múltipla Escolha",
+                qtdQuestoes,
+                prova
+        );
     }
 
     // ── DETERMINAR TIPO DA PROVA ──────────────────────────────────────────
@@ -315,10 +342,16 @@ public class TelaRelatorioController implements Initializable {
 
     // ── BUSCAR PROVA POR CÓDIGO ────────────────────────────────────────────
     private Prova buscarProvaPorCodigo(String codigo) {
-        ProvaSessao sessao = ProvaSessao.getInstance();
-        for (Prova prova : sessao.getProvasSalvas()) {
+        // Busca primeiro na sessão em memória
+        for (Prova prova : ProvaSessao.getInstance().getProvasSalvas()) {
             if (prova.getCodigo().equals(codigo)) {
                 return prova;
+            }
+        }
+        // Busca nas provas já carregadas do banco (dentro do ProvaInfo)
+        for (ProvaInfo info : todasAsProvas) {
+            if (info.getCodigo().equals(codigo) && info.getProva() != null) {
+                return info.getProva();
             }
         }
         return null;
@@ -362,40 +395,10 @@ public class TelaRelatorioController implements Initializable {
 
     // ── ABRIR RELATÓRIO COM DADOS DA PROVAINFO (FALLBACK) ────────────────
     private void abrirRelatorioProvaInfo(ProvaInfo provaInfo) {
-        try {
-            System.out.println("Abrindo relatório da provaInfo: " + provaInfo.getCodigo());
-
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaRelatorioProvaView.fxml")
-            );
-            Parent root = loader.load();
-
-            TelaRelatorioProvaController controller = loader.getController();
-
-            // Criar uma prova temporária com os dados disponíveis
-            // Nota: Isso só funcionará se o controller conseguir lidar com dados mínimos
-            // Você pode precisar modificar o TelaRelatorioProvaController para aceitar ProvaInfo
-
-            Scene scene = new Scene(root, 1280, 750);
-
-            URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/TelaRelatorioProvaStyle.css");
-            if (cssUrl != null) {
-                scene.getStylesheets().add(cssUrl.toExternalForm());
-            }
-
-            Stage stage = (Stage) menuRelatorio.getScene().getWindow();
-            boolean fs = stage.isFullScreen();
-            boolean max = stage.isMaximized();
-
-            stage.setScene(scene);
-            stage.setTitle("Relatório da Prova - " + provaInfo.getCodigo());
-
-            if (fs) stage.setFullScreen(true);
-            if (max) stage.setMaximized(true);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Erro ao abrir relatório da provaInfo: " + e.getMessage());
+        if (provaInfo.getProva() != null) {
+            abrirRelatorioProva(provaInfo.getProva());
+        } else {
+            System.err.println("ProvaInfo sem prova associada: " + provaInfo.getCodigo());
         }
     }
 
@@ -477,4 +480,5 @@ public class TelaRelatorioController implements Initializable {
         public int getQtdQuestoes() { return qtdQuestoes; }
         public Prova getProva() { return prova; }
     }
+
 }

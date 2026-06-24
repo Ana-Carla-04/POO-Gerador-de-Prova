@@ -1,8 +1,10 @@
 package br.edu.ufersa.aplicativo.controlles;
 
+import br.edu.ufersa.aplicativo.model.entities.Discursiva;
 import br.edu.ufersa.aplicativo.model.entities.MultiplaEscolha;
 import br.edu.ufersa.aplicativo.model.entities.Prova;
 import br.edu.ufersa.aplicativo.model.entities.Questao;
+import br.edu.ufersa.aplicativo.model.entities.VerdadeiroFalso;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -52,7 +54,7 @@ public class TelaRelatorioProvaController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         if (provaAtual == null) {
             ProvaSessao sessao = ProvaSessao.getInstance();
-            if (sessao != null && !sessao.getQuestoes().isEmpty()) {
+            if (!sessao.getQuestoes().isEmpty()) {
                 renderizarAmbas(
                         sessao.getInstituicao(),
                         sessao.getDisciplina(),
@@ -60,7 +62,12 @@ public class TelaRelatorioProvaController implements Initializable {
                         sessao.getQuestoes()
                 );
             } else {
-                mostrarVazio();
+                List<Prova> provasSalvas = sessao.getProvasSalvas();
+                if (!provasSalvas.isEmpty()) {
+                    setProva(provasSalvas.get(provasSalvas.size() - 1));
+                } else {
+                    mostrarVazio();
+                }
             }
         }
     }
@@ -70,7 +77,7 @@ public class TelaRelatorioProvaController implements Initializable {
         if (prova != null) {
             renderizarAmbas(
                     prova.getInstituicao() != null ? prova.getInstituicao() : "",
-                    prova.getNomeDisciplina(),  // Usar getNomeDisciplina() em vez de getDisciplina()
+                    prova.getNomeDisciplina(),
                     prova.getProfessor() != null ? prova.getProfessor() : "",
                     prova.getQuestoes()
             );
@@ -94,7 +101,7 @@ public class TelaRelatorioProvaController implements Initializable {
         }
 
         String nomeDisciplina = (disciplina == null || disciplina.isBlank())
-                ? "MÚLTIPLA ESCOLHA" : disciplina.toUpperCase();
+                ? "QUESTÕES" : disciplina.toUpperCase();
 
         renderizarColuna(folhaSemGabarito, instituicao, nomeDisciplina, professor, questoes, false);
         renderizarColuna(folhaComGabarito, instituicao, nomeDisciplina, professor, questoes, true);
@@ -104,7 +111,7 @@ public class TelaRelatorioProvaController implements Initializable {
                                   String professor, List<Questao> questoes, boolean comGabarito) {
         coluna.getChildren().clear();
 
-        VBox paginaAtual  = criarPagina(instituicao, nomeDisciplina, professor);
+        VBox paginaAtual   = criarPagina(instituicao, nomeDisciplina, professor);
         double alturaAtual = MARGEM_SUPERIOR + 38;
 
         int numero    = 1;
@@ -113,7 +120,7 @@ public class TelaRelatorioProvaController implements Initializable {
 
         for (Questao q : questoes) {
             VBox bloco         = criarBlocoQuestao(numero, q, comGabarito);
-            double alturaBloco = estimarAlturaBloco(q);
+            double alturaBloco = estimarAlturaBloco(q, comGabarito);
 
             if (alturaAtual + alturaBloco + MARGEM_INFERIOR > ALTURA_MAXIMA_PAGINA) {
                 adicionarRodape(paginaAtual, paginaNum, total);
@@ -142,11 +149,9 @@ public class TelaRelatorioProvaController implements Initializable {
         pagina.getStyleClass().add("folha");
         pagina.setAlignment(Pos.TOP_CENTER);
         pagina.setPadding(new Insets(MARGEM_SUPERIOR, 36, MARGEM_INFERIOR, 36));
-
         pagina.getChildren().add(criarCabecalho(instituicao, professor));
         pagina.getChildren().add(criarTituloBox("EXERCÍCIO DE " + nomeDisciplina));
         pagina.getChildren().add(criarSeparador());
-
         return pagina;
     }
 
@@ -155,10 +160,8 @@ public class TelaRelatorioProvaController implements Initializable {
         pagina.getStyleClass().add("folha");
         pagina.setAlignment(Pos.TOP_CENTER);
         pagina.setPadding(new Insets(24, 36, MARGEM_INFERIOR, 36));
-
         pagina.getChildren().add(criarTituloBox("EXERCÍCIO DE " + nomeDisciplina + " (Página " + numeroPagina + ")"));
         pagina.getChildren().add(criarSeparador());
-
         return pagina;
     }
 
@@ -167,7 +170,6 @@ public class TelaRelatorioProvaController implements Initializable {
         titulo.getStyleClass().add("folha-titulo-exercicio");
         titulo.setAlignment(Pos.CENTER);
         titulo.setMaxWidth(Double.MAX_VALUE);
-
         HBox box = new HBox(titulo);
         box.setAlignment(Pos.CENTER);
         box.setMaxWidth(Double.MAX_VALUE);
@@ -180,7 +182,6 @@ public class TelaRelatorioProvaController implements Initializable {
         sep.getStyleClass().add("folha-separador");
         sep.setAlignment(Pos.CENTER);
         sep.setMaxWidth(Double.MAX_VALUE);
-
         HBox box = new HBox(sep);
         box.setAlignment(Pos.CENTER);
         box.setMaxWidth(Double.MAX_VALUE);
@@ -191,7 +192,6 @@ public class TelaRelatorioProvaController implements Initializable {
     private void adicionarRodape(VBox pagina, int numeroPagina, int totalQuestoes) {
         Label rodape = new Label("Página " + numeroPagina + " - Total de questões: " + totalQuestoes);
         rodape.getStyleClass().add("folha-rodape");
-
         VBox wrap = new VBox(rodape);
         wrap.setAlignment(Pos.CENTER);
         VBox.setMargin(wrap, new Insets(8, 0, 0, 0));
@@ -313,7 +313,7 @@ public class TelaRelatorioProvaController implements Initializable {
     }
 
     // ================================================================
-    // QUESTÕES
+    // QUESTÕES — trata Múltipla Escolha, Verdadeiro/Falso e Discursiva
     // ================================================================
 
     private VBox criarBlocoQuestao(int numero, Questao q, boolean comGabarito) {
@@ -326,14 +326,77 @@ public class TelaRelatorioProvaController implements Initializable {
         bloco.getChildren().add(enunciado);
 
         if (q instanceof MultiplaEscolha) {
+            // ── MÚLTIPLA ESCOLHA ──────────────────────────────────────
             MultiplaEscolha me = (MultiplaEscolha) q;
             List<String> alternativas = me.getAlternativas();
             String resposta = me.getResposta();
 
             for (int i = 0; i < alternativas.size(); i++) {
-                String texto = alternativas.get(i);
-                boolean eGabarito = comGabarito && texto.equals(resposta);
-                bloco.getChildren().add(criarLinhaAlternativa(letra(i), texto, eGabarito));
+                String texto    = alternativas.get(i);
+                boolean gabarito = comGabarito && texto.equals(resposta);
+                bloco.getChildren().add(criarLinhaAlternativa(letra(i), texto, gabarito));
+            }
+
+        } else if (q instanceof VerdadeiroFalso) {
+            // ── VERDADEIRO / FALSO ────────────────────────────────────
+            VerdadeiroFalso vf = (VerdadeiroFalso) q;
+            List<String> alternativas = vf.getAlternativas();
+            String respostaVF = "";
+
+            if (comGabarito) {
+                // Pega o texto da alternativa correta via lista de booleanos
+                List<Boolean> respostas = vf.getRespostas();
+                if (respostas != null && alternativas != null) {
+                    for (int i = 0; i < respostas.size(); i++) {
+                        if (respostas.get(i) && i < alternativas.size()) {
+                            respostaVF = alternativas.get(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Se o banco salvou alternativas reais, usa elas; senão usa padrão
+            if (alternativas != null && !alternativas.isEmpty()) {
+                for (String alt : alternativas) {
+                    boolean gabarito = comGabarito && alt.equals(respostaVF);
+                    bloco.getChildren().add(criarLinhaAlternativa("", alt, gabarito));
+                }
+            } else {
+                // Fallback: "Verdadeiro" e "Falso"
+                boolean verdadeiroGabarito = comGabarito && respostaVF.equalsIgnoreCase("Verdadeiro");
+                boolean falsoGabarito      = comGabarito && respostaVF.equalsIgnoreCase("Falso");
+                bloco.getChildren().add(criarLinhaAlternativa("", "Verdadeiro", verdadeiroGabarito));
+                bloco.getChildren().add(criarLinhaAlternativa("", "Falso",      falsoGabarito));
+            }
+
+        } else if (q instanceof Discursiva) {
+            // ── DISCURSIVA ────────────────────────────────────────────
+            if (comGabarito) {
+                // Lado com gabarito: mostra a resposta
+                Discursiva d = (Discursiva) q;
+                String resposta = d.getResposta();
+                Label lblGab = new Label(resposta != null && !resposta.isBlank()
+                        ? resposta : "(sem gabarito cadastrado)");
+                lblGab.getStyleClass().add("folha-alternativa-gabarito");
+                lblGab.setWrapText(true);
+                VBox.setMargin(lblGab, new Insets(4, 0, 0, 8));
+                bloco.getChildren().add(lblGab);
+            } else {
+                // Lado sem gabarito: 4 linhas em branco para o aluno escrever
+                for (int i = 0; i < 4; i++) {
+                    HBox linhaBranca = new HBox();
+                    linhaBranca.setMinHeight(22);
+                    linhaBranca.setMaxHeight(22);
+                    linhaBranca.setPrefHeight(22);
+                    linhaBranca.setMaxWidth(Double.MAX_VALUE);
+                    linhaBranca.setStyle(
+                            "-fx-border-color: transparent transparent #aaaaaa transparent;" +
+                                    "-fx-border-width: 0 0 1 0;"
+                    );
+                    VBox.setMargin(linhaBranca, new Insets(4, 4, 0, 4));
+                    bloco.getChildren().add(linhaBranca);
+                }
             }
         }
 
@@ -349,7 +412,8 @@ public class TelaRelatorioProvaController implements Initializable {
         marcador.getStyleClass().add(eGabarito ? "folha-marcador-gabarito" : "folha-marcador");
         marcador.setMinWidth(34);
 
-        Label conteudo = new Label(letra + ". " + texto);
+        String prefixo = (letra == null || letra.isBlank()) ? "" : letra + ". ";
+        Label conteudo = new Label(prefixo + texto);
         conteudo.getStyleClass().add(eGabarito ? "folha-alternativa-gabarito" : "folha-alternativa-texto");
         conteudo.setWrapText(true);
         HBox.setHgrow(conteudo, Priority.ALWAYS);
@@ -362,11 +426,16 @@ public class TelaRelatorioProvaController implements Initializable {
         return String.valueOf((char) ('A' + index));
     }
 
-    private double estimarAlturaBloco(Questao q) {
-        int numAlternativas = (q instanceof MultiplaEscolha)
-                ? ((MultiplaEscolha) q).getAlternativas().size()
-                : 0;
-        return 22 + numAlternativas * 16 + 8;
+    private double estimarAlturaBloco(Questao q, boolean comGabarito) {
+        if (q instanceof MultiplaEscolha) {
+            int n = ((MultiplaEscolha) q).getAlternativas().size();
+            return 22 + n * 16 + 8;
+        } else if (q instanceof VerdadeiroFalso) {
+            return 22 + 2 * 16 + 8;
+        } else {
+            // Discursiva: sem gabarito = 4 linhas (~22px cada); com gabarito = texto variável
+            return comGabarito ? 22 + 30 + 8 : 22 + 4 * 22 + 8;
+        }
     }
 
     // ================================================================
@@ -434,15 +503,83 @@ public class TelaRelatorioProvaController implements Initializable {
         boolean showDialog = job.showPrintDialog(btnImprimir.getScene().getWindow());
         if (!showDialog) return;
 
-        boolean sucesso = imprimirColuna(job, layout, folhaSemGabarito)
-                && imprimirColuna(job, layout, folhaComGabarito);
+        // Contadores para controle de páginas impressas
+        int totalPaginasSemGabarito = folhaSemGabarito.getChildren().size();
+        int totalPaginasComGabarito = folhaComGabarito.getChildren().size();
+        int paginasImpressas = 0;
+        int totalPaginas = totalPaginasSemGabarito + totalPaginasComGabarito;
+
+        boolean sucesso = true;
+
+        // Imprime todas as páginas da coluna sem gabarito
+        for (Node node : folhaSemGabarito.getChildren()) {
+            if (!(node instanceof VBox)) continue;
+            VBox folha = (VBox) node;
+
+            paginasImpressas++;
+            boolean ok = imprimirPagina(job, layout, folha, paginasImpressas, totalPaginas);
+            if (!ok) {
+                sucesso = false;
+                break;
+            }
+        }
+
+        // Se a primeira coluna foi bem sucedida, imprime a coluna com gabarito
+        if (sucesso) {
+            for (Node node : folhaComGabarito.getChildren()) {
+                if (!(node instanceof VBox)) continue;
+                VBox folha = (VBox) node;
+
+                paginasImpressas++;
+                boolean ok = imprimirPagina(job, layout, folha, paginasImpressas, totalPaginas);
+                if (!ok) {
+                    sucesso = false;
+                    break;
+                }
+            }
+        }
 
         if (sucesso) {
             job.endJob();
-            alerta("Impressão", "Impressão enviada!\n\nDica: selecione 'Salvar como PDF' para gerar um arquivo PDF.");
+            alerta("Impressão", "Impressão enviada!\n\n" +
+                    "Páginas impressas: " + totalPaginas + "\n" +
+                    "Sem gabarito: " + totalPaginasSemGabarito + " página(s)\n" +
+                    "Com gabarito: " + totalPaginasComGabarito + " página(s)\n\n" +
+                    "Dica: selecione 'Salvar como PDF' para gerar um PDF.");
         } else {
             alerta("Erro", "Ocorreu um erro durante a impressão.");
         }
+    }
+
+    /**
+     * Imprime uma única página com escala adequada
+     */
+    private boolean imprimirPagina(PrinterJob job, PageLayout layout, VBox folha, int paginaAtual, int totalPaginas) {
+        double larguraPagina = layout.getPrintableWidth();
+        double alturaPagina = layout.getPrintableHeight();
+
+        // Calcula a escala para caber na página
+        double escalaX = larguraPagina / folha.getPrefWidth();
+        double escalaY = alturaPagina / folha.getMinHeight();
+        double escala = Math.min(escalaX, escalaY);
+
+        // Aplica a escala
+        Scale transform = new Scale(escala, escala);
+        folha.getTransforms().add(transform);
+
+        // Imprime a página
+        boolean ok = job.printPage(layout, folha);
+
+        // Remove a escala
+        folha.getTransforms().remove(transform);
+
+        if (!ok) {
+            System.err.println("Erro ao imprimir página " + paginaAtual + " de " + totalPaginas);
+        } else {
+            System.out.println("Página " + paginaAtual + " de " + totalPaginas + " impressa com sucesso");
+        }
+
+        return ok;
     }
 
     private boolean imprimirColuna(PrinterJob job, PageLayout layout, VBox coluna) {
@@ -459,9 +596,7 @@ public class TelaRelatorioProvaController implements Initializable {
 
             Scale transform = new Scale(escala, escala);
             folha.getTransforms().add(transform);
-
             boolean ok = job.printPage(layout, folha);
-
             folha.getTransforms().remove(transform);
 
             if (!ok) return false;
@@ -473,30 +608,11 @@ public class TelaRelatorioProvaController implements Initializable {
     // NAVEGAÇÃO
     // ================================================================
 
-    @FXML
-    private void handleVoltar(MouseEvent e) {
-        navegarPara("TelaRelatorioView", "TelaRelatorioStyle", btnEditar);
-    }
-
-    @FXML
-    private void handleMenuDisciplinas(MouseEvent e) {
-        navegarPara("TelaInicialView", "TelaInicialStyle", menuDisciplinas);
-    }
-
-    @FXML
-    private void handleMenuBuscar(MouseEvent e) {
-        navegarPara("TelaBuscarView", "TelaBuscarStyle", menuBuscar);
-    }
-
-    @FXML
-    private void handleMenuGerarProva(MouseEvent e) {
-        navegarPara("TelaGerarProvaView", "TelaGerarProvaStyle", menuGerarProva);
-    }
-
-    @FXML
-    private void handleMenuRelatorio(MouseEvent e) {
-        navegarPara("TelaRelatorioView", "TelaRelatorioStyle", menuRelatorio);
-    }
+    @FXML private void handleVoltar(MouseEvent e)          { navegarPara("TelaRelatorioView",       "TelaRelatorioStyle",       btnEditar);      }
+    @FXML private void handleMenuDisciplinas(MouseEvent e) { navegarPara("TelaInicialView",          "TelaInicialStyle",          menuDisciplinas); }
+    @FXML private void handleMenuBuscar(MouseEvent e)      { navegarPara("TelaBuscarView",           "TelaBuscarStyle",           menuBuscar);      }
+    @FXML private void handleMenuGerarProva(MouseEvent e)  { navegarPara("TelaGerarProvaView",       "TelaGerarProvaStyle",       menuGerarProva);  }
+    @FXML private void handleMenuRelatorio(MouseEvent e)   { navegarPara("TelaRelatorioView",        "TelaRelatorioStyle",        menuRelatorio);   }
 
     private void navegarPara(String nomeView, String nomeCSS, Node origem) {
         try {
@@ -505,11 +621,8 @@ public class TelaRelatorioProvaController implements Initializable {
             Parent root = loader.load();
 
             Scene scene = new Scene(root, 1280, 750);
-
             URL cssUrl = getClass().getResource("/br/edu/ufersa/aplicativo/css/" + nomeCSS + ".css");
-            if (cssUrl != null) {
-                scene.getStylesheets().add(cssUrl.toExternalForm());
-            }
+            if (cssUrl != null) scene.getStylesheets().add(cssUrl.toExternalForm());
 
             Stage stage = (Stage) origem.getScene().getWindow();
             boolean fs  = stage.isFullScreen();

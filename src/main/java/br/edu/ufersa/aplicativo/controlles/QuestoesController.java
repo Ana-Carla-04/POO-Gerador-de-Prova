@@ -59,7 +59,6 @@ public class QuestoesController implements Initializable {
     @FXML private StackPane menuBuscar;
     @FXML private StackPane menuGerarProva;
     @FXML private StackPane menuRelatorio;
-    @FXML private StackPane menuProvas;
 
     private List<StackPane> menuItems;
     private HBox itemSelecionado;
@@ -71,7 +70,16 @@ public class QuestoesController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         questaoService = ServiceFactory.criarQuestaoService();
+
+        // Tenta pegar a disciplina do Contexto
         disciplinaInfo = Contexto.getDisciplinaSelecionada();
+
+        // Verifica se veio uma questão específica do Contexto
+        Questao questaoEspecifica = Contexto.getQuestaoSelecionada();
+
+        // Limpa a questão do Contexto após recuperar
+        Contexto.limparQuestaoSelecionada();
+
         menuItems = Arrays.asList(menuDisciplinas, menuBuscar, menuGerarProva, menuRelatorio);
 
         inicializarQuestoesPorDisciplina();
@@ -82,7 +90,59 @@ public class QuestoesController implements Initializable {
         nivelCombo.setPromptText("nível da questão");
         nivelCombo.getSelectionModel().selectFirst();
 
+        // Atualiza o título da topbar
+        if (disciplinaInfo != null) {
+            String nomeDisc = Contexto.getNomeDisciplinaSelecionada();
+            if (nomeDisc != null && !nomeDisc.isEmpty()) {
+                disciplinaInfo = new DisciplinaInfo(nomeDisc, "", 0, "");
+            }
+
+        }
+
         carregarQuestoes();
+
+        // Se veio uma questão específica, seleciona ela automaticamente
+        if (questaoEspecifica != null) {
+            selecionarQuestaoEspecifica(questaoEspecifica);
+        }
+    }
+
+    /**
+     * Seleciona uma questão específica na lista
+     */
+    private void selecionarQuestaoEspecifica(Questao questao) {
+        String codigoQuestao = String.valueOf(questao.getCodigo());
+        String nomeDisciplina = disciplinaInfo != null ? disciplinaInfo.getNome() :
+                (questao.getDisciplina() != null ? questao.getDisciplina().getNome() : "Geral");
+
+        List<QuestaoInfo> listaQuestoes = questoesPorDisciplina.get(nomeDisciplina);
+
+        if (listaQuestoes != null) {
+            for (int i = 0; i < listaQuestoes.size(); i++) {
+                QuestaoInfo info = listaQuestoes.get(i);
+                if (info.getCodigo().equals(codigoQuestao)) {
+                    // Encontrou a questão, seleciona na lista
+                    if (i < listaContainer.getChildren().size()) {
+                        HBox item = (HBox) listaContainer.getChildren().get(i);
+
+                        // Remove seleção anterior
+                        if (itemSelecionado != null) {
+                            itemSelecionado.getStyleClass().remove("questao-item-selected");
+                        }
+
+                        // Seleciona o item
+                        item.getStyleClass().add("questao-item-selected");
+                        itemSelecionado = item;
+
+                        // Atualiza o detalhe
+                        atualizarDetalhe(info);
+
+                        System.out.println("Questão selecionada automaticamente: " + info.getCodigo());
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     // ================================================================
@@ -109,34 +169,29 @@ public class QuestoesController implements Initializable {
                     if (me.getAlternativas() != null) {
                         alternativas = me.getAlternativas().toArray(new String[0]);
                     }
-                    // getResposta() já retorna o texto da alternativa correta
                     gabarito = me.getResposta() != null ? me.getResposta().trim() : "";
 
                 } else if (q instanceof VerdadeiroFalso) {
                     VerdadeiroFalso vf = (VerdadeiroFalso) q;
                     tipo = "Verdadeiro ou Falso";
 
-                    // Usa as alternativas reais do banco
                     if (vf.getAlternativas() != null && !vf.getAlternativas().isEmpty()) {
                         alternativas = vf.getAlternativas().toArray(new String[0]);
                     } else {
                         alternativas = new String[]{"Verdadeiro", "Falso"};
                     }
 
-                    // Busca o texto da alternativa correta via lista de booleanos
-                    // (evita depender do getResposta() que retorna "V-F")
                     String gabVF = "";
                     List<String> altsVF = vf.getAlternativas();
                     List<Boolean> respsVF = vf.getRespostas();
                     if (respsVF != null && !respsVF.isEmpty() && altsVF != null) {
                         for (int idx = 0; idx < respsVF.size(); idx++) {
                             if (respsVF.get(idx) && idx < altsVF.size()) {
-                                gabVF = altsVF.get(idx); // "Verdadeiro" ou "Falso"
+                                gabVF = altsVF.get(idx);
                                 break;
                             }
                         }
                     }
-                    // Fallback: se não achou via booleanos, usa getResposta()
                     if (gabVF.isEmpty() && vf.getResposta() != null) {
                         gabVF = vf.getResposta();
                     }
@@ -205,7 +260,7 @@ public class QuestoesController implements Initializable {
             item.getStyleClass().add("questao-item");
             item.setUserData(q);
 
-            Label lbl = new Label(q.getAssunto() + " (" + q.getTipo() + ")");
+            Label lbl = new Label(q.getAssunto());
             lbl.getStyleClass().add("questao-item-label");
             item.getChildren().add(lbl);
 
@@ -245,7 +300,6 @@ public class QuestoesController implements Initializable {
         String gabarito = q.getGabarito() != null ? q.getGabarito().trim() : "";
         String tipo = q.getTipo();
 
-        // --- DISCURSIVA ---
         if ("Discursiva".equals(tipo)) {
             Label msg = new Label(!gabarito.isEmpty() ? gabarito : "Questão discursiva — sem gabarito.");
             msg.getStyleClass().add("det-normal");
@@ -258,7 +312,6 @@ public class QuestoesController implements Initializable {
             return;
         }
 
-        // --- SEM ALTERNATIVAS ---
         if (alternativas == null || alternativas.length == 0) {
             Label msg = new Label("Sem alternativas cadastradas.");
             msg.getStyleClass().add("det-normal");
@@ -268,13 +321,6 @@ public class QuestoesController implements Initializable {
             return;
         }
 
-        // 🔍 LOG PARA DEPURAÇÃO
-        System.out.println("=== PREENCHENDO GABARITO ===");
-        System.out.println("Tipo: " + tipo);
-        System.out.println("Gabarito: '" + gabarito + "'");
-        System.out.println("Alternativas: " + Arrays.toString(alternativas));
-
-        // --- MÚLTIPLA ESCOLHA e VERDADEIRO/FALSO ---
         boolean isMultipla = "Múltipla Escolha".equals(tipo);
         int metade = (int) Math.ceil(alternativas.length / 2.0);
 
@@ -288,25 +334,12 @@ public class QuestoesController implements Initializable {
             altLabel.setWrapText(true);
             altLabel.setMaxWidth(Double.MAX_VALUE);
 
-            // 🔥 COMPARAÇÃO CORRIGIDA - ignora maiúsculas/minúsculas
-            boolean eGabarito = false;
-
-            // Para Verdadeiro/Falso, compara com "Verdadeiro" ou "Falso"
-            if ("Verdadeiro ou Falso".equals(tipo)) {
-                eGabarito = textoAlternativa.equalsIgnoreCase(gabarito);
-            }
-            // Para Múltipla Escolha, compara o texto completo
-            else {
-                eGabarito = textoAlternativa.equalsIgnoreCase(gabarito);
-            }
-
-            System.out.println("  Alt " + i + ": '" + textoAlternativa + "' | Gabarito: '" + gabarito + "' | É gabarito? " + eGabarito);
+            boolean eGabarito = textoAlternativa.equalsIgnoreCase(gabarito);
 
             if (eGabarito) {
-                altLabel.getStyleClass().add("det-gabarito"); // Vermelho
-                System.out.println("   ALTERNATIVA CORRETA DETECTADA: " + textoAlternativa);
+                altLabel.getStyleClass().add("det-gabarito");
             } else {
-                altLabel.getStyleClass().add("det-normal"); // Cor normal
+                altLabel.getStyleClass().add("det-normal");
             }
 
             GridPane.setColumnIndex(altLabel, col);
@@ -314,7 +347,6 @@ public class QuestoesController implements Initializable {
             GridPane.setFillWidth(altLabel, true);
             gabaritoGrid.getChildren().add(altLabel);
         }
-        System.out.println("================================");
     }
 
     // ================================================================
@@ -429,6 +461,7 @@ public class QuestoesController implements Initializable {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void handleMenuRelatorio(MouseEvent event) {
         try {

@@ -34,9 +34,10 @@ public class ServiceFactory {
 
     public static ProvaService criarProvaService() {
         try {
-            return new ProvaService(new ProvaDAO(Conexao.abrirConexao()));
+            ProvaDAO provaDAO = new ProvaDAO(Conexao.abrirConexao());
+            return new ProvaService(provaDAO);
         } catch (SQLException e) {
-            throw new ServiceException(e.getMessage(), e);
+            throw new RuntimeException("Erro ao criar ProvaService: " + e.getMessage(), e);
         }
     }
 }

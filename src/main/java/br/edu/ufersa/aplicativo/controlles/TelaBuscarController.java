@@ -1,9 +1,12 @@
 package br.edu.ufersa.aplicativo.controlles;
 
+import br.edu.ufersa.aplicativo.application.Contexto;
 import br.edu.ufersa.aplicativo.model.entities.Questao;
+import br.edu.ufersa.aplicativo.model.entities.Prova;
 import br.edu.ufersa.aplicativo.model.DAO.QuestaoDAO;
 import br.edu.ufersa.aplicativo.model.entities.Disciplina;
 import br.edu.ufersa.aplicativo.model.DAO.DisciplinaDAO;
+import br.edu.ufersa.aplicativo.model.DAO.ProvaDAO;
 import br.edu.ufersa.aplicativo.util.Conexao;
 
 import javafx.fxml.FXML;
@@ -12,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -29,6 +33,7 @@ public class TelaBuscarController implements Initializable {
     private Connection conexao;
     private QuestaoDAO questaoDAO;
     private DisciplinaDAO disciplinaDAO;
+    private ProvaDAO provaDAO;
 
 
     // ── FXML ────────────────────────────────────────────────────────
@@ -89,22 +94,12 @@ public class TelaBuscarController implements Initializable {
     // Popup visível no momento
     private VBox popupAtual = null;
 
-    // ── Dados mock ──────────────────────────────────────────────────
-    private final List<String> disciplinas = Arrays.asList(
-            "Matemática", "Português", "História",
-            "Geografia", "Física", "Química", "Biologia"
-    );
-
+    // ── Dados ──────────────────────────────────────────────────
     private final List<String> semestres = Arrays.asList(
             "2024.1", "2024.2", "2025.1", "2025.2"
     );
 
-    private final List<String> assuntos = Arrays.asList(
-            "Álgebra", "Geometria", "Trigonometria",
-            "Literatura", "Gramática", "Revolução Industrial"
-    );
-
-    // Itens da lista (mock)
+    // Itens da lista
     private final List<ItemBusca> todosItens = new ArrayList<>();
     private final List<ItemBusca> itensFiltrados = new ArrayList<>();
 
@@ -115,7 +110,7 @@ public class TelaBuscarController implements Initializable {
             this.conexao = Conexao.abrirConexao();
             this.questaoDAO = new QuestaoDAO(this.conexao);
             this.disciplinaDAO = new DisciplinaDAO(this.conexao);
-
+            this.provaDAO = new ProvaDAO(this.conexao);
 
             carregarDadosDoBanco();
             preencherPopupsDisciplina();
@@ -129,22 +124,31 @@ public class TelaBuscarController implements Initializable {
     }
 
     // ================================================================
-    // DADOS MOCK
+    // CARREGAR DADOS DO BANCO
     // ================================================================
 
     private void carregarDadosDoBanco() {
         todosItens.clear();
 
         try {
+            // 1. Carregar Questões
             List<Questao> questoesDoBanco = questaoDAO.listar();
-
             for (Questao q : questoesDoBanco) {
                 todosItens.add(new ItemBusca(q));
             }
 
+            // 2. Carregar Provas Salvas
+            List<Prova> provasDoBanco = provaDAO.listar();
+            for (Prova p : provasDoBanco) {
+                todosItens.add(new ItemBusca(p));
+            }
+
+            System.out.println("Carregados " + questoesDoBanco.size() + " questões e " +
+                    provasDoBanco.size() + " provas");
+
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Erro ao carregar os dados reais na tela de busca.");
+            System.err.println("Erro ao carregar os dados na tela de busca.");
         }
 
         itensFiltrados.addAll(todosItens);
@@ -216,7 +220,6 @@ public class TelaBuscarController implements Initializable {
     }
 
     private void preencherPopupDificuldade() {
-        // já declarado no FXML, só precisamos conectar ação
         for (javafx.scene.Node n : popupDificuldade.getChildren()) {
             if (n instanceof Label l && l.getStyleClass().contains("popup-opcao")) {
                 l.setOnMouseClicked(e -> {
@@ -429,10 +432,10 @@ public class TelaBuscarController implements Initializable {
         itensFiltrados.clear();
 
         for (ItemBusca item : todosItens) {
-            if (filtroTipo != null && !item.tipo.equals(filtroTipo))         continue;
+            if (filtroTipo != null && !item.tipo.equals(filtroTipo)) continue;
             if (filtroDisciplina != null && !item.disciplina.equals(filtroDisciplina)) continue;
-            if (filtroSemestre != null && !item.semestre.equals(filtroSemestre))       continue;
-            if (filtroAssunto != null && !item.assunto.equals(filtroAssunto))          continue;
+            if (filtroSemestre != null && !item.semestre.equals(filtroSemestre)) continue;
+            if (filtroAssunto != null && !item.assunto.equals(filtroAssunto)) continue;
             if (filtroDificuldade != null && !item.dificuldade.equals(filtroDificuldade)) continue;
             itensFiltrados.add(item);
         }
@@ -455,40 +458,96 @@ public class TelaBuscarController implements Initializable {
             row.getStyleClass().add("lista-item");
             row.setAlignment(Pos.CENTER_LEFT);
 
-            Label lbl = new Label(item.descricao);
+            // Ícone indicando o tipo
+            String icone = item.tipo.equals("Prova") ? "📄 " : "❓ ";
+            Label lbl = new Label(icone + item.descricao);
             lbl.getStyleClass().add("lista-item-label");
 
-            row.getChildren().add(lbl);
+            // Adiciona badge com o tipo
+            Label badge = new Label(item.tipo);
+            badge.getStyleClass().add("lista-item-badge");
+            badge.setStyle("-fx-font-size: 10px; -fx-text-fill: #666; -fx-padding: 2 8;");
+
+            HBox content = new HBox(10);
+            content.setAlignment(Pos.CENTER_LEFT);
+            content.getChildren().addAll(lbl, badge);
+
+            row.getChildren().add(content);
 
             // ═══════════════════════════════════════════════════════════════
-            // CORREÇÃO: Clique no item
+            // Clique no item - navega para visualizar
             // ═══════════════════════════════════════════════════════════════
             row.setOnMouseClicked(e -> {
                 // Remove seleção anterior
                 for (javafx.scene.Node n : listaContainer.getChildren()) {
                     n.getStyleClass().remove("lista-item-selected");
-                    // Verifica se o nó é um StackPane e tem filhos
-                    if (n instanceof StackPane) {
-                        StackPane sp = (StackPane) n;
-                        for (javafx.scene.Node child : sp.getChildren()) {
-                            if (child instanceof Label) {
-                                Label ll = (Label) child;
-                                ll.getStyleClass().remove("lista-item-label-selected");
-                                if (!ll.getStyleClass().contains("lista-item-label")) {
-                                    ll.getStyleClass().add("lista-item-label");
-                                }
-                            }
-                        }
-                    }
                 }
 
                 // Marca o item atual como selecionado
                 row.getStyleClass().add("lista-item-selected");
-                lbl.getStyleClass().remove("lista-item-label");
-                lbl.getStyleClass().add("lista-item-label-selected");
 
-                // Mostra qual item foi clicado
-                System.out.println("Item selecionado: " + item.descricao);
+                // Navega para visualizar o item
+                if (item.tipo.equals("Prova")) {
+                    // Navega para visualizar a prova
+                    try {
+                        FXMLLoader loader = new FXMLLoader(
+                                getClass().getResource("/br/edu/ufersa/aplicativo/views/TelaRelatorioProvaView.fxml"));
+                        Parent root = loader.load();
+                        TelaRelatorioProvaController controller = loader.getController();
+                        controller.setProva(item.prova);
+
+                        Stage stage = (Stage) row.getScene().getWindow();
+                        stage.setScene(new Scene(root, 1280, 750));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    // Para questões, navega para a tela de questões com a questão selecionada
+                    try {
+                        // Carrega a questão completa do banco
+                        Questao questaoCompleta = null;
+                        List<Questao> todasQuestoes = questaoDAO.listar();
+                        for (Questao q : todasQuestoes) {
+                            if (String.valueOf(q.getCodigo()).equals(item.codigoQuestao)) {
+                                questaoCompleta = q;
+                                break;
+                            }
+                        }
+
+                        if (questaoCompleta != null) {
+                            // Salva a questão selecionada no Contexto
+                            Contexto.setQuestaoSelecionada(questaoCompleta);
+
+                            // Também salva a disciplina no Contexto para a tela de questões
+                            // Busca a disciplina pelo nome
+                            List<Disciplina> disciplinas = disciplinaDAO.listar();
+                            for (Disciplina d : disciplinas) {
+                                if (d.getNome().equals(item.disciplina)) {
+                                    TelaInicialController.DisciplinaInfo discInfo = new TelaInicialController.DisciplinaInfo(
+                                            d.getNome(),      // nome
+                                            d.getCodigo(),    // codigo
+                                            0,                // quantidade (0 pois é só para contexto)
+                                            ""                // professor (vazio)
+                                    );
+                                    Contexto.setDisciplinaSelecionada(discInfo);
+                                    break;
+                                }
+                            }
+
+                            FXMLLoader loader = new FXMLLoader(
+                                    getClass().getResource("/br/edu/ufersa/aplicativo/views/QuestoesView.fxml"));
+                            Parent root = loader.load();
+
+                            Stage stage = (Stage) row.getScene().getWindow();
+                            stage.setScene(new Scene(root, 1280, 750));
+                        } else {
+                            alerta("Erro", "Questão não encontrada no banco de dados.");
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        alerta("Erro", "Erro ao abrir a questão: " + ex.getMessage());
+                    }
+                }
 
                 e.consume();
             });
@@ -501,10 +560,6 @@ public class TelaBuscarController implements Initializable {
     // GERENCIAMENTO DE POPUPS
     // ================================================================
 
-    /**
-     * Abre o popup se estiver fechado; fecha se estiver aberto.
-     * Posiciona o popup abaixo do nó âncora dentro do StackPane central.
-     */
     private void togglePopup(VBox popup, javafx.scene.Node ancora) {
         if (popupAtual != null && popupAtual != popup) {
             fecharPopup(popupAtual);
@@ -523,7 +578,6 @@ public class TelaBuscarController implements Initializable {
         popup.setManaged(true);
         popupAtual = popup;
 
-        // Posicionar via translate — calcula offset relativo ao centerRoot
         javafx.application.Platform.runLater(() -> {
             javafx.geometry.Bounds bounds = ancora.localToScene(ancora.getBoundsInLocal());
             javafx.geometry.Bounds rootB  = centerRoot.localToScene(centerRoot.getBoundsInLocal());
@@ -531,13 +585,11 @@ public class TelaBuscarController implements Initializable {
             double tx = bounds.getMinX() - rootB.getMinX();
             double ty = bounds.getMaxY() - rootB.getMinY() + 4;
 
-            // Garante que não sai da tela pela direita
             double popupW = popup.prefWidth(-1);
             if (popupW <= 0) popupW = 200;
             double maxX = centerRoot.getWidth() - popupW - 10;
             if (tx > maxX) tx = maxX;
 
-            // Traduz o popup para a posição correta dentro do StackPane
             StackPane.setAlignment(popup, javafx.geometry.Pos.TOP_LEFT);
             popup.setTranslateX(tx);
             popup.setTranslateY(ty);
@@ -613,7 +665,6 @@ public class TelaBuscarController implements Initializable {
             }
         }
         chipsAtivos.clear();
-        // Restaura labels originais
         setChipLabel(chipDisciplinaProva, "disciplina");
         setChipLabel(chipSemestre,        "semestre");
         setChipLabel(chipDisciplinaQuest, "disciplina");
@@ -635,7 +686,6 @@ public class TelaBuscarController implements Initializable {
     @FXML private void handleMenuGerarProva(MouseEvent e)   { navegarPara("TelaGerarProvaView"); }
     @FXML private void handleMenuRelatorio(MouseEvent e)    { navegarPara("TelaRelatorioView"); }
 
-
     private void navegarPara(String nomeView) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -653,9 +703,10 @@ public class TelaBuscarController implements Initializable {
     }
 
     private void alerta(String titulo, String msg) {
-        javafx.scene.control.Alert a = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.INFORMATION);
-        a.setTitle(titulo); a.setHeaderText(null); a.setContentText(msg);
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle(titulo);
+        a.setHeaderText(null);
+        a.setContentText(msg);
         a.showAndWait();
     }
 
@@ -665,20 +716,39 @@ public class TelaBuscarController implements Initializable {
 
     public static class ItemBusca {
         final String descricao;
-        final String tipo;        // "Prova" | "Questão"
+        final String tipo;        // "Prova" ou "Questões"
         final String disciplina;
         final String semestre;
         final String assunto;
-        final String dificuldade; // "Fácil" | "Médio" | "Difícil"
+        final String dificuldade;
+        final Prova prova;        // Referência à prova, se for uma
+        final String codigoQuestao; // Código da questão, se for uma questão
 
+        // Construtor para Questão
         public ItemBusca(Questao q) {
             String nomeDisc = (q.getDisciplina() != null) ? q.getDisciplina().getNome() : "Geral";
             this.descricao   = "Questão " + q.getCodigo() + " — " + nomeDisc;
-            this.tipo        = "Questões"; // Identifica como questão nos filtros
+            this.tipo        = "Questões";
             this.disciplina  = nomeDisc;
-            this.semestre    = ""; // Questões normais não costumam ter semestre fixo
+            this.semestre    = "";
             this.assunto     = q.getAssunto() != null ? q.getAssunto() : "Geral";
             this.dificuldade = (q.getNivel() != null) ? q.getNivel().getDescricaoTela() : "Fácil";
+            this.prova       = null;
+            this.codigoQuestao = String.valueOf(q.getCodigo());
+        }
+
+        // Construtor para Prova
+        public ItemBusca(Prova p) {
+            String nomeDisc = (p.getDisciplina() != null) ? p.getDisciplina().getNome() : "Geral";
+            String info = p.getQuestoes() != null ? p.getQuestoes().size() + " questões" : "0 questões";
+            this.descricao   = p.getCodigo() + " — " + nomeDisc + " (" + info + ")";
+            this.tipo        = "Prova";
+            this.disciplina  = nomeDisc;
+            this.semestre    = "";
+            this.assunto     = "Geral";
+            this.dificuldade = "Geral";
+            this.prova       = p;
+            this.codigoQuestao = null;
         }
     }
 }
