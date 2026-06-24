@@ -41,33 +41,9 @@ public abstract class Questao {
         }
     }
 
-    public void setNivel(Nivel nivel) {
-        if (nivel != null) {
+    public void setNivel(int nivel) {
+        if (nivel >= 1 && nivel <= 10) {
             this.nivel = nivel;
         }
     }
-
-    public abstract void setResposta(String resposta);
-
-    public int getCodigo() {
-        return codigo;
-    }
-
-    public String getEnunciado() {
-        return enunciado;
-    }
-
-    public String getAssunto() {
-        return assunto;
-    }
-
-    public Disciplina getDisciplina() {
-        return disciplina;
-    }
-
-    public Nivel getNivel() {
-        return this.nivel;
-    }
-
-    public abstract String getResposta();
 }
