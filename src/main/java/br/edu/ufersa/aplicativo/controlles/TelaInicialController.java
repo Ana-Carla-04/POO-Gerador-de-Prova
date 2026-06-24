@@ -3,6 +3,8 @@ package br.edu.ufersa.aplicativo.controlles;
 import br.edu.ufersa.aplicativo.application.Contexto;
 import br.edu.ufersa.aplicativo.model.service.DisciplinaService;
 import br.edu.ufersa.aplicativo.model.service.ServiceFactory;
+import br.edu.ufersa.aplicativo.model.observer.Observer;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,7 +30,7 @@ import java.util.ResourceBundle;
 
 import br.edu.ufersa.aplicativo.application.GerenteDeCena;
 
-public class TelaInicialController implements Initializable {
+public class TelaInicialController implements Initializable, Observer {
 
     @FXML private Label topbarTitle;
     @FXML private GridPane disciplinasGrid;
@@ -47,6 +49,7 @@ public class TelaInicialController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         disciplinaService = ServiceFactory.criarDisciplinaService();
+        disciplinaService.attach(this); // Registra como observador
         menuItems = Arrays.asList(
                 menuDisciplinas, menuBuscar, menuGerarProva, menuRelatorio
         );
@@ -54,6 +57,14 @@ public class TelaInicialController implements Initializable {
         carregarDisciplinasDoBanco();
         configurarGridResponsivo();
         carregarDisciplinas();
+    }
+
+    @Override
+    public void update() {
+        Platform.runLater(() -> {
+            carregarDisciplinasDoBanco();
+            carregarDisciplinas();
+        });
     }
 
     private void carregarDisciplinasDoBanco() {
@@ -64,6 +75,7 @@ public class TelaInicialController implements Initializable {
             System.err.println("Erro ao carregar disciplinas: " + e.getMessage());
         }
     }
+
 
     private void configurarGridResponsivo() {
         disciplinasGrid.getColumnConstraints().clear();
