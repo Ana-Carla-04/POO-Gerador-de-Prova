@@ -417,9 +417,42 @@ public class QuestoesController implements Initializable {
 
     @FXML
     private void handleEditar() {
-        System.out.println("Editar questão: " + questaoCodigoLabel.getText());
-    }
+        if (itemSelecionado == null) {
+            showAlert("Erro", "Selecione uma questão para editar.");
+            return;
+        }
 
+        QuestaoInfo info = (QuestaoInfo) itemSelecionado.getUserData();
+        if (info == null) return;
+
+        // Busca a Questao real no banco pelo código
+        try {
+            Questao questaoParaEditar = null;
+            for (Questao q : questaoService.listarQuestoes()) {
+                if (String.valueOf(q.getCodigo()).equals(info.getCodigo())) {
+                    questaoParaEditar = q;
+                    break;
+                }
+            }
+
+            if (questaoParaEditar == null) {
+                showAlert("Erro", "Questão não encontrada no banco de dados.");
+                return;
+            }
+
+            // Salva no Contexto para a próxima tela ler
+            Contexto.setQuestaoParaEditar(questaoParaEditar);
+
+            GerenteDeCena.carregarCena(
+                    "/br/edu/ufersa/aplicativo/views/TelaAdicionarQuestView.fxml",
+                    "/br/edu/ufersa/aplicativo/css/TelaAdicionarQuestStyle.css",
+                    "Gerador de Provas - Editar Questão");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erro", "Erro ao abrir edição: " + e.getMessage());
+        }
+    }
     // ================================================================
     // NAVEGAÇÃO
     // ================================================================

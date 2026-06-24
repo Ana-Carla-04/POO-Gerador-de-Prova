@@ -1,6 +1,7 @@
 package br.edu.ufersa.aplicativo.model.entities;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Prova {
@@ -8,7 +9,7 @@ public class Prova {
     private String codigo;
     private String instituicao;
     private String professor;
-    private LocalDate dataDeCriacao;
+    private LocalDate dataDeCriacao;  // Único campo de data
     private List<Questao> questoes;
     private Disciplina disciplina;
 
@@ -54,6 +55,14 @@ public class Prova {
         if (dataDeCriacao != null) {
             this.dataDeCriacao = dataDeCriacao;
         }
+    }
+
+  
+    public String getDataCriacao() {
+        if (dataDeCriacao == null) {
+            return null;
+        }
+        return dataDeCriacao.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
     public List<Questao> getQuestoes() { return questoes; }

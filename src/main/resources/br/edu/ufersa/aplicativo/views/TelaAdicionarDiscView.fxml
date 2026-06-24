@@ -105,35 +105,6 @@
                     <TextField fx:id="fieldCodigo" styleClass="field-input" promptText="Ex: MAT001"/>
                 </VBox>
 
-                <VBox spacing="8">
-                    <Label styleClass="field-label" text="Assuntos da disciplina:"/>
-
-                    <!-- Assunto 1 -->
-                    <HBox spacing="12" alignment="CENTER_LEFT">
-                        <Label styleClass="assunto-label" text="Assunto 1:" minWidth="90"/>
-                        <TextField fx:id="fieldAssunto1" styleClass="field-input-assunto" promptText="Ex: Álgebra"/>
-                    </HBox>
-                    <!-- Assunto 2 -->
-                    <HBox spacing="12" alignment="CENTER_LEFT">
-                        <Label styleClass="assunto-label" text="Assunto 2:" minWidth="90"/>
-                        <TextField fx:id="fieldAssunto2" styleClass="field-input-assunto" promptText="Ex: Geometria"/>
-                    </HBox>
-                    <!-- Assunto 3 -->
-                    <HBox spacing="12" alignment="CENTER_LEFT">
-                        <Label styleClass="assunto-label" text="Assunto 3:" minWidth="90"/>
-                        <TextField fx:id="fieldAssunto3" styleClass="field-input-assunto" promptText="Ex: Trigonometria"/>
-                    </HBox>
-                    <!-- Assunto 4 -->
-                    <HBox spacing="12" alignment="CENTER_LEFT">
-                        <Label styleClass="assunto-label" text="Assunto 4:" minWidth="90"/>
-                        <TextField fx:id="fieldAssunto4" styleClass="field-input-assunto" promptText="Ex: Estatística"/>
-                        <!-- Nota lateral -->
-                        <Label styleClass="hint-label"
-                               text="* para cadastrar mais assuntos, cadastre a mesma disciplina novamente"
-                               wrapText="true" maxWidth="160"/>
-                    </HBox>
-                </VBox>
-
                 <!-- Botão Adicionar -->
                 <HBox alignment="CENTER">
                     <Button fx:id="btnAdicionar"

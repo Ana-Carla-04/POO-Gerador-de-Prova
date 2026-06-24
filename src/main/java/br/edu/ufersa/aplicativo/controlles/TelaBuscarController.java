@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -123,10 +124,8 @@ public class TelaBuscarController implements Initializable {
         }
     }
 
-    // ================================================================
-    // CARREGAR DADOS DO BANCO
-    // ================================================================
 
+    // CARREGAR DADOS DO BANCO
     private void carregarDadosDoBanco() {
         todosItens.clear();
 
@@ -139,25 +138,38 @@ public class TelaBuscarController implements Initializable {
 
             // 2. Carregar Provas Salvas
             List<Prova> provasDoBanco = provaDAO.listar();
+            System.out.println("Total de provas no banco: " + provasDoBanco.size());
+
             for (Prova p : provasDoBanco) {
+                String data = p.getDataCriacao();
+
+                if (data == null || data.trim().isEmpty()) {
+                    // Usa a data atual
+                    p.setDataDeCriacao(LocalDate.now());
+                    data = p.getDataCriacao();
+                    System.out.println("⚠️ Prova sem data, usando data atual: " + data);
+                }
+
+                // DEBUG: Mostra o semestre extraído
+                String semestreExtraido = ItemBusca.extrairSemestre(data);
+                System.out.println("   → Semestre extraído: " + semestreExtraido);
+
                 todosItens.add(new ItemBusca(p));
             }
 
-            System.out.println("Carregados " + questoesDoBanco.size() + " questões e " +
+            System.out.println(" Carregados " + questoesDoBanco.size() + " questões e " +
                     provasDoBanco.size() + " provas");
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Erro ao carregar os dados na tela de busca.");
+            System.err.println(" Erro ao carregar os dados na tela de busca.");
         }
 
         itensFiltrados.addAll(todosItens);
     }
 
-    // ================================================================
-    // PREENCHIMENTO DOS POPUPS COM DADOS
-    // ================================================================
 
+    // PREENCHIMENTO DOS POPUPS COM DADOS
     private void preencherPopupsDisciplina() {
         try {
             List<Disciplina> disciplinasDoBanco = disciplinaDAO.listar();
@@ -181,10 +193,46 @@ public class TelaBuscarController implements Initializable {
                 atualizarLista();
             });
 
+            // NOVO: Preencher popup de semestre com dados das provas
+            preencherPopupSemestre();
+
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Erro ao carregar disciplinas no filtro.");
         }
+    }
+
+    // NOVO MÉTODO: Preencher popup de semestre
+    private void preencherPopupSemestre() {
+        List<String> semestresDisponiveis = new ArrayList<>();
+
+        // Extrai semestres únicos das provas
+        for (ItemBusca item : todosItens) {
+            if (item.tipo.equals("Prova") && item.semestre != null && !item.semestre.isEmpty()) {
+                if (!semestresDisponiveis.contains(item.semestre)) {
+                    semestresDisponiveis.add(item.semestre);
+                }
+            }
+        }
+
+        // Ordena os semestres (ex: 2023.1, 2023.2, 2024.1, 2024.2)
+        semestresDisponiveis.sort((s1, s2) -> {
+            String[] p1 = s1.split("\\.");
+            String[] p2 = s2.split("\\.");
+            int ano1 = Integer.parseInt(p1[0]);
+            int ano2 = Integer.parseInt(p2[0]);
+            if (ano1 != ano2) return Integer.compare(ano1, ano2);
+            int sem1 = Integer.parseInt(p1[1]);
+            int sem2 = Integer.parseInt(p2[1]);
+            return Integer.compare(sem1, sem2);
+        });
+
+        preencherPopupLista(popupSemestre, semestresDisponiveis, opcao -> {
+            filtroSemestre = opcao;
+            atualizarLabelChip(chipSemestre, "semestre", opcao);
+            fecharPopupAtual();
+            atualizarLista();
+        });
     }
 
     private void preencherPopupAssunto() {
@@ -295,7 +343,7 @@ public class TelaBuscarController implements Initializable {
         modoAtual = modo;
         filtroTipo        = labelTexto;
         filtroDisciplina  = null;
-        filtroSemestre    = null;
+        filtroSemestre    = null;  // Reset do filtro de semestre
         filtroAssunto     = null;
         filtroDificuldade = null;
 
@@ -317,6 +365,9 @@ public class TelaBuscarController implements Initializable {
             subfiltroProva.setManaged(true);
             subfiltroQuestoes.setVisible(false);
             subfiltroQuestoes.setManaged(false);
+
+            // Re-preenche o popup de semestre sempre que selecionar "Prova"
+            preencherPopupSemestre();
         } else {
             ativarBotaoTipo(btnQuestoes);
             subfiltroQuestoes.setVisible(true);
@@ -434,7 +485,18 @@ public class TelaBuscarController implements Initializable {
         for (ItemBusca item : todosItens) {
             if (filtroTipo != null && !item.tipo.equals(filtroTipo)) continue;
             if (filtroDisciplina != null && !item.disciplina.equals(filtroDisciplina)) continue;
-            if (filtroSemestre != null && !item.semestre.equals(filtroSemestre)) continue;
+
+            // FILTRO DE SEMESTRE MELHORADO
+            if (filtroSemestre != null) {
+                // Só aplica filtro se o item for uma prova E tiver semestre
+                if (item.tipo.equals("Prova") && item.semestre != null) {
+                    if (!item.semestre.equals(filtroSemestre)) continue;
+                } else {
+                    // Se não for prova ou não tiver semestre, não exibe quando filtro está ativo
+                    continue;
+                }
+            }
+
             if (filtroAssunto != null && !item.assunto.equals(filtroAssunto)) continue;
             if (filtroDificuldade != null && !item.dificuldade.equals(filtroDificuldade)) continue;
             itensFiltrados.add(item);
@@ -716,13 +778,14 @@ public class TelaBuscarController implements Initializable {
 
     public static class ItemBusca {
         final String descricao;
-        final String tipo;        // "Prova" ou "Questões"
+        final String tipo;
         final String disciplina;
         final String semestre;
         final String assunto;
         final String dificuldade;
-        final Prova prova;        // Referência à prova, se for uma
-        final String codigoQuestao; // Código da questão, se for uma questão
+        final Prova prova;
+        final String codigoQuestao;
+        final String dataProva;
 
         // Construtor para Questão
         public ItemBusca(Questao q) {
@@ -735,6 +798,7 @@ public class TelaBuscarController implements Initializable {
             this.dificuldade = (q.getNivel() != null) ? q.getNivel().getDescricaoTela() : "Fácil";
             this.prova       = null;
             this.codigoQuestao = String.valueOf(q.getCodigo());
+            this.dataProva   = null;
         }
 
         // Construtor para Prova
@@ -744,11 +808,58 @@ public class TelaBuscarController implements Initializable {
             this.descricao   = p.getCodigo() + " — " + nomeDisc + " (" + info + ")";
             this.tipo        = "Prova";
             this.disciplina  = nomeDisc;
-            this.semestre    = "";
+
+            //  OBTÉM A DATA CORRETAMENTE
+            String data = p.getDataCriacao(); // Retorna yyyy-MM-dd
+            this.semestre = extrairSemestre(data);
+            this.dataProva = data;
+
+            System.out.println(" ItemBusca criado: " + p.getCodigo() +
+                    " | Data: " + data +
+                    " | Semestre: " + this.semestre);
+
             this.assunto     = "Geral";
             this.dificuldade = "Geral";
             this.prova       = p;
             this.codigoQuestao = null;
+        }
+
+
+        private static String extrairSemestre(String data) {
+            if (data == null || data.trim().isEmpty()) {
+                System.out.println("⚠️ Data vazia ou nula");
+                return "";
+            }
+
+            try {
+                String dataLimpa = data.trim();
+                System.out.println(" Processando data: '" + dataLimpa + "'");
+
+                // Formato esperado: yyyy-MM-dd
+                String[] partes = dataLimpa.split("-");
+                if (partes.length == 3) {
+                    int ano = Integer.parseInt(partes[0]);
+                    int mes = Integer.parseInt(partes[1]);
+                    int dia = Integer.parseInt(partes[2]);
+
+                    System.out.println(" Ano: " + ano + ", Mês: " + mes + ", Dia: " + dia);
+
+                    if (ano >= 2000 && ano <= 2100 && mes >= 1 && mes <= 12 && dia >= 1 && dia <= 31) {
+                        int semestre = (mes <= 6) ? 1 : 2;
+                        String resultado = ano + "." + semestre;
+                        System.out.println(" Semestre extraído: " + resultado);
+                        return resultado;
+                    }
+                }
+
+                System.out.println(" Formato de data não reconhecido: " + data);
+                return "";
+
+            } catch (Exception e) {
+                System.err.println(" Erro ao extrair semestre da data: " + data);
+                e.printStackTrace();
+                return "";
+            }
         }
     }
 }

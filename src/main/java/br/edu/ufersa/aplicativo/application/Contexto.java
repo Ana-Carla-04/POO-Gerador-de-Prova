@@ -72,4 +72,18 @@ public class Contexto {
         questaoSelecionada = null;
         nomeDisciplinaSelecionada = null;
     }
+    // Adicionar ao Contexto existente:
+    private static Questao questaoParaEditar = null;
+
+    public static void setQuestaoParaEditar(Questao questao) {
+        questaoParaEditar = questao;
+    }
+
+    public static Questao getQuestaoParaEditar() {
+        return questaoParaEditar;
+    }
+
+    public static void limparQuestaoParaEditar() {
+        questaoParaEditar = null;
+    }
 }
